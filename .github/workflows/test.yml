@@ -1,0 +1,36 @@
+name: Docker Test
+
+on: [push]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        container: [metasploit]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker images
+        run: |
+          docker build -t metasploit ./dockers/metasploit/
+
+      - name: Start Docker container
+        run: |
+          if [[ ${{ matrix.container }} == "metasploit" ]]; then
+            docker run -d -it --rm -p 4444:4444 metasploit
+          else
+            docker run -d -it --rm -p 4444:4444 ${{ matrix.container }}
+          fi
+          echo "Waiting for container ${{ matrix.container }} to start..."
+          while [[ $(docker inspect -f '{{.State.Status}}' ${{ matrix.container }}) != "running" ]]; do sleep 1; done
+
+      - name: Run Gradle test
+        run: |
+          ./gradlew test --tests "MyTest.test${{ matrix.container }}"
+
+      - name: Stop Docker container
+        run: docker stop ${{ matrix.container }}
