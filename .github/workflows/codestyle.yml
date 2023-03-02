@@ -11,16 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Java
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
+          distribution: 'temurin'
 
       - name: Download Checkstyle
-        run: curl -O https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.44/checkstyle-8.44-all.jar
+        run: curl -O https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.8.0/checkstyle-10.8.0-all.jar
 
       - name: Run Checkstyle
-        run: java -jar checkstyle-8.44-all.jar -c google_checks.xml src/
+        run: java -jar checkstyle-10.8.0-all.jar -c google_checks.xml src/
