@@ -1,7 +1,6 @@
 package c2.search.netlas.cli;
 
 import java.io.PrintStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -16,7 +15,7 @@ public class Cli {
   private final Config config;
 
   public Cli() {
-    this.config = new Config(); 
+    this.config = new Config();
   }
 
   public void run(final PrintStream stream, String[] args) {

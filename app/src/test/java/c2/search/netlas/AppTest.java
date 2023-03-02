@@ -3,10 +3,11 @@
  */
 package c2.search.netlas;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Test;
+
 class AppTest {
-    @Test void testTemplate() {
-    }
+  @Test
+  void testTemplate() {}
 }
