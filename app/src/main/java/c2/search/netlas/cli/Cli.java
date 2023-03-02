@@ -19,7 +19,7 @@ public class Cli {
     this.config = new Config(); 
   }
 
-  public static void run(final PrintStream stream, String[] args) {
+  public void run(final PrintStream stream, String[] args) {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
@@ -31,7 +31,7 @@ public class Cli {
       }
       if (cmd.hasOption("g")) {
         logger.debug("Command: {}", cmd.getOptionValue("g"));
-        stream.println("Your API key is: " + Config.getApiKey());
+        stream.println("Your API key is: " + config.getApi());
       }
       if (cmd.hasOption("t")) {
         logger.debug("Command: {}", cmd.getOptionValue("t"));

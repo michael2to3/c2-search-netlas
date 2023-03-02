@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Properties;
 
 public class Config {
-
     private String api;
     private final String configFile = "/path/to/config/file.properties";
 
