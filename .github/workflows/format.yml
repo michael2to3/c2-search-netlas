@@ -11,6 +11,6 @@ jobs:
       - uses: axel-op/googlejavaformat-action@v3.6.0
         with:
           args: "--replace"
-          files: 'lib/**/*.java'
+          files: 'app/**/*.java'
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           skipCommit: false
