@@ -34,3 +34,16 @@ jobs:
 
       - name: Stop Docker container
         run: docker stop ${{ matrix.container }}
+
+      - name: Test with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: test
+
+      - name: Generate report jacoco
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: jacocoTestReport
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
