@@ -1,0 +1,16 @@
+name: Format
+
+on: [ push, pull_request ]
+
+jobs:
+
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: axel-op/googlejavaformat-action@v3.6.0
+        with:
+          args: "--replace"
+          files: 'lib/**/*.java'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          skipCommit: false
