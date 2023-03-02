@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        container: [metasploit]
+        container: [remove_me_metasploit]
 
     steps:
       - name: Checkout code
