@@ -7,7 +7,8 @@ public class DetectResponse {
   private int countAllTest;
   private int countSuccessTest;
 
-  public DetectResponse(String name, String minVersion, String maxVersion, int countAllTest, int countSuccessTest) {
+  public DetectResponse(
+      String name, String minVersion, String maxVersion, int countAllTest, int countSuccessTest) {
     this.name = name;
     this.minVersion = minVersion;
     this.maxVersion = maxVersion;
@@ -54,5 +55,4 @@ public class DetectResponse {
   public void setCountSuccessTest(int countSuccessTest) {
     this.countSuccessTest = countSuccessTest;
   }
-
 }
