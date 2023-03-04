@@ -1,7 +1,8 @@
 package c2.search.netlas.target;
 
 import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.DetectResponse;
 
-interface Target {
-  public void run(final Host host);
+public interface Target {
+  public DetectResponse run(final Host host);
 }
