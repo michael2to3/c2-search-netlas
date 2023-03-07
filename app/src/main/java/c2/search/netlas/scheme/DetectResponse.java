@@ -7,13 +7,15 @@ public class DetectResponse {
   private int countAllTest;
   private int countSuccessTest;
 
-  @Override public String toString() {
-    return String.format("DetectResponse [name=%s, minVersion=%s, maxVersion=%s, countAllTest=%d, countSuccessTest=%d]",
-        name, minVersion, maxVersion, countAllTest, countSuccessTest);  
+  @Override
+  public String toString() {
+    return String.format(
+        "DetectResponse [name=%s, minVersion=%s, maxVersion=%s, countAllTest=%d,"
+            + " countSuccessTest=%d]",
+        name, minVersion, maxVersion, countAllTest, countSuccessTest);
   }
 
-  public DetectResponse() {
-  }
+  public DetectResponse() {}
 
   public DetectResponse(
       String name, String minVersion, String maxVersion, int countAllTest, int countSuccessTest) {

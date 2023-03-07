@@ -1,13 +1,11 @@
 package c2.search.netlas.target;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import c2.search.netlas.scheme.Host;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import c2.search.netlas.scheme.Host;
+import java.util.ArrayList;
+import java.util.List;
 import netlas.java.APIException;
 import netlas.java.Netlas;
 
@@ -44,13 +42,14 @@ class NetlasWrapper {
   }
 
   public List<String> getDnsName() {
-    var commonName = this.response
-        .get("items")
-        .get(0)
-        .get("data")
-        .get("certificate")
-        .get("subject")
-        .get("common_name");
+    var commonName =
+        this.response
+            .get("items")
+            .get(0)
+            .get("data")
+            .get("certificate")
+            .get("subject")
+            .get("common_name");
     List<String> dnsNames = new ArrayList<String>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;

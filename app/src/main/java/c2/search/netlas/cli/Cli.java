@@ -1,7 +1,8 @@
 package c2.search.netlas.cli;
 
+import c2.search.netlas.scheme.Host;
+import c2.search.netlas.target.metasploit.Metasploit;
 import java.io.PrintStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -10,9 +11,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import c2.search.netlas.scheme.Host;
-import c2.search.netlas.target.metasploit.Metasploit;
 
 public class Cli {
   private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
@@ -28,9 +26,8 @@ public class Cli {
 
     try {
       CommandLine cmd = parser.parse(optionsWithConfig, args);
-      if(cmd.hasOption("debug")) {
+      if (cmd.hasOption("debug")) {}
 
-      }
       if (cmd.hasOption("s")) {
         LOGGER.debug("Command: {}", cmd.getOptionValue("s"));
         config.setApi(cmd.getOptionValue("s"));
@@ -44,7 +41,7 @@ public class Cli {
         LOGGER.debug("Command: {}", cmd.getOptionValue("t"));
         host.setHost(cmd.getOptionValue("t"));
       }
-      if(cmd.hasOption("p")) {
+      if (cmd.hasOption("p")) {
         LOGGER.debug("Command: {}", cmd.getOptionValue("p"));
         host.setPort(Integer.parseInt(cmd.getOptionValue("p")));
       }

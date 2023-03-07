@@ -1,20 +1,18 @@
 package c2.search.netlas.target.metasploit;
 
+import c2.search.netlas.scheme.DetectResponse;
+import c2.search.netlas.scheme.Host;
+import c2.search.netlas.target.Target;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
-import c2.search.netlas.scheme.DetectResponse;
-import c2.search.netlas.scheme.Host;
-import c2.search.netlas.target.Target;
+import org.slf4j.LoggerFactory;
 
 public class Metasploit implements Target {
-  private final static Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
 
   @Override
   public DetectResponse run(final Host host) {
