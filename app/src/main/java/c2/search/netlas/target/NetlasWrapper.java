@@ -1,11 +1,13 @@
 package c2.search.netlas.target;
 
-import c2.search.netlas.scheme.Host;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.List;
+
+import c2.search.netlas.scheme.Host;
 import netlas.java.APIException;
 import netlas.java.Netlas;
 
@@ -21,15 +23,34 @@ class NetlasWrapper {
     getResponse();
   }
 
+  public Host getHost() {
+    return host;
+  }
+
+  public void setHost(Host host) {
+    this.host = host;
+  }
+
+  public Netlas getNetlas() {
+    return netlas;
+  }
+
+  public void setNetlas(Netlas netlas) {
+    this.netlas = netlas;
+  }
+
+  public void setResponse(JsonNode response) {
+    this.response = response;
+  }
+
   public List<String> getDnsName() {
-    var commonName =
-        this.response
-            .get("items")
-            .get(0)
-            .get("data")
-            .get("certificate")
-            .get("subject")
-            .get("common_name");
+    var commonName = this.response
+        .get("items")
+        .get(0)
+        .get("data")
+        .get("certificate")
+        .get("subject")
+        .get("common_name");
     List<String> dnsNames = new ArrayList<String>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
