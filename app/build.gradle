@@ -20,6 +20,7 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'commons-cli:commons-cli:1.5.0'
     implementation 'org.slf4j:slf4j-log4j12:2.0.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     implementation 'com.michael2to3:netlas:0.0.21-SNAPSHOT'
 }
