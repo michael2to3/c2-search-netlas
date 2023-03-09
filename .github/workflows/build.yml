@@ -7,6 +7,8 @@ permissions:
 
 env:
   API_KEY: "${{ secrets.API_KEY }}"
+  GITHUB_ACTOR: "${{ secrets.PACKAGE_ACTOR }}"
+  GITHUB_TOKEN: "${{ secrets.PAKCAGE_TOKEN }}"
 
 jobs:
   build:
