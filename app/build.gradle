@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-log4j12:2.0.6'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
-    implementation 'com.michael2to3:netlas:0.0.21-SNAPSHOT'
+    implementation 'netlas-java:lib:0.0.31-SNAPSHOT'
 }
 
 application {
