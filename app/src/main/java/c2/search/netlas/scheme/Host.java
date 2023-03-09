@@ -4,8 +4,7 @@ public class Host {
   private String target;
   private int port;
 
-  public Host() {
-  }
+  public Host() {}
 
   public Host(String target, int port) {
     this.target = target;

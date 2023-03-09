@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class NetlasWrapperTest {
-  private static final Logger  LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
   private static final String API = System.getenv("API_KEY");
   private static final Host HOST = new Host("ya.ru", 443);
   private static NetlasWrapper netlas;
@@ -41,7 +41,8 @@ class NetlasWrapperTest {
     assertTrue(jarm.length() == 62);
   }
 
-  @Test void testGetResponseBody() throws JsonMappingException, JsonProcessingException {
+  @Test
+  void testGetResponseBody() throws JsonMappingException, JsonProcessingException {
     String responseBody = netlas.getResponseBody();
     assertNotNull(responseBody);
     assertNotEquals("", responseBody);
