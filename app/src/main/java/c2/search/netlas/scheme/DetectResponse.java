@@ -2,26 +2,25 @@ package c2.search.netlas.scheme;
 
 public class DetectResponse {
   private String name;
-  private String minVersion;
-  private String maxVersion;
+  private Version version;
   private int countAllTest;
   private int countSuccessTest;
 
   @Override
   public String toString() {
     return String.format(
-        "DetectResponse [name=%s, minVersion=%s, maxVersion=%s, countAllTest=%d,"
-            + " countSuccessTest=%d]",
-        name, minVersion, maxVersion, countAllTest, countSuccessTest);
+        "DetectResponse [name=%s, version=%s, countAllTest=%d, countSuccessTest=%d]",
+        name, version, countAllTest, countSuccessTest);
   }
 
-  public DetectResponse() {}
+  public DetectResponse() {
+    this("", "", "", 0, 0);
+  }
 
   public DetectResponse(
       String name, String minVersion, String maxVersion, int countAllTest, int countSuccessTest) {
     this.name = name;
-    this.minVersion = minVersion;
-    this.maxVersion = maxVersion;
+    this.version = new Version(minVersion, maxVersion);
     this.countAllTest = countAllTest;
     this.countSuccessTest = countSuccessTest;
   }
@@ -35,19 +34,19 @@ public class DetectResponse {
   }
 
   public String getMinVersion() {
-    return minVersion;
+    return version.getMin();
   }
 
   public void setMinVersion(String minVersion) {
-    this.minVersion = minVersion;
+    this.version.setMin(minVersion);
   }
 
   public String getMaxVersion() {
-    return maxVersion;
+    return version.getMax();
   }
 
   public void setMaxVersion(String maxVersion) {
-    this.maxVersion = maxVersion;
+    this.version.setMax(maxVersion);
   }
 
   public int getCountAllTest() {
