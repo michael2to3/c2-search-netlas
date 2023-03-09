@@ -16,6 +16,9 @@ on:
 permissions:
   contents: read
 
+env:
+  API_KEY: "${{ secrets.API_KEY }}"
+
 jobs:
   build:
 
@@ -35,6 +38,14 @@ jobs:
 
     - name: Google Java Format
       uses: axel-op/googlejavaformat-action@v3.6.0
+
+    - name: Start test
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: test
+
+    - name: Create Jacoco report
+      run: gradle jacocoTestReport
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
