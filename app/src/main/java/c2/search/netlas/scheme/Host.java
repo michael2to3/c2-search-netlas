@@ -1,22 +1,23 @@
 package c2.search.netlas.scheme;
 
 public class Host {
-  private String host;
+  private String target;
   private int port;
 
-  public Host() {}
+  public Host() {
+  }
 
-  public Host(String host, int port) {
-    this.host = host;
+  public Host(String target, int port) {
+    this.target = target;
     this.port = port;
   }
 
-  public String getHost() {
-    return host;
+  public String getTarget() {
+    return target;
   }
 
-  public void setHost(String host) {
-    this.host = host;
+  public void setTarget(String target) {
+    this.target = target;
   }
 
   public int getPort() {
