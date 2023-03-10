@@ -3,8 +3,6 @@ package c2.search.netlas.target;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
