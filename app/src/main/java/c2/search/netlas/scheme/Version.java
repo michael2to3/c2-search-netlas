@@ -1,12 +1,12 @@
 package c2.search.netlas.scheme;
 
 public class Version implements Comparable<Version> {
-  private String min;
   private String max;
+  private String min;
 
-  public Version(String min, String max) {
-    this.min = min;
+  public Version(String max, String min) {
     this.max = max;
+    this.min = min;
   }
 
   public Version() {}
