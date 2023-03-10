@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +20,51 @@ public class Checker {
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private NetlasWrapper netlasWrapper;
   private Host host;
+  private ClassScanner classScanner;
 
-  public Checker(NetlasWrapper netlasWrapper, Host host) {
+  public static Logger getLogger() {
+    return LOGGER;
+  }
+
+  public static String getTargetClassName() {
+    return TARGET_CLASS_NAME;
+  }
+
+  public Checker(NetlasWrapper netlasWrapper, Host host)
+      throws ClassNotFoundException, IOException {
     this.netlasWrapper = netlasWrapper;
     this.host = host;
+    this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
+  }
+
+  public List<Response> run()
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
+    return forEachTarget();
+  }
+
+  public NetlasWrapper getNetlasWrapper() {
+    return netlasWrapper;
+  }
+
+  public void setNetlasWrapper(NetlasWrapper netlasWrapper) {
+    this.netlasWrapper = netlasWrapper;
+  }
+
+  public Host getHost() {
+    return host;
+  }
+
+  public void setHost(Host host) {
+    this.host = host;
+  }
+
+  public ClassScanner getClassScanner() {
+    return classScanner;
+  }
+
+  public void setClassScanner(ClassScanner classScanner) {
+    this.classScanner = classScanner;
   }
 
   private void changeField(Field field, Object instant) {
@@ -57,53 +100,38 @@ public class Checker {
     }
   }
 
-  private void forEachMethod(Class<?> clazz, Object instant)
+  private List<Response> forEachMethod(Class<?> clazz, Object instant)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    List<Response> responses = new ArrayList<>();
     for (Method method : clazz.getMethods()) {
       if (method.isAnnotationPresent(Test.class)) {
         LOGGER.info("Check method {}", method.getName());
-        Response resp;
-        resp = (Response) method.invoke(instant);
-        System.out.println(resp);
+        responses.add((Response) method.invoke(instant));
       }
     }
+    return responses;
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
+      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
-  private void forEachTarget()
-      throws ClassNotFoundException,
-          IOException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
-    var clazzes = new ClassScanner(TARGET_CLASS_NAME).getClasses();
+  private List<Response> forEachTarget()
+      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
+    var clazzes = this.classScanner.getClasses();
     for (Class<?> clazz : clazzes) {
       if (clazz.isAnnotationPresent(Detect.class)) {
         var instant = getInstant(clazz);
         Detect detect = clazz.getAnnotation(Detect.class);
-        System.out.println(detect.name());
+        LOGGER.info("Detect {}", detect.name());
         forEachField(clazz, instant);
-        forEachMethod(clazz, instant);
+        return forEachMethod(clazz, instant);
       }
     }
-  }
-
-  public void run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
-    forEachTarget();
+    throw new IllegalArgumentException("No detect class");
   }
 }
