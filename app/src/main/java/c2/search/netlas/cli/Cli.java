@@ -1,8 +1,6 @@
 package c2.search.netlas.cli;
 
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.target.Checker;
-import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -24,8 +22,12 @@ public class Cli {
   }
 
   public Host run(final PrintStream stream, String[] args)
-      throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException {
+      throws IOException,
+          ClassNotFoundException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
