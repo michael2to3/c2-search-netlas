@@ -6,6 +6,8 @@ public class Response {
   private String description;
   private String error;
 
+  public Response() {}
+
   public Response(boolean success) {
     this.success = success;
   }
