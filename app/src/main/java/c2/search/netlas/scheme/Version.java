@@ -9,7 +9,9 @@ public class Version implements Comparable<Version> {
     this.min = min;
   }
 
-  public Version() {}
+  public Version() {
+    this("", "");
+  }
 
   @Override
   public String toString() {
