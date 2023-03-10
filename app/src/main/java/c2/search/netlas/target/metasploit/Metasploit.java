@@ -1,63 +1,45 @@
 package c2.search.netlas.target.metasploit;
 
-import c2.search.netlas.scheme.DetectResponse;
+import c2.search.netlas.annotation.Detect;
+import c2.search.netlas.annotation.Test;
+import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
-import c2.search.netlas.target.Target;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Metasploit implements Target {
+@Detect(name = "Metasploit")
+public class Metasploit {
   private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
-  private static final String name = "Metasploit";
-  private String maxVersion = "6.x.x";
-  private String minVersion = "x.x.x";
-  private Host host;
-  private NetlasWrapper netlas;
+  @Wire private Host host;
+  @Wire private NetlasWrapper netlasWrapper;
 
-  @Override
-  public void setNetlas(final NetlasWrapper netlas) {
-    this.netlas = netlas;
-  }
-
-  @Override
-  public DetectResponse run() {
-    DetectResponse response = new DetectResponse();
-
-    response.setName(name);
-    response.setMaxVersion(maxVersion);
-    response.setMinVersion(minVersion);
-    response.setCountAllTest(2);
-
-    int count = 0;
-    count += checkDefaultBodyResponse() ? 1 : 0;
-    count += checkJarm() ? 1 : 0;
-
-    response.setCountSuccessTest(count);
-    return response;
-  }
-
-  private boolean checkDefaultBodyResponse() {
+  @Test
+  public Response checkDefaultBodyResponse() {
     String body = "";
+    System.out.println(netlasWrapper.getNetlas().getApiKey());
     try {
-      body = netlas.getResponseBody();
+      body = netlasWrapper.getResponseBody();
     } catch (IOException e) {
       LOGGER.error(e.getMessage());
-      return false;
+      return new Response(false);
     }
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
-    return body.equals(defaultBody);
+    return new Response(body.equals(defaultBody));
   }
 
-  boolean checkJarm() {
+  @Test
+  public Response checkJarm() {
     String jarmv5 = "07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
     String jarmv6 = "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
 
     String responseJarm = "";
     try {
-      responseJarm = netlas.getJarm();
+      responseJarm = netlasWrapper.getJarm();
     } catch (JsonProcessingException e) {
       LOGGER.error(e.getMessage());
     }
@@ -72,14 +54,7 @@ public class Metasploit implements Target {
       minVersion = "6.x.x";
       detect = true;
     }
-    changeMinimalVersion(minVersion);
-    return detect;
-  }
-
-  private void changeMinimalVersion(String version) {
-    if (version.compareTo(minVersion) < 0) {
-      minVersion = version;
-    }
+    return new Response(detect, new Version(null, minVersion));
   }
 
   private boolean checkUA() {
