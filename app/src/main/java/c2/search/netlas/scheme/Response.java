@@ -1,5 +1,7 @@
 package c2.search.netlas.scheme;
 
+import java.util.Objects;
+
 public class Response {
   private boolean success;
   private Version version;
@@ -9,18 +11,15 @@ public class Response {
   public Response() {}
 
   public Response(boolean success) {
-    this.success = success;
+    this(success, new Version());
   }
 
   public Response(boolean success, Version version) {
-    this.version = version;
-    this.success = success;
+    this(success, version, "");
   }
 
   public Response(boolean success, Version version, String description) {
-    this.success = success;
-    this.version = version;
-    this.description = description;
+    this(success, version, description, "");
   }
 
   public Response(boolean success, Version version, String description, String error) {
@@ -67,5 +66,21 @@ public class Response {
     return String.format(
         "Response(version=%s, success=%s, description=%s, error=%s)",
         version, success, description, error);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Response response = (Response) o;
+    return success == response.success
+        && version.equals(response.version)
+        && description.equals(response.description)
+        && error.equals(response.error);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(success, version, description, error);
   }
 }
