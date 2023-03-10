@@ -32,9 +32,6 @@ jobs:
       with:
         arguments: test
 
-    - name: Google Java Format
-      uses: axel-op/googlejavaformat-action@v3.6.0
-
     - name: Create Jacoco report
       run: gradle jacocoTestReport
 
