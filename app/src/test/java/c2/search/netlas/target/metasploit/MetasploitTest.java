@@ -1,6 +1,5 @@
 package c2.search.netlas.target.metasploit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
-import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
