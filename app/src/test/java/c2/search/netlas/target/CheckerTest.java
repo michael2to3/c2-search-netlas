@@ -1,49 +1,55 @@
 package c2.search.netlas.target;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
+import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
-import java.lang.reflect.Field;
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
 
 public class CheckerTest {
-
-  @Mock private NetlasWrapper netlasWrapper;
-  @Mock private Host host;
-  @Mock private Logger logger;
-
   private Checker checker;
+  private NetlasWrapper netlasWrapper;
+  private Host host;
 
   @BeforeEach
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
+    netlasWrapper = mock(NetlasWrapper.class);
+    host = mock(Host.class);
     checker = new Checker(netlasWrapper, host);
-    setLogger();
   }
 
-  private void setLogger() {
-    try {
-      Field loggerField = Checker.class.getDeclaredField("LOGGER");
-      loggerField.setAccessible(true);
-      loggerField.set(null, logger);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
-    }
+  @Test
+  public void testForEachTarget() throws Exception {
+    ClassScanner classScanner = mock(ClassScanner.class);
+    when(classScanner.getClasses()).thenReturn(Arrays.asList(MyTarget.TestClass.class));
+
+    checker.run();
+
+    assertEquals(new Response(true), new MyTarget.TestClass().testMethod());
   }
 
-  private static class DummyTarget {
-    @Wire private NetlasWrapper netlasWrapper;
+  @Detect(name = "My target")
+  public static class MyTarget {
+    public static class TestClass {
+      @Wire(name = "netlasWrapper")
+      public NetlasWrapper netlasWrapper;
 
-    @Wire(name = "host")
-    private Host host;
+      @Wire(name = "host")
+      public Host host;
 
-    @Test
-    public Response dummyTestMethod() {
-      return new Response(false);
+      @Test
+      public Response testMethod() {
+        return new Response(true);
+      }
     }
   }
 }
