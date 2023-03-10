@@ -17,5 +17,13 @@ class ClassScannerTest {
     assertTrue(classes.contains(MyTestClass.class));
   }
 
+  @Test
+  void testScanClasses() throws ClassNotFoundException, IOException {
+    String packageName = "c2.search.netlas";
+    ClassScanner scanner = new ClassScanner(packageName);
+    List<Class<?>> classes = scanner.getClasses();
+    assertTrue(classes.size() > 0);
+  }
+
   static class MyTestClass {}
 }
