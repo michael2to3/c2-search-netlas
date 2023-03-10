@@ -1,10 +1,12 @@
 package c2.search.netlas.cli;
 
 import c2.search.netlas.scheme.Host;
+import c2.search.netlas.target.Checker;
 import c2.search.netlas.target.NetlasWrapper;
-import c2.search.netlas.target.metasploit.Metasploit;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -22,7 +24,7 @@ public class Cli {
     this.config = new Config();
   }
 
-  public void run(final PrintStream stream, String[] args) throws IOException {
+  public void run(final PrintStream stream, String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
@@ -30,9 +32,9 @@ public class Cli {
     try {
       cmd = parser.parse(optionsWithConfig, args);
     } catch (ParseException e) {
-      System.out.println("Error: " + e.getMessage());
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("c2detect", optionsWithConfig);
+      return;
     }
     if (cmd.hasOption("debug")) {}
 
@@ -54,11 +56,12 @@ public class Cli {
       host.setPort(Integer.parseInt(cmd.getOptionValue("p")));
     }
 
-    var api = System.getProperty("KEY_API");
+    if (host == null || host.getTarget() == null) {
+      return;
+    }
+
+    var api = System.getenv("API_KEY");
     var netlas = new NetlasWrapper(api, host);
-    var m = new Metasploit();
-    m.setNetlas(netlas);
-    m.run();
-    System.out.println(m.toString());
+    new Checker(netlas, host).run();
   }
 }
