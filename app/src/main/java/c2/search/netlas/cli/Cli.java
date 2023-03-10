@@ -23,13 +23,9 @@ public class Cli {
     this.config = new Config();
   }
 
-  public void run(final PrintStream stream, String[] args)
-      throws IOException,
-          ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+  public Host run(final PrintStream stream, String[] args)
+      throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
@@ -39,9 +35,11 @@ public class Cli {
     } catch (ParseException e) {
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("c2detect", optionsWithConfig);
-      return;
+      return null;
     }
-    if (cmd.hasOption("debug")) {}
+    if (cmd.hasOption("debug")) {
+      // TODO: add debug option
+    }
 
     if (cmd.hasOption("s")) {
       LOGGER.debug("Command: {}", cmd.getOptionValue("s"));
@@ -51,6 +49,7 @@ public class Cli {
       LOGGER.debug("Command: {}", cmd.getOptionValue("g"));
       stream.println("Your API key is: " + config.getApi());
     }
+
     Host host = new Host();
     if (cmd.hasOption("t")) {
       LOGGER.debug("Command: {}", cmd.getOptionValue("t"));
@@ -61,12 +60,6 @@ public class Cli {
       host.setPort(Integer.parseInt(cmd.getOptionValue("p")));
     }
 
-    if (host == null || host.getTarget() == null) {
-      return;
-    }
-
-    var api = System.getenv("API_KEY");
-    var netlas = new NetlasWrapper(api, host);
-    new Checker(netlas, host).run();
+    return host;
   }
 }
