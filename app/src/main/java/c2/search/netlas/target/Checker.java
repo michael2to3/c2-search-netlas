@@ -70,15 +70,21 @@ public class Checker {
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
+      throws InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
   private void forEachTarget()
-      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException {
+      throws ClassNotFoundException,
+          IOException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException {
     var clazzes = new ClassScanner(TARGET_CLASS_NAME).getClasses();
     for (Class<?> clazz : clazzes) {
       if (clazz.isAnnotationPresent(Detect.class)) {
@@ -92,8 +98,12 @@ public class Checker {
   }
 
   public void run()
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException, IOException {
+      throws ClassNotFoundException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException,
+          IOException {
     forEachTarget();
   }
 }
