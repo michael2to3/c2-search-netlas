@@ -20,7 +20,8 @@ public class App {
 
       var api = System.getenv("API_KEY");
       var netlas = new NetlasWrapper(api, host);
-      new Checker(netlas, host).run();
+      var reponses = new Checker(netlas, host).run();
+      System.out.println(reponses);
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
       System.exit(1);
