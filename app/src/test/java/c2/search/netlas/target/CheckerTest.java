@@ -1,6 +1,5 @@
 package c2.search.netlas.target;
 
-
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;

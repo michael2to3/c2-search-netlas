@@ -21,8 +21,9 @@ public class Host {
     return port == host.port && target.equals(host.target);
   }
 
-  @Override public int hashCode() {
-    return Objects.hash(target, port); 
+  @Override
+  public int hashCode() {
+    return Objects.hash(target, port);
   }
 
   @Override

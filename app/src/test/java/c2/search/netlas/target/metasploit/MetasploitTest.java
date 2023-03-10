@@ -1,6 +1,5 @@
 package c2.search.netlas.target.metasploit;
 
-
 import c2.search.netlas.target.NetlasWrapper;
 import org.mockito.Mock;
 import org.slf4j.Logger;

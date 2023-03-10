@@ -1,4 +1,5 @@
 package c2.search.netlas.annotation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ class DetectTest {
     Detect detectAnnotation = MyTestClass.class.getAnnotation(Detect.class);
     assertEquals("testName", detectAnnotation.name());
   }
-  
+
   @Detect(name = "testName")
   static class MyTestClass {
     // Test class with Detect annotation
