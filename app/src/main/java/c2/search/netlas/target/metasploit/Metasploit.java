@@ -21,7 +21,6 @@ public class Metasploit {
   @Test
   public Response checkDefaultBodyResponse() {
     String body = "";
-    System.out.println(netlasWrapper.getNetlas().getApiKey());
     try {
       body = netlasWrapper.getResponseBody();
     } catch (IOException e) {
