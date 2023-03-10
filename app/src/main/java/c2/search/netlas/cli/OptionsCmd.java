@@ -35,12 +35,19 @@ public class OptionsCmd {
             .argName("PORT")
             .desc("Set the target port for the application")
             .build();
+    Option enableDebugOption =
+        Option.builder("debug")
+            .longOpt("debug")
+            .argName("ENABLE_DEBUG")
+            .desc("Enable debug mode")
+            .build();
 
     Options optionsWithConfig = new Options();
     optionsWithConfig.addOption(setOption);
     optionsWithConfig.addOption(getOption);
     optionsWithConfig.addOption(targetOption);
     optionsWithConfig.addOption(targetPortOption);
+    optionsWithConfig.addOption(enableDebugOption);
 
     return optionsWithConfig;
   }
