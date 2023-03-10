@@ -22,12 +22,8 @@ public class Cli {
   }
 
   public Host run(final PrintStream stream, String[] args)
-      throws IOException,
-          ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+      throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
