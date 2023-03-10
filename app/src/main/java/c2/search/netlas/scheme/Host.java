@@ -11,6 +11,10 @@ public class Host {
     this.port = port;
   }
 
+  @Override public String toString() {
+    return String.format("%s:%d", target, port);
+  }
+
   public String getTarget() {
     return target;
   }
