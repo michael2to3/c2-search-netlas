@@ -51,7 +51,7 @@ public class NetlasWrapper {
   }
 
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
-    var commonName = getResponse().get("data").get("certificate").get("subject").get("common_name");
+    var commonName = getLastHas(".data.certificate.subject.common_name");
     List<String> dnsNames = new ArrayList<String>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
