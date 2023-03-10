@@ -1,6 +1,7 @@
 package c2.search.netlas.target;
 
 import c2.search.netlas.scheme.Host;
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,15 +58,33 @@ public class NetlasWrapper {
   }
 
   public String getJarm() throws JsonMappingException, JsonProcessingException {
-    return getResponse().get("data").get("jarm").asText();
+    return getLastHas(".data.jarm").asText();
   }
 
   public String getResponseBody() throws JsonMappingException, JsonProcessingException {
-    return getResponse().get("data").get("http").get("body").asText();
+    return getLastHas(".data.http.body").asText();
   }
 
   public String getResponseBodyAsSha256() throws JsonMappingException, JsonProcessingException {
-    return getResponse().get("data").get("http").get("body_sha256").asText();
+    return getLastHas(".data.http.body_sha256").asText();
+  }
+
+  public JsonNode getItem(int i) throws JsonMappingException, JsonProcessingException {
+    return getResponse().get(i);
+  }
+
+  public JsonNode getLastHas(String keyPath) throws JsonMappingException, JsonProcessingException {
+    LOGGER.info("getLastHas: {}", keyPath);
+    int count = getResponse().size();
+    for (int i = 0; i < count; i++) {
+      JsonNode item = getItem(i);
+      JsonPointer pointer = JsonPointer.compile(keyPath.replace('.', '/'));
+      JsonNode node = item.at(pointer);
+      if (!node.isMissingNode()) {
+        return node;
+      }
+    }
+    return null;
   }
 
   public JsonNode getResponse() throws JsonMappingException, JsonProcessingException {
@@ -80,7 +99,7 @@ public class NetlasWrapper {
     var fields = "";
     var excludeFields = false;
     var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
-    resp = resp.get("items").get(0);
+    resp = resp.get("items");
     setResponse(resp);
 
     return resp;
