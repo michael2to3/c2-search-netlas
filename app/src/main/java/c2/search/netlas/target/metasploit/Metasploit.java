@@ -9,6 +9,7 @@ import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,19 +44,34 @@ public class Metasploit {
   public Response checkDefaultBodyResponse() {
     String body = "";
     try {
-      body = netlasWrapper.getResponseBody();
+      body = netlasWrapper.getBody();
     } catch (IOException e) {
       LOGGER.error(e.getMessage());
       return new Response(false);
     }
-    String defaultBody = "<html><body><h1>It works!</h1></body></html>";
-    return new Response(body.equals(defaultBody));
+    String defaultBody = "It works!";
+    String defaultTagPayload = "echo";
+    return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
+  }
+
+  private boolean checkJarm(String body, List<String> jarms) {
+    for (String jarm : jarms) {
+      if (body.contains(jarm)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Test
   public Response checkJarm() {
-    String jarmv5 = "07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
-    String jarmv6 = "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
+    List<String> jarmv5 = List.of("07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823");
+    List<String> jarmv6 =
+        List.of(
+            "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823",
+            "07b03b12b21b21b07b07b03b07b21b23aeefb38b723c523befb314af6e95ac",
+            "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
+            "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
     String responseJarm = "";
     try {
@@ -66,22 +82,43 @@ public class Metasploit {
 
     String minVersion = "6.x.x";
     boolean detect = false;
-    if (responseJarm.equals(jarmv5)) {
+    if (checkJarm(responseJarm, jarmv5)) {
       minVersion = "5.x.x";
       detect = true;
     }
-    if (responseJarm.equals(jarmv6)) {
+    if (checkJarm(responseJarm, jarmv6)) {
       minVersion = "6.x.x";
       detect = true;
     }
     return new Response(detect, new Version(null, minVersion));
   }
 
-  private boolean checkUA() {
-    String defaultUA =
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko)"
-            + " Version/16.1 Safari/605.1.15";
+  @Test
+  public Response checkHeaders() {
+    List<String> servers = null;
+    try {
+      servers = netlasWrapper.getServers();
+    } catch (IOException e) {
+      LOGGER.error(e.getMessage());
+    }
+    String defaultServer = "apache";
+    boolean checkDefaultServer = false;
+    for (String server : servers) {
+      if (server.toLowerCase().contains(defaultServer)) {
+        checkDefaultServer = true;
+        break;
+      }
+    }
 
-    return false;
+    int defaultStatus = 200;
+    int status = 0;
+    try {
+      status = netlasWrapper.getStatusCode();
+    } catch (IOException e) {
+      LOGGER.error(e.getMessage());
+    }
+    boolean checkDefaultStatus = defaultStatus == status;
+
+    return new Response(checkDefaultServer && checkDefaultStatus);
   }
 }
