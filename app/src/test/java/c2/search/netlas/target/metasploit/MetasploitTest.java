@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import c2.search.netlas.scheme.Host;
-import c2.search.netlas.scheme.Response;
-import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.Response;
+import c2.search.netlas.target.NetlasWrapper;
 
 @ExtendWith(MockitoExtension.class)
 public class MetasploitTest {
@@ -35,6 +41,9 @@ public class MetasploitTest {
   @Test
   @DisplayName("Test checkDefaultBodyResponse() with default body")
   public void testCheckDefaultBodyResponseWithDefaultBody() throws IOException {
+    assertNotNull(metasploit.getHost());
+    assertNotNull(metasploit.getNetlasWrapper());
+
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
     when(netlasWrapper.getBody()).thenReturn(defaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
@@ -68,6 +77,16 @@ public class MetasploitTest {
     String jarmv6 = "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
     when(netlasWrapper.getJarm()).thenReturn(jarmv6);
     Response response = metasploit.checkJarm();
+    assertNotNull(response);
+    assertTrue(response.isSuccess());
+  }
+
+  @Test
+  public void testCheckHeaders() throws JsonMappingException, JsonProcessingException {
+    List<String> defaultServers = List.of("apache");
+    when(netlasWrapper.getServers()).thenReturn(defaultServers);
+    when(netlasWrapper.getStatusCode()).thenReturn(200);
+    Response response = metasploit.checkHeaders();
     assertNotNull(response);
     assertTrue(response.isSuccess());
   }
