@@ -42,7 +42,7 @@ public class NetlasWrapper {
     this.netlas = netlas;
   }
 
-  public void setResponse(JsonNode json) {
+  public void set(JsonNode json) {
     if (response.containsKey(host)) {
       response.replace(host, json);
     } else {
@@ -61,21 +61,21 @@ public class NetlasWrapper {
     return getLastHas(".data.jarm").asText();
   }
 
-  public String getResponseBody() throws JsonMappingException, JsonProcessingException {
+  public String getBody() throws JsonMappingException, JsonProcessingException {
     return getLastHas(".data.http.body").asText();
   }
 
-  public String getResponseBodyAsSha256() throws JsonMappingException, JsonProcessingException {
+  public String getBodyAsSha256() throws JsonMappingException, JsonProcessingException {
     return getLastHas(".data.http.body_sha256").asText();
   }
 
   public JsonNode getItem(int i) throws JsonMappingException, JsonProcessingException {
-    return getResponse().get(i);
+    return get().get(i);
   }
 
   public JsonNode getLastHas(String keyPath) throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
-    int count = getResponse().size();
+    int count = get().size();
     for (int i = 0; i < count; i++) {
       JsonNode item = getItem(i);
       JsonPointer pointer = JsonPointer.compile(keyPath.replace('.', '/'));
@@ -84,10 +84,10 @@ public class NetlasWrapper {
         return node;
       }
     }
-    return null;
+    throw new IllegalArgumentException("keyPath: " + keyPath + " not found");
   }
 
-  public JsonNode getResponse() throws JsonMappingException, JsonProcessingException {
+  public JsonNode get() throws JsonMappingException, JsonProcessingException {
     if (response.containsKey(host)) {
       return response.get(host);
     }
@@ -100,8 +100,23 @@ public class NetlasWrapper {
     var excludeFields = false;
     var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
     resp = resp.get("items");
-    setResponse(resp);
+    set(resp);
 
     return resp;
+  }
+
+  public JsonNode getHeaders() throws JsonMappingException, JsonProcessingException {
+    return getLastHas(".data.http.headers");
+  }
+
+  public List<String> getServers() throws JsonMappingException, JsonProcessingException {
+    List<String> servers = new ArrayList<>();
+    JsonNode jservers = getHeaders().get(".server");
+    jservers.forEach(item -> servers.add(item.asText()));
+    return servers;
+  }
+
+  public int getStatusCode() throws JsonMappingException, JsonProcessingException {
+    return getLastHas(".data.http.status_code").asInt();
   }
 }
