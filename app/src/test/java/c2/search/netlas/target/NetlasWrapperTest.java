@@ -3,6 +3,7 @@ package c2.search.netlas.target;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import c2.search.netlas.cli.Config;
@@ -89,5 +90,27 @@ class NetlasWrapperTest {
     netlas.setNetlas(new Netlas(API));
     assertNotNull(netlas.getHost());
     assertNotNull(netlas.getNetlas());
+  }
+
+  @Test
+  void testHeaders() throws JsonMappingException, JsonProcessingException {
+    var nn = new NetlasWrapper(API, new Host("vk.com", 443));
+    var headers = nn.getHeaders();
+    assertNotNull(headers);
+    var server = nn.getServers();
+    assertNotNull(server);
+    assertNotEquals("", server.get(0));
+
+    var status = nn.getStatusCode();
+    assertTrue(status >= 200 && status < 600);
+  }
+
+  @Test
+  void testNotExistKey() throws JsonMappingException, JsonProcessingException {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          netlas.getLastHas("notExistKey");
+        });
   }
 }
