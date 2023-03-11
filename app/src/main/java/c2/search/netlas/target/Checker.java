@@ -6,12 +6,15 @@ import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.Results;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +40,9 @@ public class Checker {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
   }
 
-  public List<Response> run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+  public Results run()
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
     return forEachTarget();
   }
 
@@ -117,31 +116,34 @@ public class Checker {
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
+      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
-  private List<Response> forEachTarget()
-      throws ClassNotFoundException,
-          IOException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+  private Results forEachTarget()
+      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     var clazzes = this.classScanner.getClasses();
+    if (clazzes.isEmpty()) {
+      throw new IllegalArgumentException("No class found");
+    }
+    Results reponses = new Results();
     for (Class<?> clazz : clazzes) {
       if (clazz.isAnnotationPresent(Detect.class)) {
         var instant = getInstant(clazz);
         Detect detect = clazz.getAnnotation(Detect.class);
-        LOGGER.info("Detect {}", detect.name());
+        String nameOfDetect = detect.name();
+        if (nameOfDetect == null || nameOfDetect.isEmpty()) {
+          nameOfDetect = clazz.getName();
+        }
+        LOGGER.info("Detect {}", nameOfDetect);
+
         forEachField(clazz, instant);
-        return forEachMethod(clazz, instant);
+        reponses.addResponse(detect.name(), forEachMethod(clazz, instant));
       }
     }
-    throw new IllegalArgumentException("No detect class");
+    return reponses;
   }
 }
