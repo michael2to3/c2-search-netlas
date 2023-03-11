@@ -2,6 +2,7 @@ package c2.search.netlas.target;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,6 +41,27 @@ public class CheckerTest {
     assertNotNull(r);
     assertTrue(r.size() >= 1);
     assertEquals(new Response(true), r.get(0));
+  }
+
+  @Test
+  public void testThrowNotFoundClass() throws ClassNotFoundException, IOException {
+    assertNotNull(checker.getHost());
+    assertNotNull(Checker.getLogger());
+    assertNotNull(checker.getClassScanner());
+    assertNotNull(checker.getNetlasWrapper());
+    assertNotNull(Checker.getTargetClassName());
+
+    var host = new Host("localhost", 80);
+    NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
+    ClassScanner classScanner = mock(ClassScanner.class);
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          checker = new Checker(netlasWrapper, host);
+          checker.setClassScanner(classScanner);
+          checker.run();
+        },
+        "No detect class");
   }
 
   @Detect(name = "My target")

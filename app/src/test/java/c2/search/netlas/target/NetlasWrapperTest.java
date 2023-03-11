@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import c2.search.netlas.cli.Config;
 import c2.search.netlas.scheme.Host;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
-  private static final String API = System.getenv("API_KEY");
+  private static final String API = new Config("config.properties").get("api.key");
   private static final Host HOST = new Host("ya.ru", 443);
   private static NetlasWrapper netlas;
 

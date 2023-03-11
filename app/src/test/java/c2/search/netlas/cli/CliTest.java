@@ -2,6 +2,7 @@ package c2.search.netlas.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import c2.search.netlas.scheme.Host;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,5 +53,23 @@ public class CliTest {
     String[] args = {};
     cli.run(new PrintStream(out), args);
     assertNotNull(out.toString());
+  }
+
+  @Test
+  void runCheckSetAndGetTestConfig() throws Exception {
+    String fileName = "cli.test";
+    String[] args = {"-s", "test=test"};
+    Cli cli = new Cli(fileName);
+    cli.run(new PrintStream(out), args);
+
+    args = new String[] {"-g", "test"};
+    cli.run(new PrintStream(out), args);
+    assertNotNull(out.toString());
+    assertTrue(out.toString().contains("test"));
+
+    File file = new File(fileName);
+    if (file.exists()) {
+      file.delete();
+    }
   }
 }
