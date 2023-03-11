@@ -18,16 +18,16 @@ public class Cli {
   private final Config config;
 
   public Cli() {
-    this.config = new Config("config.properties");
+    this("config.properties");
+  }
+
+  public Cli(String configFile) {
+    this.config = new Config(configFile);
   }
 
   public Host run(final PrintStream stream, String[] args)
-      throws IOException,
-          ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+      throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     Options optionsWithConfig = OptionsCmd.get();
     CommandLineParser parser = new DefaultParser();
 
@@ -45,7 +45,13 @@ public class Cli {
 
     if (cmd.hasOption("s")) {
       LOGGER.debug("Command: {}", cmd.getOptionValue("s"));
-      config.save("api.key", cmd.getOptionValue("s"));
+      String[] values = cmd.getOptionValues("s");
+      for (String value : values) {
+        String[] parts = value.split("=");
+        if (parts.length == 2 && parts[0].matches("^\\w+(\\.\\w+)*$")) {
+          config.save(parts[0], parts[1]);
+        }
+      }
       return null;
     }
     if (cmd.hasOption("g")) {
