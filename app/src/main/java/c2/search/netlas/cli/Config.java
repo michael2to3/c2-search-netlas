@@ -32,6 +32,8 @@ public class Config {
       try (FileInputStream input = new FileInputStream(fileName)) {
         props.load(input);
         value = props.getProperty(key);
+      } catch (FileNotFoundException e) {
+        LOGGER.error("Config file not found: {}", fileName);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
