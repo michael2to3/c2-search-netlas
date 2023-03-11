@@ -50,7 +50,7 @@ public class Config {
     props.setProperty(key, value);
     try (FileOutputStream output = new FileOutputStream(fileName)) {
       props.store(output, null);
-    } catch(FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       LOGGER.error("Config file not found: {}", fileName);
     } catch (IOException e) {
       throw new RuntimeException(e);
