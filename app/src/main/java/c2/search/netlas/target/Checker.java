@@ -163,7 +163,7 @@ public class Checker {
         LOGGER.info("Detect {}", nameOfDetect);
 
         forEachField(clazz, instant);
-        reponses.addResponse(detect.name(), forEachMethod(clazz, instant));
+        reponses.addResponse(nameOfDetect, forEachMethod(clazz, instant));
       }
     }
     return reponses;
