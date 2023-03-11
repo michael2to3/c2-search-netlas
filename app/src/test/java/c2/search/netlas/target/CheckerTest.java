@@ -75,8 +75,8 @@ public class CheckerTest {
 
   @Detect
   public static class OtherTarget {
-    @Wire
-    public NetlasWrapper netlasWrapper;
+    @Wire public NetlasWrapper netlasWrapper;
+
     @Wire(name = "host")
     public Host host;
 
@@ -88,8 +88,8 @@ public class CheckerTest {
 
   @Detect(name = "My target")
   public static class MyTarget {
-    @Wire
-    public NetlasWrapper netlasWrapper;
+    @Wire public NetlasWrapper netlasWrapper;
+
     @Wire(name = "host")
     public Host host;
 
