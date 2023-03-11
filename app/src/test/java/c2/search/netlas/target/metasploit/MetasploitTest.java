@@ -36,7 +36,7 @@ public class MetasploitTest {
   @DisplayName("Test checkDefaultBodyResponse() with default body")
   public void testCheckDefaultBodyResponseWithDefaultBody() throws IOException {
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
-    when(netlasWrapper.getResponseBody()).thenReturn(defaultBody);
+    when(netlasWrapper.getBody()).thenReturn(defaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
     assertNotNull(response);
     assertTrue(response.isSuccess());
@@ -46,7 +46,7 @@ public class MetasploitTest {
   @DisplayName("Test checkDefaultBodyResponse() with non-default body")
   public void testCheckDefaultBodyResponseWithNonDefaultBody() throws IOException {
     String nonDefaultBody = "<html><body><h1>It doesn't work!</h1></body></html>";
-    when(netlasWrapper.getResponseBody()).thenReturn(nonDefaultBody);
+    when(netlasWrapper.getBody()).thenReturn(nonDefaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
     assertNotNull(response);
     assertFalse(response.isSuccess());
