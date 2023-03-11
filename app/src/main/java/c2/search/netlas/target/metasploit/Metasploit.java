@@ -8,7 +8,7 @@ import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +41,9 @@ public class Metasploit {
   @Wire private NetlasWrapper netlasWrapper;
 
   @Test
-  public Response checkDefaultBodyResponse() {
+  public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
     String body = "";
-    try {
-      body = netlasWrapper.getBody();
-    } catch (IOException e) {
-      LOGGER.error(e.getMessage());
-      return new Response(false);
-    }
+    body = netlasWrapper.getBody();
     String defaultBody = "It works!";
     String defaultTagPayload = "echo";
     return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
@@ -64,7 +59,7 @@ public class Metasploit {
   }
 
   @Test
-  public Response checkJarm() {
+  public Response checkJarm() throws JsonMappingException, JsonProcessingException {
     List<String> jarmv5 = List.of("07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823");
     List<String> jarmv6 =
         List.of(
@@ -74,11 +69,7 @@ public class Metasploit {
             "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
     String responseJarm = "";
-    try {
-      responseJarm = netlasWrapper.getJarm();
-    } catch (JsonProcessingException e) {
-      LOGGER.error(e.getMessage());
-    }
+    responseJarm = netlasWrapper.getJarm();
 
     String minVersion = "6.x.x";
     boolean detect = false;
@@ -94,13 +85,9 @@ public class Metasploit {
   }
 
   @Test
-  public Response checkHeaders() {
+  public Response checkHeaders() throws JsonMappingException, JsonProcessingException {
     List<String> servers = null;
-    try {
-      servers = netlasWrapper.getServers();
-    } catch (IOException e) {
-      LOGGER.error(e.getMessage());
-    }
+    servers = netlasWrapper.getServers();
     String defaultServer = "apache";
     boolean checkDefaultServer = false;
     for (String server : servers) {
@@ -112,11 +99,7 @@ public class Metasploit {
 
     int defaultStatus = 200;
     int status = 0;
-    try {
-      status = netlasWrapper.getStatusCode();
-    } catch (IOException e) {
-      LOGGER.error(e.getMessage());
-    }
+    status = netlasWrapper.getStatusCode();
     boolean checkDefaultStatus = defaultStatus == status;
 
     return new Response(checkDefaultServer && checkDefaultStatus);

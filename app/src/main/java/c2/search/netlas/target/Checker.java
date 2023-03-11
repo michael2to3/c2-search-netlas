@@ -39,12 +39,8 @@ public class Checker {
   }
 
   public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
     return forEachTarget();
   }
 
@@ -72,7 +68,8 @@ public class Checker {
     this.classScanner = classScanner;
   }
 
-  private void changeField(Field field, Object instant) {
+  private void changeField(Field field, Object instant)
+      throws IllegalArgumentException, IllegalAccessException {
     Wire wire = field.getAnnotation(Wire.class);
     String nameOfVariable = wire.name();
     if (nameOfVariable == null || nameOfVariable.isEmpty()) {
@@ -80,24 +77,21 @@ public class Checker {
     }
     LOGGER.info("Change field {} to {}", nameOfVariable, instant);
     field.setAccessible(true);
-    try {
-      switch (nameOfVariable) {
-        case "netlasWrapper":
-          field.set(instant, this.netlasWrapper);
-          break;
-        case "netlas":
-          field.set(instant, this.netlasWrapper.getNetlas());
-          break;
-        case "host":
-          field.set(instant, this.host);
-          break;
-      }
-    } catch (IllegalAccessException e) {
-      LOGGER.error(e.getMessage(), e);
+    switch (nameOfVariable) {
+      case "netlasWrapper":
+        field.set(instant, this.netlasWrapper);
+        break;
+      case "netlas":
+        field.set(instant, this.netlasWrapper.getNetlas());
+        break;
+      case "host":
+        field.set(instant, this.host);
+        break;
     }
   }
 
-  private void forEachField(Class<?> clazz, Object instant) {
+  private void forEachField(Class<?> clazz, Object instant)
+      throws IllegalArgumentException, IllegalAccessException {
     for (Field field : clazz.getDeclaredFields()) {
       if (field.isAnnotationPresent(Wire.class)) {
         changeField(field, instant);
@@ -123,6 +117,7 @@ public class Checker {
         resp = invokeMethod(method, instant);
       } catch (Exception e) {
         LOGGER.info(e.getMessage(), e);
+        resp = new Response(false);
       }
       if (resp != null) {
         responses.add(resp);
@@ -132,21 +127,15 @@ public class Checker {
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
+      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
   private Results forEachTarget()
-      throws ClassNotFoundException,
-          IOException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     var clazzes = this.classScanner.getClasses();
     if (clazzes.isEmpty()) {
       throw new IllegalArgumentException("No class found");
