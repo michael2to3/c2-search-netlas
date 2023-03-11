@@ -6,48 +6,41 @@
 [![Junit Jupiter](https://img.shields.io/badge/Junit-Jupiter-green?style=flat-square)](https://junit.org/junit5/)
 [![Gradle](https://img.shields.io/badge/Gradle-blue?style=flat-square)](https://gradle.org/)
 
-This tool is designed to search for Command and Control (C2) servers using NetAtlas, a web-based platform for mapping and visualizing internet assets. It leverages the NetAtlas API to identify potentially malicious C2 servers and provide information about them.
+C2 Search Netlas is a Java utility to detect C2 servers using Netlas API. This utility provides a simple and easy-to-use CLI interface for searching C2 servers. It uses the Netlas API to fetch data and process it locally.
 
-## Getting Started
-### Prerequisites
+## Installation
 
-To use this tool, you will need Java 8 or higher and Gradle installed on your system. You can download Gradle from the following link:
-
+Clone this repository to your local machine:
 ```bash
-https://gradle.org/install/
+git clone https://github.com/<your-github-username>/c2-search-netlas.git
 ```
 
-### Installing
+## Usage
+To use this utility, you need to have a Netlas API key. You can get the key from the [Netlas](https://netlas.io/) website.
 
-To install the tool, simply clone the GitHub repository:
+Once you have the API key, create a config.properties file in the root directory of the project and add the following line:
+```bash
+api.key=<your-netlas-api-key>
+```
+Now you can build the project and run it using the following commands:
 
 ```bash
-git clone https://github.com/michael2to3/c2-search-netlas
+./gradlew build
+java -jar app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar --help
 ```
-Then navigate to the project directory and build the project using Gradle:
 
+This will display the help message with available options.
+
+To search for C2 servers, run the following command:
 ```bash
-cd c2-search-netlas
-gradle build
+java -jar app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar -t <ip-or-domain> -p <port>
 ```
 
-### Usage
+This will display a list of C2 servers found in the given IP address or domain.
 
-To use the tool, run the NetAtlasC2Search.java class with the following command:
+## Contributing
 
-```bash
-java -cp build/libs/netatlas-c2-search-java-gradle-1.0-SNAPSHOT.jar NetAtlasC2Search <your-api-key> <your-org-id>
-```
+If you want to contribute to this project, please feel free to create a pull request.
+## License
 
-Replace `<your-api-key>` and `<your-org-id>` with your NetAtlas API key and organization ID, respectively. These can be obtained from the NetAtlas web interface.
-
-The tool will search for C2 servers within your organization's IP range and output a list of potential C2 servers, along with information about them such as the hosting provider and country.
-### Contributing
-
-Contributions are welcome! If you find a bug or would like to suggest a new feature, please open an issue or submit a pull request.
-### License
-
-This project is licensed under the License - see the LICENSE.md file for details.
-### Acknowledgments
-
-This tool was inspired by the NetAtlas platform and the need for a simple and effective way to identify potentially malicious C2 servers.
+This project is licensed under the License - see the [LICENSE](https://github.com/michael2to3/c2-search-netlas/blob/main/LICENSE) file for details.
