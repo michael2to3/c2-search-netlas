@@ -39,8 +39,12 @@ public class Checker {
   }
 
   public Results run()
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException, IOException {
+      throws ClassNotFoundException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException,
+          IOException {
     return forEachTarget();
   }
 
@@ -128,15 +132,21 @@ public class Checker {
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
+      throws InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
   private Results forEachTarget()
-      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException {
+      throws ClassNotFoundException,
+          IOException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException {
     var clazzes = this.classScanner.getClasses();
     if (clazzes.isEmpty()) {
       throw new IllegalArgumentException("No class found");
