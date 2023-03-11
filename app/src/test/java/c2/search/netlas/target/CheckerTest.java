@@ -14,6 +14,7 @@ import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import java.io.IOException;
 import java.util.Arrays;
+import netlas.java.Netlas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -88,7 +89,11 @@ public class CheckerTest {
 
   @Detect(name = "My target")
   public static class MyTarget {
-    @Wire public NetlasWrapper netlasWrapper;
+    @Wire(name = "netlasWrapper")
+    public NetlasWrapper netlasWrapper;
+
+    @Wire(name = "netlas")
+    public Netlas netlas;
 
     @Wire(name = "host")
     public Host host;
