@@ -74,9 +74,14 @@ public class NetlasWrapper {
   }
 
   public JsonNode getLastHas(String keyPath) throws JsonMappingException, JsonProcessingException {
+    return getLastHas(keyPath, 0);
+  }
+
+  public JsonNode getLastHas(String keyPath, int skip)
+      throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
     int count = get().size();
-    for (int i = 0; i < count; i++) {
+    for (int i = skip; i < count; i++) {
       JsonNode item = getItem(i);
       JsonPointer pointer = JsonPointer.compile(keyPath.replace('.', '/'));
       JsonNode node = item.at(pointer);
