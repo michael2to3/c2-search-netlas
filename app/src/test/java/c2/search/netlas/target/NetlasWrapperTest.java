@@ -69,14 +69,14 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetResponseBody() throws JsonMappingException, JsonProcessingException {
-    String responseBody = netlas.getResponseBody();
+  void testGetBody() throws JsonMappingException, JsonProcessingException {
+    String responseBody = netlas.getBody();
     assertNotNull(responseBody);
     assertNotEquals("", responseBody);
     assertTrue(responseBody.length() > 0);
     String hash = sha256(responseBody);
-    String hashResponse = netlas.getResponseBodyAsSha256();
-    assertEquals(hash, hashResponse);
+    String rhash = netlas.getBodyAsSha256();
+    assertEquals(hash, rhash);
   }
 
   @Test
