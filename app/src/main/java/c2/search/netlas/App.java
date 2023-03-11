@@ -22,7 +22,6 @@ public class App {
 
       var config = new Config("config.properties");
       var api = config.get("api.key");
-      System.out.println(api);
       var netlas = new NetlasWrapper(api, host);
       var reponses = new Checker(netlas, host).run();
       System.out.println(reponses);
