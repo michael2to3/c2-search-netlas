@@ -3,6 +3,7 @@ package c2.search.netlas;
 import c2.search.netlas.cli.Cli;
 import c2.search.netlas.cli.Config;
 import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.Checker;
 import c2.search.netlas.target.NetlasWrapper;
 import org.slf4j.Logger;
@@ -22,8 +23,8 @@ public class App {
       var config = new Config("config.properties");
       var api = config.get("api.key");
       var netlas = new NetlasWrapper(api, host);
-      var reponses = new Checker(netlas, host).run();
-      System.out.println(reponses);
+      Results reponses = new Checker(netlas, host).run();
+      reponses.print(System.out);
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
       System.exit(1);

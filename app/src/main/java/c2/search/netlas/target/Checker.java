@@ -6,6 +6,7 @@ import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.Results;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +38,7 @@ public class Checker {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
   }
 
-  public List<Response> run()
+  public Results run()
       throws ClassNotFoundException,
           InstantiationException,
           IllegalAccessException,
@@ -125,7 +126,7 @@ public class Checker {
     return clazz.getDeclaredConstructor().newInstance();
   }
 
-  private List<Response> forEachTarget()
+  private Results forEachTarget()
       throws ClassNotFoundException,
           IOException,
           InstantiationException,
@@ -133,15 +134,24 @@ public class Checker {
           NoSuchMethodException,
           InvocationTargetException {
     var clazzes = this.classScanner.getClasses();
+    if (clazzes.isEmpty()) {
+      throw new IllegalArgumentException("No class found");
+    }
+    Results reponses = new Results();
     for (Class<?> clazz : clazzes) {
       if (clazz.isAnnotationPresent(Detect.class)) {
         var instant = getInstant(clazz);
         Detect detect = clazz.getAnnotation(Detect.class);
-        LOGGER.info("Detect {}", detect.name());
+        String nameOfDetect = detect.name();
+        if (nameOfDetect == null || nameOfDetect.isEmpty()) {
+          nameOfDetect = clazz.getName();
+        }
+        LOGGER.info("Detect {}", nameOfDetect);
+
         forEachField(clazz, instant);
-        return forEachMethod(clazz, instant);
+        reponses.addResponse(detect.name(), forEachMethod(clazz, instant));
       }
     }
-    throw new IllegalArgumentException("No detect class");
+    return reponses;
   }
 }

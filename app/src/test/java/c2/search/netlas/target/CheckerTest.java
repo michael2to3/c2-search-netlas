@@ -37,10 +37,11 @@ public class CheckerTest {
   @Test
   public void testForEachTarget() throws Exception {
     var r = checker.run();
+    var target = r.getResponses().get("My target");
 
     assertNotNull(r);
-    assertTrue(r.size() >= 1);
-    assertEquals(new Response(true), r.get(0));
+    assertTrue(target.size() >= 1);
+    assertEquals(new Response(true), target.get(0));
   }
 
   @Test
