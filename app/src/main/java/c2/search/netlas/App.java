@@ -1,13 +1,12 @@
 package c2.search.netlas;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import c2.search.netlas.cli.Cli;
 import c2.search.netlas.cli.Config;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.target.Checker;
 import c2.search.netlas.target.NetlasWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
