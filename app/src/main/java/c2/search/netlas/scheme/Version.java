@@ -15,7 +15,7 @@ public class Version implements Comparable<Version> {
 
   @Override
   public String toString() {
-    return String.format("%s-%s", min, max);
+    return String.format("%s-%s", max, min);
   }
 
   @Override
