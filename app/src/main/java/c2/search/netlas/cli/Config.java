@@ -1,11 +1,15 @@
 package c2.search.netlas.cli;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Config {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
   private Properties props;
   private String fileName;
 
@@ -15,7 +19,9 @@ public class Config {
 
     try (FileInputStream input = new FileInputStream(fileName)) {
       props.load(input);
-    } catch (Exception e) {
+    } catch (FileNotFoundException e) {
+      LOGGER.error("Config file not found: {}", fileName);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
