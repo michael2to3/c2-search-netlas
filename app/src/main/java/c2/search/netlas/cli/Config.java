@@ -30,6 +30,13 @@ public class Config {
         throw new RuntimeException(e);
       }
     }
+    if (value == null) {
+      value = System.getenv(key);
+    }
+    if (value == null) {
+      String upperKey = key.toUpperCase().replace('.', '_');
+      value = System.getenv(upperKey);
+    }
     return value;
   }
 
