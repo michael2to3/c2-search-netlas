@@ -41,7 +41,8 @@ public class Results {
   public void print(PrintStream stream) {
     for (String tool : responses.keySet()) {
       List<Response> toolResponses = responses.get(tool);
-      stream.printf("%-12s {Version: %s} ", tool, toolResponses.get(0).getVersion());
+      var resp = toolResponses.get(0);
+      stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       printProgressBar(getSuccessPercentage(toolResponses));
       stream.println();
     }
