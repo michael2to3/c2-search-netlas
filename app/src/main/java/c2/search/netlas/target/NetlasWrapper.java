@@ -116,8 +116,11 @@ public class NetlasWrapper {
 
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
     List<String> servers = new ArrayList<>();
-    JsonNode jservers = getHeaders().get(".server");
-    jservers.forEach(item -> servers.add(item.asText()));
+    getLastHas(".data.http.headers.server")
+        .forEach(
+            item -> {
+              servers.add(item.asText());
+            });
     return servers;
   }
 
