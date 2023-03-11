@@ -39,12 +39,8 @@ public class Checker {
   }
 
   public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
     return forEachTarget();
   }
 
@@ -105,34 +101,42 @@ public class Checker {
     }
   }
 
+  private Response invokeMethod(Method method, Object instant)
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    if (method.isAnnotationPresent(Test.class)) {
+      LOGGER.info("Check method {}", method.getName());
+      return (Response) method.invoke(instant);
+    }
+    return null;
+  }
+
   private List<Response> forEachMethod(Class<?> clazz, Object instant)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     List<Response> responses = new ArrayList<>();
+    Response resp = null;
     for (Method method : clazz.getMethods()) {
-      if (method.isAnnotationPresent(Test.class)) {
-        LOGGER.info("Check method {}", method.getName());
-        responses.add((Response) method.invoke(instant));
+      try {
+        resp = invokeMethod(method, instant);
+      } catch (Exception e) {
+        LOGGER.info(e.getMessage(), e);
+      }
+      if (resp != null) {
+        responses.add(resp);
       }
     }
     return responses;
   }
 
   private Object getInstant(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
+      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Get instant {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
 
   private Results forEachTarget()
-      throws ClassNotFoundException,
-          IOException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+      throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException {
     var clazzes = this.classScanner.getClasses();
     if (clazzes.isEmpty()) {
       throw new IllegalArgumentException("No class found");
