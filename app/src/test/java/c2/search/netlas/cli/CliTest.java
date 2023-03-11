@@ -8,14 +8,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import c2.search.netlas.scheme.Host;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import c2.search.netlas.scheme.Host;
 
 public class CliTest {
   private Cli cli;
