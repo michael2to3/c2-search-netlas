@@ -39,32 +39,36 @@ public class Results {
   }
 
   public void print(PrintStream stream) {
-    for (Map.Entry<String, List<Response>> entry : responses.entrySet()) {
-      String moduleName = entry.getKey();
-      List<Response> moduleResponses = entry.getValue();
-
-      int totalResponses = moduleResponses.size();
-      int successfulResponses = 0;
-      for (Response response : moduleResponses) {
-        if (response.isSuccess()) {
-          successfulResponses++;
-        }
-      }
-      int successPercentage = (int) Math.round((double) successfulResponses / totalResponses * 100);
-
-      StringBuilder progressBar = new StringBuilder("[");
-      int progress = 0;
-      for (int i = 0; i < 10; i++) {
-        if (progress < successPercentage) {
-          progressBar.append("#");
-        } else {
-          progressBar.append("X");
-        }
-        progress += 10;
-      }
-      progressBar.append("]");
-
-      stream.printf("%-15s %s %d%%%n", moduleName, progressBar.toString(), successPercentage);
+    for (String tool : responses.keySet()) {
+      List<Response> toolResponses = responses.get(tool);
+      stream.printf("%-12s {Version: %s} ", tool, toolResponses.get(0).getVersion());
+      printProgressBar(getSuccessPercentage(toolResponses));
+      stream.println();
     }
+  }
+
+  private void printProgressBar(int successPercentage) {
+    StringBuilder progressBar = new StringBuilder("[");
+    int numBlocks = successPercentage / 10;
+    for (int i = 0; i < 10; i++) {
+      if (i < numBlocks) {
+        progressBar.append('#');
+      } else {
+        progressBar.append('X');
+      }
+    }
+    progressBar.append("] ");
+    progressBar.append(successPercentage).append("%");
+    System.out.print(progressBar);
+  }
+
+  private int getSuccessPercentage(List<Response> toolResponses) {
+    int numSuccess = 0;
+    for (Response response : toolResponses) {
+      if (response.isSuccess()) {
+        numSuccess++;
+      }
+    }
+    return (int) ((double) numSuccess / toolResponses.size() * 100);
   }
 }
