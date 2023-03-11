@@ -27,9 +27,11 @@ public class CheckerTest {
     netlasWrapper = mock(NetlasWrapper.class);
     host = mock(Host.class);
     checker = new Checker(netlasWrapper, host);
+    checker.setHost(host);
+    checker.setNetlasWrapper(netlasWrapper);
 
     ClassScanner classScanner = mock(ClassScanner.class);
-    when(classScanner.getClasses()).thenReturn(Arrays.asList(MyTarget.class));
+    when(classScanner.getClasses()).thenReturn(Arrays.asList(MyTarget.class, OtherTarget.class));
 
     checker.setClassScanner(classScanner);
   }
@@ -37,11 +39,17 @@ public class CheckerTest {
   @Test
   public void testForEachTarget() throws Exception {
     var r = checker.run();
-    var target = r.getResponses().get("My target");
+    var responses = r.getResponses();
+    assertNotNull(responses);
+
+    var target = responses.get("My target");
+    var otarget = responses.get("c2.search.netlas.target.CheckerTest$OtherTarget");
 
     assertNotNull(r);
     assertTrue(target.size() >= 1);
+    assertTrue(otarget.size() >= 1);
     assertEquals(new Response(true), target.get(0));
+    assertEquals(new Response(true), otarget.get(0));
   }
 
   @Test
@@ -65,11 +73,23 @@ public class CheckerTest {
         "No detect class");
   }
 
+  @Detect
+  public static class OtherTarget {
+    @Wire
+    public NetlasWrapper netlasWrapper;
+    @Wire(name = "host")
+    public Host host;
+
+    @c2.search.netlas.annotation.Test
+    public Response method() {
+      return new Response(host != null && netlasWrapper != null);
+    }
+  }
+
   @Detect(name = "My target")
   public static class MyTarget {
-    @Wire(name = "netlasWrapper")
+    @Wire
     public NetlasWrapper netlasWrapper;
-
     @Wire(name = "host")
     public Host host;
 
