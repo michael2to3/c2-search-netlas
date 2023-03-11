@@ -18,7 +18,7 @@ public class Cli {
   private final Config config;
 
   public Cli() {
-    this.config = new Config();
+    this.config = new Config("config.properties");
   }
 
   public Host run(final PrintStream stream, String[] args)
@@ -45,11 +45,14 @@ public class Cli {
 
     if (cmd.hasOption("s")) {
       LOGGER.debug("Command: {}", cmd.getOptionValue("s"));
-      config.setApi(cmd.getOptionValue("s"));
+      config.save("api.key", cmd.getOptionValue("s"));
+      return null;
     }
     if (cmd.hasOption("g")) {
       LOGGER.debug("Command: {}", cmd.getOptionValue("g"));
-      stream.println("Your API key is: " + config.getApi());
+      String get = cmd.getOptionValue("g");
+      stream.println("From config: " + config.get(get));
+      return null;
     }
 
     Host host = new Host();
