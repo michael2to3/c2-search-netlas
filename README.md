@@ -38,6 +38,29 @@ java -jar app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar -t <ip-or-domain> -p 
 
 This will display a list of C2 servers found in the given IP address or domain.
 
+## Support
+
+| Name                    | Support            |
+|-------------------------|--------------------|
+| metasploit              | :white_check_mark: |
+| BishopFox/sliver        | :x:                |
+| Cobalt Strike           | :x:                |
+| Empire                  | :x:                |
+| Ne0nd0g/merlin          | :x:                |
+| cobbr/Covenant          | :x:                |
+| HavocFramework/Havoc    | :x:                |
+| bruteratel              | :x:                |
+| t3l3machus/Villain      | :x:                |
+| bats3c/shad0w           | :x:                |
+| nil0x42/phpsploit       | :x:                |
+| nettitude/PoshC2        | :x:                |
+
+Legend:
+- :white_check_mark: - Accept/good support
+- :question: - Support unknown/unclear
+- :x: - No support/poor support
+
+
 ## Contributing
 
 If you want to contribute to this project, please feel free to create a pull request.
