@@ -12,7 +12,7 @@ C2 Search Netlas is a Java utility to detect C2 servers using Netlas API. This u
 
 Clone this repository to your local machine:
 ```bash
-git clone https://github.com/<your-github-username>/c2-search-netlas.git
+git clone https://github.com/michael2to3/c2-search-netlas.git
 ```
 
 ## Usage
