@@ -3,6 +3,7 @@ package c2.search.netlas.target;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import c2.search.netlas.cli.Config;
@@ -69,14 +70,14 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetResponseBody() throws JsonMappingException, JsonProcessingException {
-    String responseBody = netlas.getResponseBody();
+  void testGetBody() throws JsonMappingException, JsonProcessingException {
+    String responseBody = netlas.getBody();
     assertNotNull(responseBody);
     assertNotEquals("", responseBody);
     assertTrue(responseBody.length() > 0);
     String hash = sha256(responseBody);
-    String hashResponse = netlas.getResponseBodyAsSha256();
-    assertEquals(hash, hashResponse);
+    String rhash = netlas.getBodyAsSha256();
+    assertEquals(hash, rhash);
   }
 
   @Test
@@ -89,5 +90,27 @@ class NetlasWrapperTest {
     netlas.setNetlas(new Netlas(API));
     assertNotNull(netlas.getHost());
     assertNotNull(netlas.getNetlas());
+  }
+
+  @Test
+  void testHeaders() throws JsonMappingException, JsonProcessingException {
+    var nn = new NetlasWrapper(API, new Host("vk.com", 443));
+    var headers = nn.getHeaders();
+    assertNotNull(headers);
+    var server = nn.getServers();
+    assertNotNull(server);
+    assertNotEquals("", server.get(0));
+
+    var status = nn.getStatusCode();
+    assertTrue(status >= 200 && status < 600);
+  }
+
+  @Test
+  void testNotExistKey() throws JsonMappingException, JsonProcessingException {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          netlas.getLastHas("notExistKey");
+        });
   }
 }

@@ -8,7 +8,10 @@ import static org.mockito.Mockito.when;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.target.NetlasWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,8 +38,11 @@ public class MetasploitTest {
   @Test
   @DisplayName("Test checkDefaultBodyResponse() with default body")
   public void testCheckDefaultBodyResponseWithDefaultBody() throws IOException {
+    assertNotNull(metasploit.getHost());
+    assertNotNull(metasploit.getNetlasWrapper());
+
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
-    when(netlasWrapper.getResponseBody()).thenReturn(defaultBody);
+    when(netlasWrapper.getBody()).thenReturn(defaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
     assertNotNull(response);
     assertTrue(response.isSuccess());
@@ -46,7 +52,7 @@ public class MetasploitTest {
   @DisplayName("Test checkDefaultBodyResponse() with non-default body")
   public void testCheckDefaultBodyResponseWithNonDefaultBody() throws IOException {
     String nonDefaultBody = "<html><body><h1>It doesn't work!</h1></body></html>";
-    when(netlasWrapper.getResponseBody()).thenReturn(nonDefaultBody);
+    when(netlasWrapper.getBody()).thenReturn(nonDefaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
     assertNotNull(response);
     assertFalse(response.isSuccess());
@@ -68,6 +74,16 @@ public class MetasploitTest {
     String jarmv6 = "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823";
     when(netlasWrapper.getJarm()).thenReturn(jarmv6);
     Response response = metasploit.checkJarm();
+    assertNotNull(response);
+    assertTrue(response.isSuccess());
+  }
+
+  @Test
+  public void testCheckHeaders() throws JsonMappingException, JsonProcessingException {
+    List<String> defaultServers = List.of("apache");
+    when(netlasWrapper.getServers()).thenReturn(defaultServers);
+    when(netlasWrapper.getStatusCode()).thenReturn(200);
+    Response response = metasploit.checkHeaders();
     assertNotNull(response);
     assertTrue(response.isSuccess());
   }
