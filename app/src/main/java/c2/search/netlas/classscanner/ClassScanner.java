@@ -18,7 +18,8 @@ public class ClassScanner {
       if (file.isDirectory()) {
         scanClasses(packageName + "." + file.getName());
       } else if (file.getName().endsWith(".class")) {
-        String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
+        String className =
+            packageName + "." + file.getName().substring(0, file.getName().length() - 6);
         Class<?> clazz = classLoader.loadClass(className);
         classes.add(clazz);
       }
@@ -36,7 +37,8 @@ public class ClassScanner {
       if (file.isDirectory()) {
         scanClasses(packageName + "." + file.getName());
       } else if (file.getName().endsWith(".class")) {
-        String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
+        String className =
+            packageName + "." + file.getName().substring(0, file.getName().length() - 6);
         Class<?> clazz = classLoader.loadClass(className);
         classes.add(clazz);
       }
