@@ -1,6 +1,5 @@
 package c2.search.netlas.annotation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,9 @@ class WireTest {
   void testWireAnnotation() throws NoSuchFieldException {
     Wire wireAnnotation = MyTestClass.class.getDeclaredField("myField").getAnnotation(Wire.class);
     assertTrue(wireAnnotation != null);
-    assertEquals("myFieldName", wireAnnotation.name());
   }
 
   static class MyTestClass {
-    @Wire(name = "myFieldName")
-    private Object myField;
+    @Wire private Object myField;
   }
 }

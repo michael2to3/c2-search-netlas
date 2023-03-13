@@ -80,8 +80,7 @@ public class CheckerTest {
   public static class OtherTarget {
     @Wire public NetlasWrapper netlasWrapper;
 
-    @Wire(name = "host")
-    public Host host;
+    @Wire public Host host;
 
     @c2.search.netlas.annotation.Test
     public Response method() {
@@ -91,14 +90,11 @@ public class CheckerTest {
 
   @Detect(name = "My target")
   public static class MyTarget {
-    @Wire(name = "netlasWrapper")
-    public NetlasWrapper netlasWrapper;
+    @Wire public NetlasWrapper netlasWrapper;
 
-    @Wire(name = "netlas")
-    public Netlas netlas;
+    @Wire public Netlas netlas;
 
-    @Wire(name = "host")
-    public Host host;
+    @Wire public Host host;
 
     @c2.search.netlas.annotation.Test
     public Response method() {

@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import netlas.java.Netlas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,12 +64,8 @@ public class Checker {
   }
 
   public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -84,9 +81,7 @@ public class Checker {
   }
 
   private Object instantiateClass(Class<?> clazz)
-      throws IllegalAccessException,
-          InstantiationException,
-          NoSuchMethodException,
+      throws IllegalAccessException, InstantiationException, NoSuchMethodException,
           InvocationTargetException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
@@ -124,29 +119,35 @@ public class Checker {
 
   private void injectDependencies(Object instant) throws IllegalAccessException {
     LOGGER.info("Injecting dependencies to {}", instant.getClass().getName());
-    for (Field field : instant.getClass().getDeclaredFields()) {
-      if (field.isAnnotationPresent(Wire.class)) {
-        field.setAccessible(true);
-        Wire wire = field.getAnnotation(Wire.class);
-        String nameOfVariable = wire.name();
-        if (nameOfVariable == null || nameOfVariable.isEmpty()) {
-          nameOfVariable = field.getName();
-        }
-        switch (nameOfVariable) {
-          case "netlasWrapper":
-            field.set(instant, this.netlasWrapper);
-            break;
-          case "host":
-            field.set(instant, this.host);
-            break;
-          default:
-            LOGGER.warn(
-                "Unrecognized field {} in {}", nameOfVariable, instant.getClass().getName());
-            break;
-        }
-        LOGGER.info(
-            "Injected dependency {} to {}", nameOfVariable, instant.getClass().getSimpleName());
+    Field[] annotatedFields = instant.getClass().getDeclaredFields();
+    for (Field annotatedField : annotatedFields) {
+      if (!annotatedField.isAnnotationPresent(Wire.class)) {
+        continue;
       }
+      annotatedField.setAccessible(true);
+      Object value = getAnnotatedFieldValue(annotatedField);
+      if (value == null) {
+        LOGGER.warn(
+            "Unrecognized field {} in {}", annotatedField.getType(), instant.getClass().getName());
+        continue;
+      }
+      annotatedField.set(instant, value);
+      LOGGER.info(
+          "Injected dependency {} to {}",
+          annotatedField.getType().getSimpleName(),
+          instant.getClass().getSimpleName());
     }
+  }
+
+  private Object getAnnotatedFieldValue(Field annotatedField) {
+    Class<?> typeOfVariable = annotatedField.getType();
+    if (typeOfVariable.equals(NetlasWrapper.class)) {
+      return this.netlasWrapper;
+    } else if (typeOfVariable.equals(Host.class)) {
+      return this.host;
+    } else if (typeOfVariable.equals(Netlas.class)) {
+      return this.netlasWrapper.getNetlas();
+    }
+    return null;
   }
 }
