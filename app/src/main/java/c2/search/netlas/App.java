@@ -22,8 +22,11 @@ public class App {
   private static final String CONFIG_FILENAME = "config.properties";
 
   public static void main(String[] args)
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-          NoSuchMethodException, InvocationTargetException {
+      throws ClassNotFoundException,
+          InstantiationException,
+          IllegalAccessException,
+          NoSuchMethodException,
+          InvocationTargetException {
     try {
       Options options = setupOptions();
       CommandLineParser parser = new DefaultParser();
