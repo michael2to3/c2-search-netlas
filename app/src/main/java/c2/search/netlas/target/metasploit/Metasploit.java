@@ -71,7 +71,7 @@ public class Metasploit {
     String responseJarm = "";
     responseJarm = netlasWrapper.getJarm();
 
-    String minVersion = "6.x.x";
+    String minVersion = null;
     boolean detect = false;
     if (checkJarm(responseJarm, jarmv5)) {
       minVersion = "5.x.x";
