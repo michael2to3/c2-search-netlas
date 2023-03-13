@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import c2.search.netlas.annotation.*;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.classscanner.ClassScanner;
@@ -32,7 +33,8 @@ public class CheckerTest {
     checker.setNetlasWrapper(netlasWrapper);
 
     ClassScanner classScanner = mock(ClassScanner.class);
-    when(classScanner.getClasses()).thenReturn(Arrays.asList(MyTarget.class, OtherTarget.class));
+    when(classScanner.getClassesWithAnnotation(Detect.class))
+        .thenReturn(Arrays.asList(MyTarget.class, OtherTarget.class));
 
     checker.setClassScanner(classScanner);
   }
@@ -65,7 +67,7 @@ public class CheckerTest {
     NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
     ClassScanner classScanner = mock(ClassScanner.class);
     assertThrows(
-        IllegalArgumentException.class,
+        IllegalStateException.class,
         () -> {
           checker = new Checker(netlasWrapper, host);
           checker.setClassScanner(classScanner);
@@ -76,7 +78,8 @@ public class CheckerTest {
 
   @Detect
   public static class OtherTarget {
-    @Wire public NetlasWrapper netlasWrapper;
+    @Wire
+    public NetlasWrapper netlasWrapper;
 
     @Wire(name = "host")
     public Host host;

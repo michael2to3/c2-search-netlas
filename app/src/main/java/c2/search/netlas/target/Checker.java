@@ -23,31 +23,6 @@ public class Checker {
   private Host host;
   private ClassScanner classScanner;
 
-  public static Logger getLogger() {
-    return LOGGER;
-  }
-
-  public static String getTargetClassName() {
-    return TARGET_CLASS_NAME;
-  }
-
-  public Checker(NetlasWrapper netlasWrapper, Host host)
-      throws ClassNotFoundException, IOException {
-    this.netlasWrapper = netlasWrapper;
-    this.host = host;
-    this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
-  }
-
-  public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
-    return forEachTarget();
-  }
-
   public NetlasWrapper getNetlasWrapper() {
     return netlasWrapper;
   }
@@ -72,99 +47,100 @@ public class Checker {
     this.classScanner = classScanner;
   }
 
-  private void changeField(Field field, Object instant)
-      throws IllegalArgumentException, IllegalAccessException {
-    Wire wire = field.getAnnotation(Wire.class);
-    String nameOfVariable = wire.name();
-    if (nameOfVariable == null || nameOfVariable.isEmpty()) {
-      nameOfVariable = field.getName();
-    }
-    LOGGER.info("Change field {} to {}", nameOfVariable, instant);
-    field.setAccessible(true);
-    switch (nameOfVariable) {
-      case "netlasWrapper":
-        field.set(instant, this.netlasWrapper);
-        break;
-      case "netlas":
-        field.set(instant, this.netlasWrapper.getNetlas());
-        break;
-      case "host":
-        field.set(instant, this.host);
-        break;
-    }
+  public static Logger getLogger() {
+    return LOGGER;
   }
 
-  private void forEachField(Class<?> clazz, Object instant)
-      throws IllegalArgumentException, IllegalAccessException {
-    for (Field field : clazz.getDeclaredFields()) {
-      if (field.isAnnotationPresent(Wire.class)) {
-        changeField(field, instant);
-      }
-    }
+  public static String getTargetClassName() {
+    return TARGET_CLASS_NAME;
   }
 
-  private Response invokeMethod(Method method, Object instant)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-    if (method.isAnnotationPresent(Test.class)) {
-      LOGGER.info("Check method {}", method.getName());
-      return (Response) method.invoke(instant);
-    }
-    return null;
+  public Checker(NetlasWrapper netlasWrapper, Host host)
+      throws ClassNotFoundException, IOException {
+    this.netlasWrapper = netlasWrapper;
+    this.host = host;
+    this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
   }
 
-  private List<Response> forEachMethod(Class<?> clazz, Object instant)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  public Results run()
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          NoSuchMethodException, InvocationTargetException, IOException {
+    List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
+    if (detectedClasses.isEmpty()) {
+      throw new IllegalStateException(
+          "No class with @Detect annotation found in " + TARGET_CLASS_NAME);
+    }
+    Results results = new Results();
+    for (Class<?> clazz : detectedClasses) {
+      Object instant = instantiateClass(clazz);
+      injectDependencies(instant);
+      results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
+    }
+    return results;
+  }
+
+  private Object instantiateClass(Class<?> clazz)
+      throws IllegalAccessException, InstantiationException, NoSuchMethodException,
+          InvocationTargetException {
+    LOGGER.info("Instantiating {}", clazz.getName());
+    return clazz.getDeclaredConstructor().newInstance();
+  }
+
+  private String getNameOfClass(Class<?> clazz) {
+    Detect detect = clazz.getAnnotation(Detect.class);
+    String nameOfDetect = detect.name();
+    if (nameOfDetect == null || nameOfDetect.isEmpty()) {
+      nameOfDetect = clazz.getName();
+    }
+    return nameOfDetect;
+  }
+
+  private List<Response> invokeTestMethods(Object instant) {
+    LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
     List<Response> responses = new ArrayList<>();
-    Response resp = null;
-    for (Method method : clazz.getMethods()) {
-      try {
-        resp = invokeMethod(method, instant);
-      } catch (Exception e) {
-        LOGGER.info(e.getMessage(), e);
-        resp = new Response(false);
-      }
-      if (resp != null) {
-        responses.add(resp);
+    for (Method method : instant.getClass().getMethods()) {
+      if (method.isAnnotationPresent(Test.class)) {
+        try {
+          Response response = (Response) method.invoke(instant);
+          responses.add(response);
+        } catch (Exception e) {
+          LOGGER.error(
+              "Error invoking test method {} on {} - {}",
+              method.getName(),
+              instant.getClass().getName(),
+              e.getMessage());
+          responses.add(new Response(false));
+        }
       }
     }
     return responses;
   }
 
-  private Object getInstant(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
-    LOGGER.info("Get instant {}", clazz.getName());
-    return clazz.getDeclaredConstructor().newInstance();
-  }
-
-  private Results forEachTarget()
-      throws ClassNotFoundException,
-          IOException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
-    var clazzes = this.classScanner.getClasses();
-    if (clazzes.isEmpty()) {
-      throw new IllegalArgumentException("No class found");
-    }
-    Results reponses = new Results();
-    for (Class<?> clazz : clazzes) {
-      if (clazz.isAnnotationPresent(Detect.class)) {
-        var instant = getInstant(clazz);
-        Detect detect = clazz.getAnnotation(Detect.class);
-        String nameOfDetect = detect.name();
-        if (nameOfDetect == null || nameOfDetect.isEmpty()) {
-          nameOfDetect = clazz.getName();
+  private void injectDependencies(Object instant) throws IllegalAccessException {
+    LOGGER.info("Injecting dependencies to {}", instant.getClass().getName());
+    for (Field field : instant.getClass().getDeclaredFields()) {
+      if (field.isAnnotationPresent(Wire.class)) {
+        field.setAccessible(true);
+        Wire wire = field.getAnnotation(Wire.class);
+        String nameOfVariable = wire.name();
+        if (nameOfVariable == null || nameOfVariable.isEmpty()) {
+          nameOfVariable = field.getName();
         }
-        LOGGER.info("Detect {}", nameOfDetect);
-
-        forEachField(clazz, instant);
-        reponses.addResponse(nameOfDetect, forEachMethod(clazz, instant));
+        switch (nameOfVariable) {
+          case "netlasWrapper":
+            field.set(instant, this.netlasWrapper);
+            break;
+          case "host":
+            field.set(instant, this.host);
+            break;
+          default:
+            LOGGER.warn(
+                "Unrecognized field {} in {}", nameOfVariable, instant.getClass().getName());
+            break;
+        }
+        LOGGER.info(
+            "Injected dependency {} to {}", nameOfVariable, instant.getClass().getSimpleName());
       }
     }
-    return reponses;
   }
 }
