@@ -68,7 +68,9 @@ public class Results {
       stream.print(" ");
 
       for (Response response : toolResponses) {
-        if (response.isSuccess() && response.getDescription() != null && !response.getDescription().isEmpty()) {
+        if (response.isSuccess()
+            && response.getDescription() != null
+            && !response.getDescription().isEmpty()) {
           stream.printf("\n Test successful: %s", response.getDescription());
         }
         if (!response.getError().isEmpty()) {

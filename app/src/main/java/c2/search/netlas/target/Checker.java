@@ -132,7 +132,7 @@ public class Checker {
     if (description == null || description.isEmpty()) {
       description = method.getName();
     }
-    return description; 
+    return description;
   }
 
   private Response invokeTestMethod(Method method, Object instant) throws Exception {
