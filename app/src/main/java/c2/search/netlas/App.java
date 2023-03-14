@@ -47,7 +47,7 @@ public class App {
 
       Config config = new Config(CONFIG_FILENAME);
       String apiKey = config.get("api.key");
-      if (apiKey == null) {
+      if (apiKey == null || apiKey.isEmpty()) {
         LOGGER.error("API key is not set");
         return;
       }
