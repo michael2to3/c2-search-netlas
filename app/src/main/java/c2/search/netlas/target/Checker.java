@@ -127,8 +127,18 @@ public class Checker {
     return testMethods;
   }
 
+  private String getDescriptionOfTestMethod(Method method) {
+    String description = method.getAnnotation(Test.class).description();
+    if (description == null || description.isEmpty()) {
+      description = method.getName();
+    }
+    return description; 
+  }
+
   private Response invokeTestMethod(Method method, Object instant) throws Exception {
-    return (Response) method.invoke(instant);
+    Response response = (Response) method.invoke(instant);
+    response.setDescription(getDescriptionOfTestMethod(method));
+    return response;
   }
 
   private void handleInvocationError(Method method, Object instant, Exception e) {
