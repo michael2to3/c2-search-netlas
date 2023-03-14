@@ -5,15 +5,12 @@ import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.Checker;
 import c2.search.netlas.target.NetlasWrapper;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +18,7 @@ public class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
   private static final String CONFIG_FILENAME = "config.properties";
 
-  public static void main(String[] args)
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException {
+  public static void main(String[] args) {
     try {
       Options options = setupOptions();
       CommandLineParser parser = new DefaultParser();
@@ -55,7 +47,7 @@ public class App {
       Results responses = new Checker(netlas, host).run();
       responses.print(System.out, verbose);
 
-    } catch (ParseException | IOException | NumberFormatException e) {
+    } catch (Exception e) {
       LOGGER.error(e.getMessage());
       printHelp(setupOptions());
       System.exit(1);
