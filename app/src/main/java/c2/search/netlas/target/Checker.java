@@ -64,12 +64,8 @@ public class Checker {
   }
 
   public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+      NoSuchMethodException, InvocationTargetException, IOException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -85,10 +81,8 @@ public class Checker {
   }
 
   private Object instantiateClass(Class<?> clazz)
-      throws IllegalAccessException,
-          InstantiationException,
-          NoSuchMethodException,
-          InvocationTargetException {
+      throws IllegalAccessException, InstantiationException, NoSuchMethodException,
+      InvocationTargetException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
@@ -105,22 +99,38 @@ public class Checker {
   private List<Response> invokeTestMethods(Object instant) {
     LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
     List<Response> responses = new ArrayList<>();
-    for (Method method : instant.getClass().getMethods()) {
-      if (method.isAnnotationPresent(Test.class)) {
-        try {
-          Response response = (Response) method.invoke(instant);
-          responses.add(response);
-        } catch (Exception e) {
-          LOGGER.error(
-              "Error invoking test method {} on {} - {}",
-              method.getName(),
-              instant.getClass().getName(),
-              e.getMessage());
-          responses.add(new Response(false));
-        }
+    for (Method method : getTestMethods(instant.getClass())) {
+      try {
+        Response response = invokeTestMethod(method, instant);
+        responses.add(response);
+      } catch (Exception e) {
+        handleInvocationError(method, instant, e);
+        responses.add(new Response(false));
       }
     }
     return responses;
+  }
+
+  private List<Method> getTestMethods(Class<?> clazz) {
+    List<Method> testMethods = new ArrayList<>();
+    for (Method method : clazz.getMethods()) {
+      if (method.isAnnotationPresent(Test.class)) {
+        testMethods.add(method);
+      }
+    }
+    return testMethods;
+  }
+
+  private Response invokeTestMethod(Method method, Object instant) throws Exception {
+    return (Response) method.invoke(instant);
+  }
+
+  private void handleInvocationError(Method method, Object instant, Exception e) {
+    LOGGER.error(
+        "Error invoking test method {} on {} - {}",
+        method.getName(),
+        instant.getClass().getName(),
+        e.getMessage());
   }
 
   private void injectDependencies(Object instant) throws IllegalAccessException {
