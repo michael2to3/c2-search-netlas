@@ -1,6 +1,5 @@
 package c2.search.netlas.target;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,8 +50,8 @@ public class CheckerTest {
     assertNotNull(r);
     assertTrue(target.size() >= 1);
     assertTrue(otarget.size() >= 1);
-    assertEquals(new Response(true), target.get(0));
-    assertEquals(new Response(true), otarget.get(0));
+    assertTrue(target.get(0).isSuccess());
+    assertTrue(otarget.get(0).isSuccess());
   }
 
   @Test
@@ -79,7 +78,6 @@ public class CheckerTest {
   @Detect
   public static class OtherTarget {
     @Wire public NetlasWrapper netlasWrapper;
-
     @Wire public Host host;
 
     @c2.search.netlas.annotation.Test
@@ -91,9 +89,7 @@ public class CheckerTest {
   @Detect(name = "My target")
   public static class MyTarget {
     @Wire public NetlasWrapper netlasWrapper;
-
     @Wire public Netlas netlas;
-
     @Wire public Host host;
 
     @c2.search.netlas.annotation.Test
