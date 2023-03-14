@@ -39,13 +39,52 @@ public class Results {
   }
 
   public void print(PrintStream stream) {
+    printShort(stream);
+  }
+
+  public void print(PrintStream stream, boolean verbose) {
+    if (verbose) {
+      printVerbose(stream);
+    } else {
+      printShort(stream);
+    }
+  }
+
+  public void printVerbose(PrintStream stream) {
     for (String tool : responses.keySet()) {
       List<Response> toolResponses = responses.get(tool);
       var resp = toolResponses.get(0);
-      stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
+
+      if (resp.getVersion() == null) {
+        stream.printf("%-12s ", tool, resp.getVersion());
+      } else {
+        stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
+      }
+
       printProgressBar(getSuccessPercentage(toolResponses));
+      stream.print(" ");
+
+      stream.printf("(%d/%d)", toolResponses.size(), getSuccessCount(toolResponses));
+      stream.print(" ");
+
+      for (Response response : toolResponses) {
+        if (response.getDescription() != "")
+          stream.print("\n  Description: " + response.getDescription());
+        if (response.getError() != "") stream.print("\n  Error: " + response.getError());
+      }
+
       stream.println();
     }
+  }
+
+  private int getSuccessCount(List<Response> toolResponses) {
+    int numSuccess = 0;
+    for (Response response : toolResponses) {
+      if (response.isSuccess()) {
+        numSuccess++;
+      }
+    }
+    return numSuccess;
   }
 
   private void printProgressBar(int successPercentage) {
@@ -61,6 +100,22 @@ public class Results {
     progressBar.append("] ");
     progressBar.append(successPercentage).append("%");
     System.out.print(progressBar);
+  }
+
+  public void printShort(PrintStream stream) {
+    for (String tool : responses.keySet()) {
+      List<Response> toolResponses = responses.get(tool);
+      var resp = toolResponses.get(0);
+
+      if (resp.getVersion() == null) {
+        stream.printf("%-12s ", tool, resp.getVersion());
+      } else {
+        stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
+      }
+
+      printProgressBar(getSuccessPercentage(toolResponses));
+      stream.println();
+    }
   }
 
   private int getSuccessPercentage(List<Response> toolResponses) {
