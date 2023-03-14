@@ -2,7 +2,10 @@ package c2.search.netlas.scheme;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +17,12 @@ public class Results {
   }
 
   public Results(Map<String, List<Response>> responses) {
-    this.responses = responses;
+    this.responses = sortBySuccessCount(responses);
   }
 
   public void addResponse(String name, List<Response> responses) {
     this.responses.put(name, responses);
+    this.responses = sortBySuccessCount(this.responses);
   }
 
   public void addResponse(String name, Response response) {
@@ -131,5 +135,36 @@ public class Results {
       }
     }
     return (int) ((double) numSuccess / toolResponses.size() * 100);
+  }
+
+  protected static Map<String, List<Response>> sortBySuccessCount(
+      Map<String, List<Response>> responses) {
+    Map<String, Integer> successCount = new HashMap<>();
+    for (Map.Entry<String, List<Response>> entry : responses.entrySet()) {
+      int count = 0;
+      for (Response response : entry.getValue()) {
+        if (response.isSuccess()) {
+          count++;
+        }
+      }
+      successCount.put(entry.getKey(), count);
+    }
+
+    List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(successCount.entrySet());
+    Collections.sort(
+        sortedEntries,
+        new Comparator<Map.Entry<String, Integer>>() {
+          @Override
+          public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+            return e2.getValue().compareTo(e1.getValue());
+          }
+        });
+
+    Map<String, List<Response>> sortedResponses = new LinkedHashMap<>();
+    for (Map.Entry<String, Integer> entry : sortedEntries) {
+      sortedResponses.put(entry.getKey(), responses.get(entry.getKey()));
+    }
+
+    return sortedResponses;
   }
 }
