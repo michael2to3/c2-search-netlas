@@ -96,11 +96,7 @@ public class App {
             .build();
 
     Option printVerbosOption =
-        Option.builder("v")
-            .longOpt("verbose")
-            .hasArg(false)
-            .desc("Print verbose output")
-            .build();
+        Option.builder("v").longOpt("verbose").hasArg(false).desc("Print verbose output").build();
 
     Option helpOption = Option.builder("h").longOpt("help").desc("Print this help message").build();
 
