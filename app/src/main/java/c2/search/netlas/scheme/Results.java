@@ -64,7 +64,7 @@ public class Results {
       printProgressBar(getSuccessPercentage(toolResponses));
       stream.print(" ");
 
-      stream.printf("(%d/%d)", toolResponses.size(), getSuccessCount(toolResponses));
+      stream.printf("(%d/%d)", getSuccessCount(toolResponses), toolResponses.size());
       stream.print(" ");
 
       for (Response response : toolResponses) {
