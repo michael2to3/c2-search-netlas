@@ -86,8 +86,7 @@ public class Metasploit {
 
   @Test
   public Response checkHeaders() throws JsonMappingException, JsonProcessingException {
-    List<String> servers = null;
-    servers = netlasWrapper.getServers();
+    List<String> servers = netlasWrapper.getServers();
     String defaultServer = "apache";
     boolean checkDefaultServer = false;
     for (String server : servers) {
