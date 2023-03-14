@@ -142,7 +142,7 @@ public class Checker {
   }
 
   private void handleInvocationError(Method method, Object instant, Exception e) {
-    LOGGER.error(
+    LOGGER.info(
         "Error invoking test method {} on {} - {}",
         method.getName(),
         instant.getClass().getName(),
