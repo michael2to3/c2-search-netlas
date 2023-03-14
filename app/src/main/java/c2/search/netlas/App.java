@@ -43,6 +43,8 @@ public class App {
         return;
       }
 
+      boolean verbose = cmd.hasOption("v");
+
       Config config = new Config(CONFIG_FILENAME);
       String apiKey = config.get("api.key");
       if (apiKey == null) {
@@ -51,7 +53,7 @@ public class App {
       }
       NetlasWrapper netlas = new NetlasWrapper(apiKey, host);
       Results responses = new Checker(netlas, host).run();
-      responses.print(System.out);
+      responses.print(System.out, verbose);
 
     } catch (ParseException | IOException | NumberFormatException e) {
       LOGGER.error(e.getMessage());
@@ -93,6 +95,13 @@ public class App {
             .desc("Set the target port for the application")
             .build();
 
+    Option printVerbosOption =
+        Option.builder("v")
+            .longOpt("verbose")
+            .hasArg(false)
+            .desc("Print verbose output")
+            .build();
+
     Option helpOption = Option.builder("h").longOpt("help").desc("Print this help message").build();
 
     Options options = new Options();
@@ -101,6 +110,7 @@ public class App {
     options.addOption(targetOption);
     options.addOption(portOption);
     options.addOption(helpOption);
+    options.addOption(printVerbosOption);
 
     return options;
   }
