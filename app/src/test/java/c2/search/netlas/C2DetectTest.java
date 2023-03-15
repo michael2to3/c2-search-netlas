@@ -36,11 +36,11 @@ public class C2DetectTest {
     assertEquals(8080, host.getPort());
 
     when(cmd.getOptionValue("t")).thenReturn(null);
-		assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
+    assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
 
     when(cmd.getOptionValue("t")).thenReturn("google.com");
     when(cmd.getOptionValue("p")).thenReturn("asd");
-		assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
+    assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
   }
 
   @Test

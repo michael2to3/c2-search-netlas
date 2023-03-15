@@ -39,7 +39,8 @@ class VersionTest {
     assertTrue(version1.isEmpty());
   }
 
-  @Test void testCompare() {
+  @Test
+  void testCompare() {
     Version version1 = new Version("1.0", "0.1");
     Version version2 = new Version("1.0", "0.2");
     assertTrue(version1.compareTo(version2) < 0);
