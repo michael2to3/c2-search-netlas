@@ -10,6 +10,52 @@ import java.util.List;
 import java.util.Map;
 
 public class Results {
+  protected static Map<String, List<Response>> sortBySuccessPercentage(
+      Map<String, List<Response>> responses) {
+    Map<String, Integer> successCount = new HashMap<>();
+    for (Map.Entry<String, List<Response>> entry : responses.entrySet()) {
+      int count = getSuccessPercentage(entry.getValue());
+      successCount.put(entry.getKey(), count);
+    }
+
+    List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(successCount.entrySet());
+    Collections.sort(
+        sortedEntries,
+        new Comparator<Map.Entry<String, Integer>>() {
+          @Override
+          public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+            return e2.getValue().compareTo(e1.getValue());
+          }
+        });
+
+    Map<String, List<Response>> sortedResponses = new LinkedHashMap<>();
+    for (Map.Entry<String, Integer> entry : sortedEntries) {
+      sortedResponses.put(entry.getKey(), responses.get(entry.getKey()));
+    }
+
+    return sortedResponses;
+  }
+
+  private static int getSuccessCount(List<Response> toolResponses) {
+    int numSuccess = 0;
+    for (Response response : toolResponses) {
+      if (response.isSuccess()) {
+        numSuccess++;
+      }
+    }
+    return numSuccess;
+  }
+
+  private static int getSuccessPercentage(List<Response> toolResponses) {
+    int numSuccess = 0;
+    for (Response response : toolResponses) {
+      if (response.isSuccess()) {
+        numSuccess++;
+      }
+    }
+    return (int) ((double) numSuccess / toolResponses.size() * 100);
+  }
+
   private Map<String, List<Response>> responses;
 
   public Results() {
@@ -17,12 +63,12 @@ public class Results {
   }
 
   public Results(Map<String, List<Response>> responses) {
-    this.responses = sortBySuccessCount(responses);
+    this.responses = sortBySuccessPercentage(responses);
   }
 
   public void addResponse(String name, List<Response> responses) {
     this.responses.put(name, responses);
-    this.responses = sortBySuccessCount(this.responses);
+    this.responses = sortBySuccessPercentage(this.responses);
   }
 
   public void addResponse(String name, Response response) {
@@ -65,11 +111,8 @@ public class Results {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
 
-      printProgressBar(getSuccessPercentage(toolResponses));
-      stream.print(" ");
-
-      stream.printf("(%d/%d)", getSuccessCount(toolResponses), toolResponses.size());
-      stream.print(" ");
+      printProgressBar(stream, getSuccessPercentage(toolResponses));
+      stream.printf(" (%d/%d) ", getSuccessCount(toolResponses), toolResponses.size());
 
       for (Response response : toolResponses) {
         if (response.isSuccess()
@@ -86,31 +129,6 @@ public class Results {
     }
   }
 
-  private int getSuccessCount(List<Response> toolResponses) {
-    int numSuccess = 0;
-    for (Response response : toolResponses) {
-      if (response.isSuccess()) {
-        numSuccess++;
-      }
-    }
-    return numSuccess;
-  }
-
-  private void printProgressBar(int successPercentage) {
-    StringBuilder progressBar = new StringBuilder("[");
-    int numBlocks = successPercentage / 10;
-    for (int i = 0; i < 10; i++) {
-      if (i < numBlocks) {
-        progressBar.append('#');
-      } else {
-        progressBar.append('X');
-      }
-    }
-    progressBar.append("] ");
-    progressBar.append(successPercentage).append("%");
-    System.out.print(progressBar);
-  }
-
   public void printShort(PrintStream stream) {
     for (String tool : responses.keySet()) {
       List<Response> toolResponses = responses.get(tool);
@@ -122,49 +140,12 @@ public class Results {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
 
-      printProgressBar(getSuccessPercentage(toolResponses));
+      printProgressBar(stream, getSuccessPercentage(toolResponses));
       stream.println();
     }
   }
 
-  private int getSuccessPercentage(List<Response> toolResponses) {
-    int numSuccess = 0;
-    for (Response response : toolResponses) {
-      if (response.isSuccess()) {
-        numSuccess++;
       }
     }
-    return (int) ((double) numSuccess / toolResponses.size() * 100);
-  }
-
-  protected static Map<String, List<Response>> sortBySuccessCount(
-      Map<String, List<Response>> responses) {
-    Map<String, Integer> successCount = new HashMap<>();
-    for (Map.Entry<String, List<Response>> entry : responses.entrySet()) {
-      int count = 0;
-      for (Response response : entry.getValue()) {
-        if (response.isSuccess()) {
-          count++;
-        }
-      }
-      successCount.put(entry.getKey(), count);
-    }
-
-    List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(successCount.entrySet());
-    Collections.sort(
-        sortedEntries,
-        new Comparator<Map.Entry<String, Integer>>() {
-          @Override
-          public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-            return e2.getValue().compareTo(e1.getValue());
-          }
-        });
-
-    Map<String, List<Response>> sortedResponses = new LinkedHashMap<>();
-    for (Map.Entry<String, Integer> entry : sortedEntries) {
-      sortedResponses.put(entry.getKey(), responses.get(entry.getKey()));
-    }
-
-    return sortedResponses;
   }
 }
