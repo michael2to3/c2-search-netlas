@@ -149,12 +149,13 @@ public class Results {
 
   private void printProgressBar(PrintStream stream, int successPercentage) {
     StringBuilder progressBar = new StringBuilder("[");
+    final int len = 40;
     int numBlocks = successPercentage / 10;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < len; i++) {
       if (i < numBlocks) {
-        progressBar.append('#');
+        progressBar.append("██");
       } else {
-        progressBar.append('X');
+        progressBar.append(" ");
       }
     }
     progressBar.append("] ");
