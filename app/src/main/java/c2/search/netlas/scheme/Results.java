@@ -132,20 +132,33 @@ public class Results {
   public void printShort(PrintStream stream) {
     for (String tool : responses.keySet()) {
       List<Response> toolResponses = responses.get(tool);
+      if (getSuccessCount(toolResponses) == 0) {
+        continue;
+      }
       var resp = toolResponses.get(0);
 
-      if (resp.getVersion() == null) {
+      if (resp.getVersion().isEmpty()) {
         stream.printf("%-12s ", tool, resp.getVersion());
       } else {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
-
       printProgressBar(stream, getSuccessPercentage(toolResponses));
       stream.println();
     }
   }
 
+  private void printProgressBar(PrintStream stream, int successPercentage) {
+    StringBuilder progressBar = new StringBuilder("[");
+    int numBlocks = successPercentage / 10;
+    for (int i = 0; i < 10; i++) {
+      if (i < numBlocks) {
+        progressBar.append('#');
+      } else {
+        progressBar.append('X');
       }
     }
+    progressBar.append("] ");
+    progressBar.append(successPercentage).append("%");
+    stream.print(progressBar);
   }
 }
