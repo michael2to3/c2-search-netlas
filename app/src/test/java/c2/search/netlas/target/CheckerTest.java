@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import c2.search.netlas.annotation.*;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.classscanner.ClassScanner;
