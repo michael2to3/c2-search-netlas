@@ -23,44 +23,31 @@ public class C2Detect {
     this.options = options;
   }
 
-  public void run(String[] args) {
-    try {
-      CommandLineParser parser = new DefaultParser();
-      CommandLine cmd = parser.parse(options, args);
+  public void run(String[] args) throws Exception {
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd = parser.parse(options, args);
 
-      if (cmd.hasOption("h")) {
-        printHelp();
-        return;
-      }
-
-      if (cmd.hasOption("s")) {
-        config.save("api.key", cmd.getOptionValue("s"));
-        return;
-      }
-
-      boolean verbose = cmd.hasOption("v");
-
-      String apiKey = config.get("api.key");
-      if (apiKey == null || apiKey.isEmpty()) {
-        logger.error("API key is not set");
-        return;
-      }
-
-      Host host = createHost(cmd);
-      if (host == null) {
-        printHelp();
-        return;
-      }
-
-      NetlasWrapper netlas = new NetlasWrapper(apiKey, host);
-      Results responses = new Checker(netlas, host).run();
-      responses.print(System.out, verbose);
-
-    } catch (Exception e) {
-      logger.error(e.getMessage());
+    if (cmd.hasOption("h")) {
       printHelp();
-      System.exit(1);
+      return;
     }
+
+    if (cmd.hasOption("s")) {
+      config.save("api.key", cmd.getOptionValue("s"));
+      return;
+    }
+
+    boolean verbose = cmd.hasOption("v");
+
+    String apiKey = config.get("api.key");
+    if (apiKey == null || apiKey.isEmpty()) {
+      throw new IllegalArgumentException("API key is required");
+    }
+
+    Host host = createHost(cmd);
+    NetlasWrapper netlas = new NetlasWrapper(apiKey, host);
+    Results responses = new Checker(netlas, host).run();
+    responses.print(System.out, verbose);
   }
 
   protected static Host createHost(CommandLine cmd) {

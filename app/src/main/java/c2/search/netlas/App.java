@@ -13,7 +13,12 @@ public class App {
   public static void main(String[] args) {
     Config config = new Config(CONFIG_FILENAME);
     C2Detect c2Detect = new C2Detect(config, setupOptions());
-    c2Detect.run(args);
+    try {
+      c2Detect.run(args);
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage(), e);
+      System.exit(1);
+    }
   }
 
   protected static Options setupOptions() {
