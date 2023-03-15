@@ -34,6 +34,13 @@ public class C2DetectTest {
     assertNotNull(host);
     assertEquals("example.com", host.getTarget());
     assertEquals(8080, host.getPort());
+
+    when(cmd.getOptionValue("t")).thenReturn(null);
+		assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
+
+    when(cmd.getOptionValue("t")).thenReturn("google.com");
+    when(cmd.getOptionValue("p")).thenReturn("asd");
+		assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
   }
 
   @Test
@@ -55,5 +62,14 @@ public class C2DetectTest {
     C2Detect c2 = new C2Detect(configMock, App.setupOptions());
     c2.run(args);
     verify(configMock).save("api.key", "test.test");
+  }
+
+  @Test
+  public void testWithoutApi() throws Exception {
+    String args[] = new String[] {"-v", "-t", "google.com", "-p", "443"};
+    Config configMock = mock(Config.class);
+    when(configMock.get("api.key")).thenReturn(null);
+    C2Detect c2 = new C2Detect(configMock, App.setupOptions());
+    assertThrows(Exception.class, () -> c2.run(args));
   }
 }
