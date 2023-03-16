@@ -40,6 +40,10 @@ public class Version implements Comparable<Version> {
     return min.hashCode() * 31 + max.hashCode();
   }
 
+  public boolean isEmpty() {
+    return (min == null && max == null) || (min.isEmpty() && max.isEmpty());
+  }
+
   public String getMin() {
     return min;
   }

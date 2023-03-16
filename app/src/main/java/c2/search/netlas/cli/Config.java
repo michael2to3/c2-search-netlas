@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
   private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-  private Properties props;
-  private String fileName;
+  private final String fileName;
+  private final Properties props;
 
   public Config(String fileName) {
     this.fileName = fileName;
-    props = new Properties();
+    this.props = new Properties();
 
     try (FileInputStream input = new FileInputStream(fileName)) {
       props.load(input);
@@ -52,8 +52,6 @@ public class Config {
     props.setProperty(key, value);
     try (FileOutputStream output = new FileOutputStream(fileName)) {
       props.store(output, null);
-    } catch (FileNotFoundException e) {
-      LOGGER.error("Config file not found: {}", fileName);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

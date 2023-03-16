@@ -105,22 +105,48 @@ public class Checker {
   private List<Response> invokeTestMethods(Object instant) {
     LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
     List<Response> responses = new ArrayList<>();
-    for (Method method : instant.getClass().getMethods()) {
-      if (method.isAnnotationPresent(Test.class)) {
-        try {
-          Response response = (Response) method.invoke(instant);
-          responses.add(response);
-        } catch (Exception e) {
-          LOGGER.error(
-              "Error invoking test method {} on {} - {}",
-              method.getName(),
-              instant.getClass().getName(),
-              e.getMessage());
-          responses.add(new Response(false));
-        }
+    for (Method method : getTestMethods(instant.getClass())) {
+      try {
+        Response response = invokeTestMethod(method, instant);
+        responses.add(response);
+      } catch (Exception e) {
+        handleInvocationError(method, instant, e);
+        responses.add(new Response(false));
       }
     }
     return responses;
+  }
+
+  private List<Method> getTestMethods(Class<?> clazz) {
+    List<Method> testMethods = new ArrayList<>();
+    for (Method method : clazz.getMethods()) {
+      if (method.isAnnotationPresent(Test.class)) {
+        testMethods.add(method);
+      }
+    }
+    return testMethods;
+  }
+
+  private String getDescriptionOfTestMethod(Method method) {
+    String description = method.getAnnotation(Test.class).description();
+    if (description == null || description.isEmpty()) {
+      description = method.getName();
+    }
+    return description;
+  }
+
+  private Response invokeTestMethod(Method method, Object instant) throws Exception {
+    Response response = (Response) method.invoke(instant);
+    response.setDescription(getDescriptionOfTestMethod(method));
+    return response;
+  }
+
+  private void handleInvocationError(Method method, Object instant, Exception e) {
+    LOGGER.info(
+        "Error invoking test method {} on {} - {}",
+        method.getName(),
+        instant.getClass().getName(),
+        e.getMessage());
   }
 
   private void injectDependencies(Object instant) throws IllegalAccessException {

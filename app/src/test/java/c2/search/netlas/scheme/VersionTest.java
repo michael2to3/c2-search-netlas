@@ -21,4 +21,32 @@ class VersionTest {
     assertEquals("2.0", version.getMax());
     assertEquals("1.0", version.getMin());
   }
+
+  @Test
+  void testEquals() {
+    Version version1 = new Version("1.0", "0.1");
+    Version version2 = new Version("1.0", "0.1");
+    assertEquals(version1, version2);
+    assertEquals(version1.hashCode(), version2.hashCode());
+    assertEquals(version1.toString(), version2.toString());
+    assertNotEquals(version1, null);
+    assertNotEquals(version1, "");
+    assertNotEquals(version1, "1.0");
+    assertNotEquals(version1, 1.0);
+    assertNotEquals(version1, new Object());
+    assertNotEquals(version1, new Version());
+    version1 = new Version();
+    assertTrue(version1.isEmpty());
+  }
+
+  @Test
+  void testCompare() {
+    Version version1 = new Version("1.0", "0.1");
+    Version version2 = new Version("1.0", "0.2");
+    assertTrue(version1.compareTo(version2) < 0);
+    assertTrue(version2.compareTo(version1) > 0);
+    assertTrue(version1.compareTo(version1) == 0);
+    assertTrue(version2.compareTo(version2) == 0);
+    assertTrue(version1.compareTo(new Version("1.0", "0.1")) == 0);
+  }
 }
