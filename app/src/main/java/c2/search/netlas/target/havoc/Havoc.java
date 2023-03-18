@@ -15,29 +15,8 @@ import org.slf4j.LoggerFactory;
 @Detect(name = "Havoc")
 public class Havoc {
   private static final Logger LOGGER = LoggerFactory.getLogger(Havoc.class);
-
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
-
-  public static Logger getLogger() {
-    return LOGGER;
-  }
-
-  public Host getHost() {
-    return host;
-  }
-
-  public void setHost(Host host) {
-    this.host = host;
-  }
-
-  public NetlasWrapper getNetlasWrapper() {
-    return netlasWrapper;
-  }
-
-  public void setNetlasWrapper(NetlasWrapper netlasWrapper) {
-    this.netlasWrapper = netlasWrapper;
-  }
 
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
