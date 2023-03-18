@@ -15,8 +15,8 @@ import java.util.List;
 
 @Detect(name = "Havoc")
 public class Havoc {
-  @Wire private Host host;
-  @Wire private NetlasWrapper netlasWrapper;
+  @Wire protected Host host;
+  @Wire protected NetlasWrapper netlasWrapper;
 
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
