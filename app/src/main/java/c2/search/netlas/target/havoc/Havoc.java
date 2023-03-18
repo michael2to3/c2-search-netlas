@@ -8,13 +8,13 @@ import c2.search.netlas.scheme.Response;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Detect(name = "Havoc")
 public class Havoc {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Havoc.class);
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
 
@@ -41,5 +41,16 @@ public class Havoc {
     }
 
     return new Response(rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader);
+  }
+
+  @Test(extern = true)
+  public Response checkDumbHeader() throws Exception {
+    URL url = new URL("https://" + host.getTarget() + ":" + host.getPort() + "/");
+    URLConnection connection = url.openConnection();
+    HttpURLConnection http = (HttpURLConnection) connection;
+    http.setRequestMethod("POST");
+    http.setDoOutput(true);
+    String header = http.getHeaderField("x-ishavocframework");
+    return new Response(header != null);
   }
 }
