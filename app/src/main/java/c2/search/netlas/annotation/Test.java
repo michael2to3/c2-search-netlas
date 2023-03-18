@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Test {
   String description() default "";
+
+  boolean extern() default false;
 }
