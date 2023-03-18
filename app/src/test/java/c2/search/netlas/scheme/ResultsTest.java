@@ -139,8 +139,10 @@ class ResultTest {
   @Test
   public void testAddResponse() {
     Results results = new Results();
-    results.addResponse("name", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
-    results.addResponse("othername", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
+    results.addResponse(
+        "name", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
+    results.addResponse(
+        "othername", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
 
     assertTrue(results.getResponses().containsKey("name"));
     assertTrue(results.getResponses().containsKey("othername"));
