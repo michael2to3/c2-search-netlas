@@ -148,18 +148,10 @@ public class Results {
   }
 
   private void printProgressBar(PrintStream stream, int successPercentage) {
-    StringBuilder progressBar = new StringBuilder("[");
     final int len = 40;
-    int numBlocks = successPercentage / 10;
-    for (int i = 0; i < len; i++) {
-      if (i < numBlocks) {
-        progressBar.append("██");
-      } else {
-        progressBar.append(" ");
-      }
-    }
-    progressBar.append("] ");
-    progressBar.append(successPercentage).append("%");
-    stream.print(progressBar);
+    String symbol = "█";
+    int numBlocks = (int) Math.ceil((successPercentage / 100.0) * len);
+    String progress = "[" + symbol.repeat(numBlocks) + " ".repeat(len - numBlocks) + "] ";
+    stream.print(progress + successPercentage + "%");
   }
 }

@@ -58,6 +58,10 @@ class ResultTest {
 
     assertTrue(outputStream.toString().contains("Module 1"));
     assertTrue(outputStream.toString().contains("Module 2"));
+
+    results.print(System.out);
+    assertTrue(outputStream.toString().contains("Module 1"));
+    assertTrue(outputStream.toString().contains("Module 2"));
   }
 
   @Test
@@ -130,5 +134,17 @@ class ResultTest {
 
     assertTrue(outputStream.toString().contains("Module 1"));
     assertFalse(outputStream.toString().contains("Module 2"));
+  }
+
+  @Test
+  public void testAddResponse() {
+    Results results = new Results();
+    results.addResponse(
+        "name", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
+    results.addResponse(
+        "othername", new Response(true, new Version("2.0", "0.2"), "Description 2", "Error"));
+
+    assertTrue(results.getResponses().containsKey("name"));
+    assertTrue(results.getResponses().containsKey("othername"));
   }
 }

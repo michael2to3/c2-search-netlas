@@ -43,12 +43,12 @@ This will display a list of C2 servers found in the given IP address or domain.
 | Name                    | Support            |
 |-------------------------|--------------------|
 | metasploit              | :white_check_mark: |
+| HavocFramework/Havoc    | :question:         |
 | BishopFox/sliver        | :x:                |
 | Cobalt Strike           | :x:                |
 | Empire                  | :x:                |
 | Ne0nd0g/merlin          | :x:                |
 | cobbr/Covenant          | :x:                |
-| HavocFramework/Havoc    | :x:                |
 | bruteratel              | :x:                |
 | t3l3machus/Villain      | :x:                |
 | bats3c/shad0w           | :x:                |
