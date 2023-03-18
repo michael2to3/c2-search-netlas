@@ -16,29 +16,8 @@ import org.slf4j.LoggerFactory;
 @Detect(name = "Metasploit")
 public class Metasploit {
   private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
-
-  public static Logger getLogger() {
-    return LOGGER;
-  }
-
-  public Host getHost() {
-    return host;
-  }
-
-  public void setHost(Host host) {
-    this.host = host;
-  }
-
-  public NetlasWrapper getNetlasWrapper() {
-    return netlasWrapper;
-  }
-
-  public void setNetlasWrapper(NetlasWrapper netlasWrapper) {
-    this.netlasWrapper = netlasWrapper;
-  }
-
-  @Wire private Host host;
-  @Wire private NetlasWrapper netlasWrapper;
+  @Wire protected Host host;
+  @Wire protected NetlasWrapper netlasWrapper;
 
   @Test
   public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {

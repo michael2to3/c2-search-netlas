@@ -22,24 +22,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class MetasploitTest {
-
   @Mock private Host host;
-
   @Mock private NetlasWrapper netlasWrapper;
-
   @InjectMocks private Metasploit metasploit;
 
   @BeforeEach
   public void setUp() {
-    metasploit.setHost(host);
-    metasploit.setNetlasWrapper(netlasWrapper);
+    metasploit.host = host;
+    metasploit.netlasWrapper = netlasWrapper;
   }
 
   @Test
   @DisplayName("Test checkDefaultBodyResponse() with default body")
   public void testCheckDefaultBodyResponseWithDefaultBody() throws IOException {
-    assertNotNull(metasploit.getHost());
-    assertNotNull(metasploit.getNetlasWrapper());
+    assertNotNull(metasploit.host);
+    assertNotNull(metasploit.netlasWrapper);
 
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
     when(netlasWrapper.getBody()).thenReturn(defaultBody);
