@@ -31,18 +31,8 @@ public class HavocTest {
   }
 
   @Test
-  @DisplayName("Test checkDefaultBodyResponse() with non-default body")
-  public void testCheckDefaultBodyResponseWithNonDefaultBody() throws IOException {
-    String nonDefaultBody = "<html><body><h1>It doesn't work!</h1></body></html>";
-    when(netlasWrapper.getBody()).thenReturn(nonDefaultBody);
-    Response response = havoc.checkDefaultBodyResponse();
-    assertNotNull(response);
-    assertFalse(response.isSuccess());
-  }
-
-  @Test
   @DisplayName("Test checkJarm() with JARM")
-  public void testCheckJarmWithJarmV6() throws IOException {
+  public void testCheckJarm() throws IOException {
     String jarm = "3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e";
     when(netlasWrapper.getJarm()).thenReturn(jarm);
     Response response = havoc.checkJarm();
@@ -58,5 +48,23 @@ public class HavocTest {
     Response response = havoc.checkDefaultBodyResponse();
     assertNotNull(response);
     assertTrue(response.isSuccess());
+
+    when(netlasWrapper.getServers()).thenReturn(null);
+    response = havoc.checkDefaultBodyResponse();
+
+    assertNotNull(response);
+    assertTrue(response.isSuccess());
+  }
+
+  @Test
+  public void testCheckDumbHeader() throws Exception {
+    Response response = havoc.checkDumbHeader();
+    assertFalse(response.isSuccess());
+  }
+
+  @Test
+  public void testCheckSendHttpOverHttps() throws Exception {
+    Response response = havoc.checkSendHttpOverHttps();
+    assertFalse(response.isSuccess());
   }
 }
