@@ -9,13 +9,14 @@ import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Detect(name = "Metasploit")
 public class Metasploit {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
   @Wire protected Host host;
   @Wire protected NetlasWrapper netlasWrapper;
 
@@ -81,5 +82,31 @@ public class Metasploit {
     boolean checkDefaultStatus = defaultStatus == status;
 
     return new Response(checkDefaultServer && checkDefaultStatus);
+  }
+
+  @Test
+  public Response checkBindShell() {
+    String id = "i_am_a_shell";
+    String responseMessage = "";
+    try {
+      Socket socket = new Socket(host.getTarget(), host.getPort());
+
+      OutputStream output = socket.getOutputStream();
+      InputStream input = socket.getInputStream();
+
+      String message = "echo " + id;
+      output.write(message.getBytes());
+      output.flush();
+
+      byte[] response = new byte[1024];
+      int responseLength = input.read(response);
+      responseMessage = new String(response, 0, responseLength);
+
+      socket.close();
+    } catch (IOException e) {
+      return new Response(false);
+    }
+
+    return new Response(responseMessage.trim().equals(id));
   }
 }

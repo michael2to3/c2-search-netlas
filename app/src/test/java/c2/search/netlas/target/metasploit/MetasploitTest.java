@@ -84,4 +84,10 @@ public class MetasploitTest {
     assertNotNull(response);
     assertTrue(response.isSuccess());
   }
+
+  @Test
+  public void testCheckBindShell() throws Exception {
+    var r = metasploit.checkBindShell();
+    assertFalse(r.isSuccess());
+  }
 }
