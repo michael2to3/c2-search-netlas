@@ -1,5 +1,6 @@
 package c2.search.netlas.target.metasploit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,14 +23,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class MetasploitTest {
-  @Mock private Host host;
-  @Mock private NetlasWrapper netlasWrapper;
-  @InjectMocks private Metasploit metasploit;
+  @Mock
+  private Host host;
+  @Mock
+  private NetlasWrapper netlasWrapper;
+  @Mock
+  private SocketConnection socketConnection;
+  @InjectMocks
+  private Metasploit metasploit;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws IOException {
     metasploit.host = host;
     metasploit.netlasWrapper = netlasWrapper;
+    metasploit.socket = socketConnection;
   }
 
   @Test
@@ -86,8 +93,27 @@ public class MetasploitTest {
   }
 
   @Test
-  public void testCheckBindShell() throws Exception {
-    var r = metasploit.checkBindShell();
-    assertFalse(r.isSuccess());
+  public void testCheckBindShell() throws IOException {
+    Host mockHost = new Host("localhost", 8080);
+    boolean testPassed = true;
+
+    when(socketConnection.sendAndReceive()).thenReturn("i_am_a_shell");
+    Response expectedResponse = new Response(true);
+    Response result = new Response(true);
+    when(socketConnection.sendAndReceive()).thenReturn("i_am_a_shell");
+
+    Metasploit metasploit = new Metasploit();
+    metasploit.host = mockHost;
+    metasploit.netlasWrapper = netlasWrapper;
+    metasploit.socket = socketConnection;
+
+    try {
+      result = metasploit.checkBindShell();
+    } catch (IOException e) {
+      testPassed = false;
+    }
+
+    assertEquals(expectedResponse, result);
+    assertTrue(testPassed);
   }
 }
