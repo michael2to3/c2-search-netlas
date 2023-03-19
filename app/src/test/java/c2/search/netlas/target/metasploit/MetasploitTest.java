@@ -23,14 +23,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class MetasploitTest {
-  @Mock
-  private Host host;
-  @Mock
-  private NetlasWrapper netlasWrapper;
-  @Mock
-  private SocketConnection socketConnection;
-  @InjectMocks
-  private Metasploit metasploit;
+  @Mock private Host host;
+  @Mock private NetlasWrapper netlasWrapper;
+  @Mock private SocketConnection socketConnection;
+  @InjectMocks private Metasploit metasploit;
 
   @BeforeEach
   public void setUp() throws IOException {
