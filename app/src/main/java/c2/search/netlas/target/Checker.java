@@ -1,5 +1,6 @@
 package c2.search.netlas.target;
 
+import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
@@ -9,7 +10,6 @@ import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +63,7 @@ public class Checker {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
   }
 
-  public Results run()
-      throws ClassNotFoundException,
-          InstantiationException,
-          IllegalAccessException,
-          NoSuchMethodException,
-          InvocationTargetException,
-          IOException {
+  public Results run() throws Exception {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -79,16 +73,13 @@ public class Checker {
     for (Class<?> clazz : detectedClasses) {
       Object instant = instantiateClass(clazz);
       injectDependencies(instant);
+      invokeBeforeAllMethods(instant);
       results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
     }
     return results;
   }
 
-  private Object instantiateClass(Class<?> clazz)
-      throws IllegalAccessException,
-          InstantiationException,
-          NoSuchMethodException,
-          InvocationTargetException {
+  private Object instantiateClass(Class<?> clazz) throws Exception {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
@@ -181,5 +172,23 @@ public class Checker {
       return this.netlasWrapper.getNetlas();
     }
     return null;
+  }
+
+  private List<Method> getBeforeAllMethods(Class<?> clazz) {
+    List<Method> beforeAllMethods = new ArrayList<>();
+    for (Method method : clazz.getMethods()) {
+      if (method.isAnnotationPresent(BeforeAll.class)) {
+        beforeAllMethods.add(method);
+      }
+    }
+    return beforeAllMethods;
+  }
+
+  private void invokeBeforeAllMethods(Object instant) throws Exception {
+    LOGGER.info("Invoking beforeAll methods of {}", instant.getClass().getName());
+    List<Method> beforeAllMethods = getBeforeAllMethods(instant.getClass());
+    for (Method method : beforeAllMethods) {
+      method.invoke(instant);
+    }
   }
 }
