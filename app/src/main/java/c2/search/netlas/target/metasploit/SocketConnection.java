@@ -15,6 +15,11 @@ public class SocketConnection implements AutoCloseable {
     this.id = id;
   }
 
+  public SocketConnection(Socket socket, String id) {
+    this.socket = socket;
+    this.id = id;
+  }
+
   public String sendAndReceive() throws IOException {
     String message = "echo " + id;
     OutputStream output = socket.getOutputStream();
