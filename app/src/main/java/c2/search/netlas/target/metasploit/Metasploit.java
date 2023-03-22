@@ -11,6 +11,7 @@ import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +21,13 @@ public class Metasploit {
   private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
   @Wire protected Host host;
   @Wire protected NetlasWrapper netlasWrapper;
-  SocketConnection socket;
+  @Wire protected Socket socket;
+  SocketConnection socketConnection;
 
   @BeforeAll
   public void init() throws IOException {
     String id = "i_am_a_shell";
-    socket = new SocketConnection(host.getTarget(), host.getPort(), id);
+    socketConnection = new SocketConnection(socket, id);
   }
 
   @Test
@@ -95,7 +97,7 @@ public class Metasploit {
   @Test(extern = true)
   public Response checkBindShell() throws IOException {
     String id = "i_am_a_shell";
-    String response = socket.sendAndReceive();
+    String response = socketConnection.sendAndReceive();
     return new Response(response.contains(id));
   }
 }

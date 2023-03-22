@@ -11,6 +11,7 @@ import c2.search.netlas.scheme.Results;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import netlas.java.Netlas;
@@ -170,8 +171,19 @@ public class Checker {
       return this.host;
     } else if (typeOfVariable.equals(Netlas.class)) {
       return this.netlasWrapper.getNetlas();
+    } else if (typeOfVariable.equals(Socket.class)) {
+      return getSocket();
     }
     return null;
+  }
+
+  private Socket getSocket() {
+    try {
+      return new Socket(host.getTarget(), host.getPort());
+    } catch (Exception e) {
+      LOGGER.warn("Unable to connect to {}:{}", host.getTarget(), host.getPort());
+      return null;
+    }
   }
 
   private List<Method> getBeforeAllMethods(Class<?> clazz) {
