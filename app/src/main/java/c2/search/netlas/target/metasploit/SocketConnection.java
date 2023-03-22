@@ -10,11 +10,6 @@ public class SocketConnection implements AutoCloseable {
   private final String id;
   private final Socket socket;
 
-  public SocketConnection(String host, int port, String id) throws IOException {
-    this.socket = new Socket(host, port);
-    this.id = id;
-  }
-
   public SocketConnection(Socket socket, String id) {
     this.socket = socket;
     this.id = id;

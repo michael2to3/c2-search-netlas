@@ -6,20 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import c2.search.netlas.scheme.Host;
-import c2.search.netlas.scheme.Response;
-import c2.search.netlas.target.NetlasWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.Response;
+import c2.search.netlas.target.NetlasWrapper;
 
 @ExtendWith(MockitoExtension.class)
 public class MetasploitTest {
@@ -32,7 +37,7 @@ public class MetasploitTest {
   public void setUp() throws IOException {
     metasploit.host = host;
     metasploit.netlasWrapper = netlasWrapper;
-    metasploit.socket = socketConnection;
+    metasploit.socketConnection = socketConnection;
   }
 
   @Test
@@ -101,7 +106,7 @@ public class MetasploitTest {
     Metasploit metasploit = new Metasploit();
     metasploit.host = mockHost;
     metasploit.netlasWrapper = netlasWrapper;
-    metasploit.socket = socketConnection;
+    metasploit.socketConnection = socketConnection;
 
     try {
       result = metasploit.checkBindShell();
