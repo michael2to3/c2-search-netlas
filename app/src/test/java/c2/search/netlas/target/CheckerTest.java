@@ -90,10 +90,21 @@ public class CheckerTest {
     @Wire public NetlasWrapper netlasWrapper;
     @Wire public Netlas netlas;
     @Wire public Host host;
+    public boolean isChangedBeforeAll;
+
+    @c2.search.netlas.annotation.BeforeAll
+    public void beforeAll() {
+      isChangedBeforeAll = true;
+    }
 
     @c2.search.netlas.annotation.Test
     public Response method() {
       return new Response(host != null && netlasWrapper != null);
+    }
+
+    @c2.search.netlas.annotation.Test
+    public Response throwException() throws IOException {
+      throw new IOException();
     }
   }
 }
