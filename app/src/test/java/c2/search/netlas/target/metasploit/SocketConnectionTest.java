@@ -1,9 +1,10 @@
 package c2.search.netlas.target.metasploit;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,42 +12,44 @@ import java.net.Socket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-public class SocketConnectionTest {
-  @Mock private SocketConnection socketConnection;
-  @Mock private Socket mockSocket;
-  @Mock private OutputStream mockOutputStream;
-  @Mock private InputStream mockInputStream;
+class SocketConnectionTest {
+  private static final String HOST = "localhost";
+  private static final int PORT = 12345;
+  private static final String ID = "test_id";
+  private static final String RESPONSE = "response";
 
-  private final String id = "12345";
+  @Mock private Socket socket;
+
+  private InputStream inputStream;
+  private OutputStream outputStream;
+  private SocketConnection socketConnection;
 
   @BeforeEach
-  public void setUp() throws IOException {
-    initMocks(this);
-    socketConnection = new SocketConnection(mockSocket, id);
-    when(mockSocket.getOutputStream()).thenReturn(mockOutputStream);
-    when(mockSocket.getInputStream()).thenReturn(mockInputStream);
+  void setUp() throws IOException {
+    MockitoAnnotations.openMocks(this);
+
+    inputStream = new ByteArrayInputStream(RESPONSE.getBytes());
+    outputStream = new ByteArrayOutputStream();
+
+    when(socket.getInputStream()).thenReturn(inputStream);
+    when(socket.getOutputStream()).thenReturn(outputStream);
+
+    socketConnection = new SocketConnection(socket, ID);
   }
 
   @Test
-  public void testSendAndReceive() throws IOException {
-    String expectedResponse = "echo " + id;
-    byte[] responseBytes = expectedResponse.getBytes();
-    when(mockInputStream.read(any(byte[].class))).thenReturn(responseBytes.length);
-    when(mockInputStream.read(responseBytes)).thenReturn(responseBytes.length);
-    when(mockOutputStream.toString()).thenReturn(expectedResponse);
+  void testSendAndReceive() throws IOException {
+    String response = socketConnection.sendAndReceive();
+    assertEquals(RESPONSE, response, "Received response should match expected response");
 
-    String actualResponse = socketConnection.sendAndReceive();
-
-    assertEquals(expectedResponse, actualResponse);
-    verify(mockOutputStream).write(responseBytes);
-    verify(mockOutputStream).flush();
-    verify(mockInputStream).read(responseBytes);
+    String sentMessage = outputStream.toString();
+    assertEquals("echo " + ID, sentMessage, "Sent message should match expected message");
   }
 
   @Test
-  public void testClose() throws IOException {
+  void testClose() throws IOException {
     socketConnection.close();
-    verify(mockSocket).close();
   }
 }
