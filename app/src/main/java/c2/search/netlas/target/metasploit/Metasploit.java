@@ -1,5 +1,6 @@
 package c2.search.netlas.target.metasploit;
 
+import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
@@ -10,15 +11,24 @@ import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Detect(name = "Metasploit")
 public class Metasploit {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
   @Wire protected Host host;
   @Wire protected NetlasWrapper netlasWrapper;
+  @Wire protected Socket socket;
+  SocketConnection socketConnection;
+
+  @BeforeAll
+  public void init() throws IOException {
+    String id = "i_am_a_shell";
+    socketConnection = new SocketConnection(socket, id);
+  }
 
   @Test
   public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
@@ -84,29 +94,10 @@ public class Metasploit {
     return new Response(checkDefaultServer && checkDefaultStatus);
   }
 
-  @Test
-  public Response checkBindShell() {
+  @Test(extern = true)
+  public Response checkBindShell() throws IOException {
     String id = "i_am_a_shell";
-    String responseMessage = "";
-    try {
-      Socket socket = new Socket(host.getTarget(), host.getPort());
-
-      OutputStream output = socket.getOutputStream();
-      InputStream input = socket.getInputStream();
-
-      String message = "echo " + id;
-      output.write(message.getBytes());
-      output.flush();
-
-      byte[] response = new byte[1024];
-      int responseLength = input.read(response);
-      responseMessage = new String(response, 0, responseLength);
-
-      socket.close();
-    } catch (IOException e) {
-      return new Response(false);
-    }
-
-    return new Response(responseMessage.trim().equals(id));
+    String response = socketConnection.sendAndReceive();
+    return new Response(response.contains(id));
   }
 }

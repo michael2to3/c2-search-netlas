@@ -12,6 +12,7 @@ import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Arrays;
 import netlas.java.Netlas;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,10 +91,22 @@ public class CheckerTest {
     @Wire public NetlasWrapper netlasWrapper;
     @Wire public Netlas netlas;
     @Wire public Host host;
+    @Wire public Socket socket;
+    public boolean isChangedBeforeAll;
+
+    @c2.search.netlas.annotation.BeforeAll
+    public void beforeAll() {
+      isChangedBeforeAll = true;
+    }
 
     @c2.search.netlas.annotation.Test
     public Response method() {
       return new Response(host != null && netlasWrapper != null);
+    }
+
+    @c2.search.netlas.annotation.Test
+    public Response throwException() throws IOException {
+      throw new IOException();
     }
   }
 }
