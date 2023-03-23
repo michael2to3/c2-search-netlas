@@ -30,6 +30,7 @@ public class MetasploitTest {
 
   @BeforeEach
   public void setUp() throws IOException {
+    metasploit.init();
     metasploit.host = host;
     metasploit.netlasWrapper = netlasWrapper;
     metasploit.socketConnection = socketConnection;
