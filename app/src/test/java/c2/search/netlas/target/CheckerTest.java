@@ -6,16 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Arrays;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
-import java.io.IOException;
-import java.util.Arrays;
 import netlas.java.Netlas;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class CheckerTest {
   private Checker checker;
@@ -90,6 +93,7 @@ public class CheckerTest {
     @Wire public NetlasWrapper netlasWrapper;
     @Wire public Netlas netlas;
     @Wire public Host host;
+    @Wire public Socket socket;
     public boolean isChangedBeforeAll;
 
     @c2.search.netlas.annotation.BeforeAll
