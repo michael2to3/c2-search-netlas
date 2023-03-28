@@ -39,3 +39,14 @@ jobs:
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
       uses: codecov/codecov-action@v3
+
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: axel-op/googlejavaformat-action@v3.6.0
+        with:
+          args: "--replace"
+          files: 'app/**/*.java'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          skipCommit: false
