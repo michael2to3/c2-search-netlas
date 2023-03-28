@@ -42,6 +42,7 @@ jobs:
 
   formatting:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v3
       - uses: axel-op/googlejavaformat-action@v3.6.0
