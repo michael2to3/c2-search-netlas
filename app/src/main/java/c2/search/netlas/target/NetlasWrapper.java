@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
-  private static Map<Host, JsonNode> response;
+  private Map<Host, JsonNode> response;
   private Host host;
   private Netlas netlas;
 
