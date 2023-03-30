@@ -59,13 +59,13 @@ public class C2Detect {
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
-    fields.setField(Socket.class, getSocket(host, getSocketTimeout(DEFAULT_SOCKET_TIMEOUT)));
+    fields.setField(Socket.class, getSocket(host, getSocketTimeoutMs(DEFAULT_SOCKET_TIMEOUT)));
 
     Results responses = new Checker(fields).run();
     responses.print(System.out, verbose);
   }
 
-  private int getSocketTimeout(int defaultTimeout) {
+  private int getSocketTimeoutMs(int defaultTimeout) {
     String timeout = config.get("socket.timeout");
     if (timeout == null) {
       return defaultTimeout;
