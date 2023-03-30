@@ -77,19 +77,30 @@ public class NetlasWrapper {
     return getLast(keyPath, 0);
   }
 
+  protected String formatKey(String key) {
+    return key.replace('.', '/');
+  }
+
+  protected JsonNode getNodeFromItem(JsonNode item, String key) {
+    JsonPointer pointer = JsonPointer.compile(formatKey(key));
+    JsonNode node = item.at(pointer);
+    if (!node.isMissingNode()) {
+      return node;
+    }
+    return null;
+  }
+
   public JsonNode getLast(String keyPath, int skip)
       throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
     int count = get().size();
-    for (int i = skip; i < count; i++) {
-      JsonNode item = getItem(i);
-      JsonPointer pointer = JsonPointer.compile(keyPath.replace('.', '/'));
-      JsonNode node = item.at(pointer);
-      if (!node.isMissingNode()) {
-        return node;
+    for (int i = skip; i < count; ++i) {
+      JsonNode value = getNodeFromItem(getItem(i), keyPath);
+      if (value != null) {
+        return value;
       }
     }
-    throw new IllegalArgumentException("keyPath: " + keyPath + " not found");
+    return null;
   }
 
   public JsonNode get() throws JsonMappingException, JsonProcessingException {
@@ -116,11 +127,15 @@ public class NetlasWrapper {
 
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
     List<String> servers = new ArrayList<>();
-    getLastHas(".data.http.headers.server")
-        .forEach(
-            item -> {
-              servers.add(item.asText());
-            });
+    JsonNode items = getLast(".data.http.headers.server");
+    if (items == null) {
+      return null;
+    }
+
+    items.forEach(
+        item -> {
+          servers.add(item.asText());
+        });
     return servers;
   }
 
