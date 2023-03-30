@@ -13,12 +13,24 @@ import netlas.java.Netlas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wrapper class for Netlas API that provides convenience methods for retrieving data from Netlas
+ * responses.
+ */
 public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
   private Map<Host, JsonNode> response;
   private Host host;
   private Netlas netlas;
 
+  /**
+   * Creates a new NetlasWrapper instance.
+   *
+   * @param api the Netlas API key
+   * @param host the target host
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public NetlasWrapper(final String api, final Host host)
       throws JsonMappingException, JsonProcessingException {
     this.netlas = new Netlas(api);
@@ -26,14 +38,29 @@ public class NetlasWrapper {
     response = new HashMap<>();
   }
 
+  /**
+   * Gets the target host.
+   *
+   * @return the target host
+   */
   public Host getHost() {
     return host;
   }
 
+  /**
+   * Gets the Netlas instance used by this wrapper.
+   *
+   * @return the Netlas instance
+   */
   public Netlas getNetlas() {
     return netlas;
   }
 
+  /**
+   * Sets the Netlas response for the target host.
+   *
+   * @param json the Netlas response
+   */
   public void set(JsonNode json) {
     if (response.containsKey(host)) {
       response.replace(host, json);
@@ -42,6 +69,13 @@ public class NetlasWrapper {
     }
   }
 
+  /**
+   * Gets a list of DNS names from the Netlas response.
+   *
+   * @return a list of DNS names
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
     var commonName = getLast(".data.certificate.subject.common_name");
     List<String> dnsNames = new ArrayList<String>();
@@ -49,30 +83,80 @@ public class NetlasWrapper {
     return dnsNames;
   }
 
+  /**
+   * Gets the JARM fingerprint from the Netlas response.
+   *
+   * @return the JARM fingerprint
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public String getJarm() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.jarm").asText();
   }
 
+  /**
+   * Gets the HTTP response body from the Netlas response.
+   *
+   * @return the HTTP response body
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public String getBody() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.http.body").asText();
   }
 
+  /**
+   * Gets the SHA-256 hash of the HTTP response body from the Netlas response.
+   *
+   * @return the SHA-256 hash of the HTTP response body
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public String getBodyAsSha256() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.http.body_sha256").asText();
   }
 
+  /**
+   * Gets the Netlas response item at the specified index.
+   *
+   * @param i the index of the item to retrieve
+   * @return the Netlas response item
+   * @throws JsonMappingException if there is an error mapping JSON to Java objects
+   * @throws JsonProcessingException if there is an error processing JSON
+   */
   public JsonNode getItem(int i) throws JsonMappingException, JsonProcessingException {
     return get().get(i);
   }
 
+  /**
+   * Returns the last JsonNode with the given keyPath, starting from the end of the list.
+   *
+   * @param keyPath the path of the key to search for
+   * @return the last JsonNode with the given keyPath, or null if not found
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public JsonNode getLast(String keyPath) throws JsonMappingException, JsonProcessingException {
     return getLast(keyPath, 0);
   }
 
+  /**
+   * Formats the given key by replacing "." with "/".
+   *
+   * @param key the key to format
+   * @return the formatted key
+   */
   protected String formatKey(String key) {
     return key.replace('.', '/');
   }
 
+  /**
+   * Returns the JsonNode with the given key from the given item.
+   *
+   * @param item the item to search within
+   * @param key the key to search for
+   * @return the JsonNode with the given key, or null if not found
+   */
   protected JsonNode getNodeFromItem(JsonNode item, String key) {
     JsonPointer pointer = JsonPointer.compile(formatKey(key));
     JsonNode node = item.at(pointer);
@@ -82,6 +166,15 @@ public class NetlasWrapper {
     return null;
   }
 
+  /**
+   * Returns the last JsonNode with the given keyPath, starting from the given skip index.
+   *
+   * @param keyPath the path of the key to search for
+   * @param skip the number of items to skip from the start of the list
+   * @return the last JsonNode with the given keyPath, or null if not found
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public JsonNode getLast(String keyPath, int skip)
       throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
@@ -95,6 +188,14 @@ public class NetlasWrapper {
     return null;
   }
 
+  /**
+   * Returns the response JsonNode for the current host. If the response has not yet been set, it
+   * queries the NetlasWrapper and sets the response.
+   *
+   * @return the response JsonNode for the current host
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public JsonNode get() throws JsonMappingException, JsonProcessingException {
     if (response.containsKey(host)) {
       return response.get(host);
@@ -113,10 +214,24 @@ public class NetlasWrapper {
     return resp;
   }
 
+  /**
+   * Returns the headers JsonNode for the current response.
+   *
+   * @return the headers JsonNode for the current response
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public JsonNode getHeaders() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.http.headers");
   }
 
+  /**
+   * Returns a List of servers found in the headers for the current response.
+   *
+   * @return a List of servers found in the headers for the current response, or null if not found
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
     List<String> servers = new ArrayList<>();
     JsonNode items = getLast(".data.http.headers.server");
@@ -131,6 +246,13 @@ public class NetlasWrapper {
     return servers;
   }
 
+  /**
+   * Returns the status code for the current response.
+   *
+   * @return the status code for the current response
+   * @throws JsonMappingException if there is an issue with mapping json to objects
+   * @throws JsonProcessingException if there is an issue with processing json
+   */
   public int getStatusCode() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.http.status_code").asInt();
   }
