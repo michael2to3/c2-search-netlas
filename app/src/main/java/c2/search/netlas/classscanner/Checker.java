@@ -7,7 +7,6 @@ import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
-import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,8 +23,7 @@ public class Checker {
   private ClassScanner classScanner;
   private AnnotatedFieldValues fields;
 
-  public Checker(AnnotatedFieldValues fields)
-      throws ClassNotFoundException, IOException {
+  public Checker(AnnotatedFieldValues fields) throws ClassNotFoundException, IOException {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
     this.fields = fields;
   }
@@ -47,8 +45,11 @@ public class Checker {
   }
 
   public Results run()
-      throws IllegalAccessException, InstantiationException, InvocationTargetException,
-          NoSuchMethodException, SecurityException {
+      throws IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -65,8 +66,12 @@ public class Checker {
   }
 
   private Object instantiateClass(Class<?> clazz)
-      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-          InvocationTargetException, NoSuchMethodException, SecurityException {
+      throws InstantiationException,
+          IllegalAccessException,
+          IllegalArgumentException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
