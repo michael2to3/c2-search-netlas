@@ -1,5 +1,6 @@
-package c2.search.netlas.target;
+package c2.search.netlas.classscanner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,9 +9,9 @@ import static org.mockito.Mockito.when;
 
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Wire;
-import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
@@ -27,10 +28,12 @@ public class CheckerTest {
   public void setUp() throws ClassNotFoundException, IOException {
     netlasWrapper = mock(NetlasWrapper.class);
     host = mock(Host.class);
-    checker = new Checker(netlasWrapper, host);
-    checker.setHost(host);
-    checker.setNetlasWrapper(netlasWrapper);
+    var fields = new AnnotatedFieldValues();
+    fields.setField(Host.class, host);
+    fields.setField(NetlasWrapper.class, netlasWrapper);
+    fields.setField(Netlas.class, netlasWrapper.getNetlas());
 
+    checker = new Checker(fields);
     ClassScanner classScanner = mock(ClassScanner.class);
     when(classScanner.getClassesWithAnnotation(Detect.class))
         .thenReturn(Arrays.asList(MyTarget.class, OtherTarget.class));
@@ -45,7 +48,7 @@ public class CheckerTest {
     assertNotNull(responses);
 
     var target = responses.get("My target");
-    var otarget = responses.get("c2.search.netlas.target.CheckerTest$OtherTarget");
+    var otarget = responses.get("c2.search.netlas.classscanner.CheckerTest$OtherTarget");
 
     assertNotNull(r);
     assertTrue(target.size() >= 1);
@@ -56,19 +59,20 @@ public class CheckerTest {
 
   @Test
   public void testThrowNotFoundClass() throws ClassNotFoundException, IOException {
-    assertNotNull(checker.getHost());
     assertNotNull(Checker.getLogger());
     assertNotNull(checker.getClassScanner());
-    assertNotNull(checker.getNetlasWrapper());
     assertNotNull(Checker.getTargetClassName());
 
     var host = new Host("localhost", 80);
     NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
+    var fields = new AnnotatedFieldValues();
+    fields.setField(Host.class, host);
+    fields.setField(NetlasWrapper.class, netlasWrapper);
     ClassScanner classScanner = mock(ClassScanner.class);
     assertThrows(
         IllegalStateException.class,
         () -> {
-          checker = new Checker(netlasWrapper, host);
+          checker = new Checker(fields);
           checker.setClassScanner(classScanner);
           checker.run();
         },

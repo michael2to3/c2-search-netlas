@@ -1,44 +1,33 @@
-package c2.search.netlas.target;
+package c2.search.netlas.classscanner;
 
 import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
-import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
+import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import netlas.java.Netlas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Checker {
   private static final Logger LOGGER = LoggerFactory.getLogger(Checker.class);
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
-  private NetlasWrapper netlasWrapper;
-  private Host host;
   private ClassScanner classScanner;
+  private AnnotatedFieldValues fields;
 
-  public NetlasWrapper getNetlasWrapper() {
-    return netlasWrapper;
-  }
-
-  public void setNetlasWrapper(NetlasWrapper netlasWrapper) {
-    this.netlasWrapper = netlasWrapper;
-  }
-
-  public Host getHost() {
-    return host;
-  }
-
-  public void setHost(Host host) {
-    this.host = host;
+  public Checker(AnnotatedFieldValues fields)
+      throws ClassNotFoundException, IOException {
+    this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
+    this.fields = fields;
   }
 
   public ClassScanner getClassScanner() {
@@ -57,14 +46,9 @@ public class Checker {
     return TARGET_CLASS_NAME;
   }
 
-  public Checker(NetlasWrapper netlasWrapper, Host host)
-      throws ClassNotFoundException, IOException {
-    this.netlasWrapper = netlasWrapper;
-    this.host = host;
-    this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
-  }
-
-  public Results run() throws Exception {
+  public Results run()
+      throws IllegalAccessException, InstantiationException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -80,7 +64,9 @@ public class Checker {
     return results;
   }
 
-  private Object instantiateClass(Class<?> clazz) throws Exception {
+  private Object instantiateClass(Class<?> clazz)
+      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+          InvocationTargetException, NoSuchMethodException, SecurityException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
@@ -95,16 +81,15 @@ public class Checker {
   }
 
   private List<Response> invokeTestMethods(Object instant) {
-    LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
     List<Response> responses = new ArrayList<>();
     for (Method method : getTestMethods(instant.getClass())) {
+      Response response = new Response(false);
       try {
-        Response response = invokeTestMethod(method, instant);
-        responses.add(response);
-      } catch (Exception e) {
+        response = invokeTestMethod(method, instant);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         handleInvocationError(method, instant, e);
-        responses.add(new Response(false));
       }
+      responses.add(response);
     }
     return responses;
   }
@@ -127,7 +112,9 @@ public class Checker {
     return description;
   }
 
-  private Response invokeTestMethod(Method method, Object instant) throws Exception {
+  private Response invokeTestMethod(Method method, Object instant)
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
     Response response = (Response) method.invoke(instant);
     response.setDescription(getDescriptionOfTestMethod(method));
     return response;
@@ -141,7 +128,8 @@ public class Checker {
         e.getMessage());
   }
 
-  private void injectDependencies(Object instant) throws IllegalAccessException {
+  private void injectDependencies(Object instant)
+      throws IllegalArgumentException, IllegalAccessException {
     LOGGER.info("Injecting dependencies to {}", instant.getClass().getName());
     Field[] annotatedFields = instant.getClass().getDeclaredFields();
     for (Field annotatedField : annotatedFields) {
@@ -149,7 +137,7 @@ public class Checker {
         continue;
       }
       annotatedField.setAccessible(true);
-      Object value = getAnnotatedFieldValue(annotatedField);
+      Object value = fields.get(annotatedField);
       if (value == null) {
         LOGGER.warn(
             "Unrecognized field {} in {}", annotatedField.getType(), instant.getClass().getName());
@@ -163,27 +151,16 @@ public class Checker {
     }
   }
 
-  private Object getAnnotatedFieldValue(Field annotatedField) {
-    Class<?> typeOfVariable = annotatedField.getType();
-    if (typeOfVariable.equals(NetlasWrapper.class)) {
-      return this.netlasWrapper;
-    } else if (typeOfVariable.equals(Host.class)) {
-      return this.host;
-    } else if (typeOfVariable.equals(Netlas.class)) {
-      return this.netlasWrapper.getNetlas();
-    } else if (typeOfVariable.equals(Socket.class)) {
-      return getSocket();
-    }
-    return null;
-  }
-
-  private Socket getSocket() {
+  private static Socket getSocket(Host host, int timeout) {
+    LOGGER.info("Getting socket");
+    Socket socket = null;
     try {
-      return new Socket(host.getTarget(), host.getPort());
-    } catch (Exception e) {
-      LOGGER.warn("Unable to connect to {}:{}", host.getTarget(), host.getPort());
-      return null;
+      socket = new Socket(host.getTarget(), host.getPort());
+      socket.setSoTimeout(timeout);
+    } catch (IOException e) {
+      LOGGER.error("Failed to connect to {}:{}", host.getTarget(), host.getPort());
     }
+    return socket;
   }
 
   private List<Method> getBeforeAllMethods(Class<?> clazz) {
@@ -196,7 +173,8 @@ public class Checker {
     return beforeAllMethods;
   }
 
-  private void invokeBeforeAllMethods(Object instant) throws Exception {
+  private void invokeBeforeAllMethods(Object instant)
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     LOGGER.info("Invoking beforeAll methods of {}", instant.getClass().getName());
     List<Method> beforeAllMethods = getBeforeAllMethods(instant.getClass());
     for (Method method : beforeAllMethods) {
