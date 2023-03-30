@@ -51,33 +51,33 @@ public class NetlasWrapper {
   }
 
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
-    var commonName = getLastHas(".data.certificate.subject.common_name");
+    var commonName = getLast(".data.certificate.subject.common_name");
     List<String> dnsNames = new ArrayList<String>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
   }
 
   public String getJarm() throws JsonMappingException, JsonProcessingException {
-    return getLastHas(".data.jarm").asText();
+    return getLast(".data.jarm").asText();
   }
 
   public String getBody() throws JsonMappingException, JsonProcessingException {
-    return getLastHas(".data.http.body").asText();
+    return getLast(".data.http.body").asText();
   }
 
   public String getBodyAsSha256() throws JsonMappingException, JsonProcessingException {
-    return getLastHas(".data.http.body_sha256").asText();
+    return getLast(".data.http.body_sha256").asText();
   }
 
   public JsonNode getItem(int i) throws JsonMappingException, JsonProcessingException {
     return get().get(i);
   }
 
-  public JsonNode getLastHas(String keyPath) throws JsonMappingException, JsonProcessingException {
-    return getLastHas(keyPath, 0);
+  public JsonNode getLast(String keyPath) throws JsonMappingException, JsonProcessingException {
+    return getLast(keyPath, 0);
   }
 
-  public JsonNode getLastHas(String keyPath, int skip)
+  public JsonNode getLast(String keyPath, int skip)
       throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
     int count = get().size();
@@ -111,7 +111,7 @@ public class NetlasWrapper {
   }
 
   public JsonNode getHeaders() throws JsonMappingException, JsonProcessingException {
-    return getLastHas(".data.http.headers");
+    return getLast(".data.http.headers");
   }
 
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
@@ -125,6 +125,6 @@ public class NetlasWrapper {
   }
 
   public int getStatusCode() throws JsonMappingException, JsonProcessingException {
-    return getLastHas(".data.http.status_code").asInt();
+    return getLast(".data.http.status_code").asInt();
   }
 }
