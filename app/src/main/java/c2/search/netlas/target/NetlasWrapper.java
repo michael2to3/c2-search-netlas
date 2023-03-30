@@ -30,16 +30,8 @@ public class NetlasWrapper {
     return host;
   }
 
-  public void setHost(Host host) {
-    this.host = host;
-  }
-
   public Netlas getNetlas() {
     return netlas;
-  }
-
-  public void setNetlas(Netlas netlas) {
-    this.netlas = netlas;
   }
 
   public void set(JsonNode json) {
