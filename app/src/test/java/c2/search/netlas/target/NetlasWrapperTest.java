@@ -85,11 +85,6 @@ class NetlasWrapperTest {
     var netlas = new NetlasWrapper(API, HOST);
     assertNotNull(netlas.getHost());
     assertNotNull(netlas.getNetlas());
-
-    netlas.setHost(HOST);
-    netlas.setNetlas(new Netlas(API));
-    assertNotNull(netlas.getHost());
-    assertNotNull(netlas.getNetlas());
   }
 
   @Test
@@ -110,7 +105,7 @@ class NetlasWrapperTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> {
-          netlas.getLastHas("notExistKey");
+          netlas.getLast("notExistKey");
         });
   }
 }
