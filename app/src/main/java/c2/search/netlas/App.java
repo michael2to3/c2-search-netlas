@@ -1,8 +1,14 @@
 package c2.search.netlas;
 
 import c2.search.netlas.cli.Config;
+import c2.search.netlas.cli.ParseCmdArgs;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +18,23 @@ public class App {
 
   public static void main(String[] args) {
     Config config = new Config(CONFIG_FILENAME);
-    C2Detect c2Detect = new C2Detect(config, setupOptions(), System.out);
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd;
+    try {
+      cmd = parser.parse(setupOptions(), args);
+    } catch (ParseException e) {
+      LOGGER.error("Error parsing command line arguments", e);
+      System.exit(1);
+      return;
+    }
+    ParseCmdArgs parseCmdArgs = new ParseCmdArgs(cmd, config);
+    if (parseCmdArgs.isHelp()) {
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("c2detect", setupOptions());
+      System.exit(0);
+      return;
+    }
+    C2Detect c2Detect = new C2Detect(parseCmdArgs, System.out);
     try {
       c2Detect.run(args);
     } catch (Exception e) {
