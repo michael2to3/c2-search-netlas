@@ -18,14 +18,14 @@ public class ParseCmdArgs {
     this.config = config;
   }
 
-  public Host getHost(CommandLine cmd) {
+  public Host getHost() {
     LOGGER.info("Getting host from command line arguments");
     String domain = cmd.getOptionValue("t");
-    int port = getTargetPort(cmd);
+    int port = getTargetPort();
     return new Host(domain, port);
   }
 
-  public int getTargetPort(CommandLine cmd) {
+  public int getTargetPort() {
     LOGGER.info("Getting target port from command line arguments");
     String portStr = cmd.getOptionValue("p");
 
