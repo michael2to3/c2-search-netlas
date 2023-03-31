@@ -12,7 +12,7 @@ public class App {
 
   public static void main(String[] args) {
     Config config = new Config(CONFIG_FILENAME);
-    C2Detect c2Detect = new C2Detect(config, setupOptions());
+    C2Detect c2Detect = new C2Detect(config, setupOptions(), System.out);
     try {
       c2Detect.run(args);
     } catch (Exception e) {

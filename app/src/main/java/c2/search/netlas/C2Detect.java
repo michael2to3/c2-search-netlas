@@ -3,10 +3,13 @@ package c2.search.netlas;
 import c2.search.netlas.classscanner.AnnotatedFieldValues;
 import c2.search.netlas.classscanner.Checker;
 import c2.search.netlas.cli.Config;
+import c2.search.netlas.cli.ParseCmdArgs;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import netlas.java.Netlas;
 import org.apache.commons.cli.CommandLine;
@@ -14,55 +17,117 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class C2Detect {
+  private static final int DEFAULT_SOCKET_TIMEOUT_MS = 1000;
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
-  private final Config config;
   private final Options options;
-  private static final int DEFAULT_SOCKET_TIMEOUT = 1000;
+  private AnnotatedFieldValues fields;
+  private Host host;
+  private NetlasWrapper netlas;
+  private PrintStream stream;
+  private Checker checker;
+  private ParseCmdArgs cmd;
 
-  public C2Detect(Config config, Options options) {
-    LOGGER.info("Initializing C2Detect with config: {}, options: {}", config, options);
-    this.config = config;
+  public C2Detect(ParseCmdArgs cmd, Options options, PrintStream stream) {
+    LOGGER.info("Initializing C2Detect");
+    this.cmd = cmd;
     this.options = options;
+    this.stream = stream;
   }
 
-  public void run(String[] args) throws Exception {
-    LOGGER.info("Running C2Detect");
+  public void setFields(AnnotatedFieldValues fields) {
+    this.fields = fields;
+  }
 
+  public void setup(String[] args) throws IOException, ParseException, ClassNotFoundException {
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse(options, args);
 
+    parseCommandLineArgs(cmd);
+    if (host != null) {
+      this.netlas = new NetlasWrapper(apiKey, host);
+      this.fields = createFields(host, netlas);
+      this.checker = createChecker(fields);
+    }
+  }
+
+  public void run(String[] args)
+      throws ClassNotFoundException, IOException, ParseException, IllegalAccessException,
+          InstantiationException, InvocationTargetException, NoSuchMethodException,
+          SecurityException {
+    setup(args);
+    run();
+  }
+
+  public void run()
+      throws IllegalAccessException, InstantiationException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
+    LOGGER.info("Running C2Detect");
+    if (host != null) {
+      runChecker();
+    }
+  }
+
+  protected Checker createChecker(AnnotatedFieldValues fields)
+      throws ClassNotFoundException, IOException {
+    return new Checker(fields);
+  }
+
+  protected void printHelp() {
+    HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp("c2detect", options);
+  }
+
+  private void runChecker()
+      throws IllegalAccessException, InstantiationException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
+    Results responses = checker.run();
+    printResponses(responses, verbose);
+  }
+
+  private void parseCommandLineArgs(CommandLine cmd) {
     if (cmd.hasOption("h")) {
       printHelp();
       return;
     }
 
     if (cmd.hasOption("s")) {
-      config.save("api.key", cmd.getOptionValue("s"));
+      setApiKey(cmd.getOptionValue("s"));
       return;
     }
 
-    boolean verbose = cmd.hasOption("v");
+    this.verbose = cmd.hasOption("v");
+    this.apiKey = getApiKey();
+    this.host = createHost(cmd);
+  }
 
+  private void setApiKey(String apiKey) {
+    config.save("api.key", apiKey);
+  }
+
+  private String getApiKey() {
     String apiKey = config.get("api.key");
     if (apiKey == null || apiKey.isEmpty()) {
       throw new IllegalArgumentException("API key is required");
     }
+    return apiKey;
+  }
 
-    Host host = createHost(cmd);
-    NetlasWrapper netlas = new NetlasWrapper(apiKey, host);
-
+  private AnnotatedFieldValues createFields(Host host, NetlasWrapper netlas) {
     AnnotatedFieldValues fields = new AnnotatedFieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
-    fields.setField(Socket.class, getSocket(host, getSocketTimeoutMs(DEFAULT_SOCKET_TIMEOUT)));
+    fields.setField(Socket.class, getSocket(host, getSocketTimeoutMs(DEFAULT_SOCKET_TIMEOUT_MS)));
+    return fields;
+  }
 
-    Results responses = new Checker(fields).run();
-    responses.print(System.out, verbose);
+  private void printResponses(Results responses, boolean verbose) {
+    responses.print(stream, verbose);
   }
 
   private int getSocketTimeoutMs(int defaultTimeout) {
@@ -85,27 +150,5 @@ public class C2Detect {
     } catch (IOException e) {
       return null;
     }
-  }
-
-  protected static Host createHost(CommandLine cmd) {
-    String domain = cmd.getOptionValue("t");
-    if (domain == null) {
-      throw new IllegalArgumentException("Target domain is not set");
-    }
-
-    int port;
-    try {
-      String portStr = cmd.getOptionValue("p");
-      port = Integer.parseInt(portStr);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Target port is not set");
-    }
-
-    return new Host(domain, port);
-  }
-
-  protected void printHelp() {
-    HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("c2detect", options);
   }
 }
