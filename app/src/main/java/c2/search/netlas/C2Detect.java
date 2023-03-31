@@ -42,16 +42,24 @@ public class C2Detect {
   }
 
   public void run(String[] args)
-      throws ClassNotFoundException, IOException, ParseException, IllegalAccessException,
-          InstantiationException, InvocationTargetException, NoSuchMethodException,
+      throws ClassNotFoundException,
+          IOException,
+          ParseException,
+          IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
           SecurityException {
     setup(args);
     run();
   }
 
   public void run()
-      throws IllegalAccessException, InstantiationException, InvocationTargetException,
-          NoSuchMethodException, SecurityException {
+      throws IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     LOGGER.info("Running C2Detect");
     if (cmd.getHost() != null) {
       runChecker();
@@ -64,8 +72,11 @@ public class C2Detect {
   }
 
   private void runChecker()
-      throws IllegalAccessException, InstantiationException, InvocationTargetException,
-          NoSuchMethodException, SecurityException {
+      throws IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     Results responses = checker.run();
     printResponses(responses, cmd.isVerbose());
   }
