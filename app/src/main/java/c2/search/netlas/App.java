@@ -18,7 +18,7 @@ public class App {
 
   public static void main(String[] args) {
     Config config = new Config(CONFIG_FILENAME);
-    CommandLineParser parser = new DefaultParser();
+    CommandLineParser parser = getDefaultParser();
     CommandLine cmd;
     try {
       cmd = parser.parse(setupOptions(), args);
@@ -41,6 +41,10 @@ public class App {
       LOGGER.error(e.getMessage(), e);
       System.exit(1);
     }
+  }
+
+  protected static CommandLineParser getDefaultParser() {
+    return new DefaultParser();
   }
 
   protected static Options setupOptions() {
