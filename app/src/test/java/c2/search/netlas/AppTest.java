@@ -1,71 +1,23 @@
 package c2.search.netlas;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Options;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.commons.cli.HelpFormatter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 class AppTest {
-  @Mock private CommandLineParser mockParser;
-
-  private ByteArrayOutputStream outContent;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-    outContent = new ByteArrayOutputStream();
-  }
 
   @Test
-  void testMainWithHelpArg() throws Exception {
-    String[] args = {"-h"};
+  void printHelp() {
     CommandLine mockCmd = mock(CommandLine.class);
     when(mockCmd.hasOption("h")).thenReturn(true);
-    when(mockParser.parse(any(Options.class), eq(args))).thenReturn(mockCmd);
 
-    App app =
-        new App() {
-          @Override
-          protected static CommandLineParser getDefaultParser() {
-            return mockParser;
-          }
-        };
+    App.main(new String[] {"-h"});
 
-    try (MockedPrintStream printStream = new MockedPrintStream(outContent)) {
-      tapSystemOut(
-          printStream,
-          () -> {
-            int exitStatus = catchSystemExit(() -> app.main(args));
-            assertEquals(0, exitStatus);
-          });
-    }
-
-    String output = outContent.toString();
-    assertHelpMessageShown(output);
-  }
-
-  private void assertHelpMessageShown(String output) {
-    // Verify that the help message is printed
-    assertEquals(true, output.contains("usage: c2detect"));
-    assertEquals(
-        true,
-        output.contains("-s,--set <API_KEY>        Set the API key to use for the application"));
-  }
-
-  // Add more test cases for other command line options and error scenarios.
-
-  private static class MockedPrintStream extends PrintStream {
-    MockedPrintStream(ByteArrayOutputStream outContent) {
-      super(outContent, true);
-    }
+    HelpFormatter formatter = new HelpFormatter();
+    verify(formatter).printHelp("c2detect", App.setupOptions());
   }
 }
