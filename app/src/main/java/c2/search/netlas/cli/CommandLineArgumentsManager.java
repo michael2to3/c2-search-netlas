@@ -6,13 +6,13 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ParseCmdArgs {
+public class CommandLineArgumentsManager {
   private static final int DEFAULT_SOCKET_TIMEOUT_MS = 1000;
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private final Config config;
   private CommandLine cmd;
 
-  public ParseCmdArgs(CommandLine cmd, Config config) {
+  public CommandLineArgumentsManager(CommandLine cmd, Config config) {
     LOGGER.info("Parsing command line arguments");
     this.cmd = cmd;
     this.config = config;

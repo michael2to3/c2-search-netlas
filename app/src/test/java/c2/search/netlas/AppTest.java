@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import c2.search.netlas.cli.Config;
-import c2.search.netlas.cli.ParseCmdArgs;
+import c2.search.netlas.cli.CommandLineArgumentsManager;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class AppTest {
     System.setOut(printStream);
 
     String[] args = new String[] {"-t", "example.com", "-p", "80"};
-    ParseCmdArgs pargs = App.getParseCmdArgs(args);
+    CommandLineArgumentsManager pargs = App.getParseCmdArgs(args);
     C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
     doNothing().when(c2Detect).run();
 

@@ -1,7 +1,7 @@
 package c2.search.netlas;
 
 import c2.search.netlas.cli.Config;
-import c2.search.netlas.cli.ParseCmdArgs;
+import c2.search.netlas.cli.CommandLineArgumentsManager;
 import java.io.PrintStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -44,7 +44,7 @@ public class App {
     App.config = config;
   }
 
-  public static ParseCmdArgs getParseCmdArgs(String[] args) {
+  public static CommandLineArgumentsManager getParseCmdArgs(String[] args) {
     CommandLine cmd = null;
     CommandLineParser parser = getDefaultParser();
     try {
@@ -53,7 +53,7 @@ public class App {
       LOGGER.error("Error parsing command line arguments", e);
     }
 
-    ParseCmdArgs parseCmdArgs = new ParseCmdArgs(cmd, config);
+    CommandLineArgumentsManager parseCmdArgs = new CommandLineArgumentsManager(cmd, config);
     return parseCmdArgs;
   }
 
@@ -65,12 +65,12 @@ public class App {
     App.c2Detect = c2Detect;
   }
 
-  private static C2Detect getC2Detect(ParseCmdArgs args) {
+  private static C2Detect getC2Detect(CommandLineArgumentsManager args) {
     return new C2Detect(args, out);
   }
 
   public static void main(String[] args) {
-    ParseCmdArgs parseCmdArgs = getParseCmdArgs(args);
+    CommandLineArgumentsManager parseCmdArgs = getParseCmdArgs(args);
     c2Detect = getC2Detect(parseCmdArgs);
 
     if (parseCmdArgs.isHelp()) {

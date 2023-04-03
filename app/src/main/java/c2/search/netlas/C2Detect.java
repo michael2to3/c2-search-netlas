@@ -2,7 +2,7 @@ package c2.search.netlas;
 
 import c2.search.netlas.classscanner.AnnotatedFieldValues;
 import c2.search.netlas.classscanner.Checker;
-import c2.search.netlas.cli.ParseCmdArgs;
+import c2.search.netlas.cli.CommandLineArgumentsManager;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
@@ -21,9 +21,9 @@ public class C2Detect {
   private NetlasWrapper netlas;
   private PrintStream stream;
   private Checker checker;
-  private ParseCmdArgs cmd;
+  private CommandLineArgumentsManager cmd;
 
-  public C2Detect(ParseCmdArgs cmd, PrintStream stream) {
+  public C2Detect(CommandLineArgumentsManager cmd, PrintStream stream) {
     LOGGER.info("Initializing C2Detect");
     this.cmd = cmd;
     this.stream = stream;
