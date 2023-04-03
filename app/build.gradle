@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'jacoco'
-    id 'com.github.johnrengelman.shadow' version '8.1.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -17,6 +17,9 @@ repositories {
 }
 
 dependencies {
+    shadow localGroovy()
+    shadow gradleApi()
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.1.1'
     testImplementation 'org.mockito:mockito-core:5.2.0'
@@ -26,6 +29,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     implementation 'netlas-java:lib:0.0.31-SNAPSHOT'
+}
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'c2.search.netlas'
+    }
 }
 
 application {
