@@ -104,13 +104,6 @@ public class App {
             .argName("API_KEY")
             .desc("Set the API key to use for the application")
             .build();
-    Option getOption =
-        Option.builder("g")
-            .longOpt("get")
-            .hasArg(true)
-            .argName("CONFIG_KEY")
-            .desc("Get the value of the specified configuration key")
-            .build();
     Option targetOption =
         Option.builder("t")
             .longOpt("target")
