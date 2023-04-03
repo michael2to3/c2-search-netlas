@@ -1,7 +1,7 @@
 package c2.search.netlas;
 
-import c2.search.netlas.cli.Config;
 import c2.search.netlas.cli.CommandLineArgumentsManager;
+import c2.search.netlas.cli.Config;
 import java.io.PrintStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

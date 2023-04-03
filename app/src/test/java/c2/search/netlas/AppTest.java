@@ -7,8 +7,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import c2.search.netlas.cli.Config;
 import c2.search.netlas.cli.CommandLineArgumentsManager;
+import c2.search.netlas.cli.Config;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
