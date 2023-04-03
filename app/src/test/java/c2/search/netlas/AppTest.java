@@ -53,4 +53,16 @@ class AppTest {
 
     verify(c2Detect).run(args);
   }
+
+  @Test
+  void testNotExistsArgs() {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(outputStream);
+    System.setOut(printStream);
+
+    String[] args = new String[] {"--not-exists-args"};
+    App.main(args);
+
+    assertTrue(outputStream.toString().contains("Usage"));
+  }
 }
