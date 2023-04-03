@@ -70,7 +70,7 @@ public class App {
     c2Detect = getC2Detect(parseCmdArgs);
     int status = 0;
 
-    if (parseCmdArgs.isHelp()) {
+    if (parseCmdArgs.isInvalid() || parseCmdArgs.isHelp()) {
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("c2detect", setupOptions());
     } else if (parseCmdArgs.isChangeApiKey()) {
