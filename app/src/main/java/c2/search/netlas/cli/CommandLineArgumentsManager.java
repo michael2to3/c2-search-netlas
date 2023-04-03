@@ -11,11 +11,17 @@ public class CommandLineArgumentsManager {
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private final Config config;
   private CommandLine cmd;
+  private boolean isInvalid;
 
   public CommandLineArgumentsManager(CommandLine cmd, Config config) {
     LOGGER.info("Parsing command line arguments");
     this.cmd = cmd;
     this.config = config;
+    this.isInvalid = cmd == null;
+  }
+
+  public boolean isInvalid() {
+    return isInvalid;
   }
 
   public Host getHost() {
