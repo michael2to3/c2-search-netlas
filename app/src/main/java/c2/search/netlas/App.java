@@ -2,6 +2,7 @@ package c2.search.netlas;
 
 import c2.search.netlas.cli.Config;
 import c2.search.netlas.cli.ParseCmdArgs;
+import java.io.PrintStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,26 +16,74 @@ import org.slf4j.LoggerFactory;
 public class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
   private static final String CONFIG_FILENAME = "config.properties";
+  private static Config config = new Config(CONFIG_FILENAME);
+  private static PrintStream out = System.out;
+  private static C2Detect c2Detect = null;
 
-  public static void main(String[] args) {
-    Config config = new Config(CONFIG_FILENAME);
+  public static Logger getLogger() {
+    return LOGGER;
+  }
+
+  public static PrintStream getOut() {
+    return out;
+  }
+
+  public static void setOut(PrintStream out) {
+    App.out = out;
+  }
+
+  public static String getConfigFilename() {
+    return CONFIG_FILENAME;
+  }
+
+  public static Config getConfig() {
+    return config;
+  }
+
+  public static void setConfig(Config config) {
+    App.config = config;
+  }
+
+  public static ParseCmdArgs getParseCmdArgs(String[] args) {
+    CommandLine cmd = null;
     CommandLineParser parser = getDefaultParser();
-    CommandLine cmd;
     try {
       cmd = parser.parse(setupOptions(), args);
     } catch (ParseException e) {
       LOGGER.error("Error parsing command line arguments", e);
-      System.exit(1);
-      return;
     }
+
     ParseCmdArgs parseCmdArgs = new ParseCmdArgs(cmd, config);
+    return parseCmdArgs;
+  }
+
+  public static C2Detect getC2Detect() {
+    return c2Detect;
+  }
+
+  public static void setC2Detect(C2Detect c2Detect) {
+    App.c2Detect = c2Detect;
+  }
+
+  private static C2Detect getC2Detect(ParseCmdArgs args) {
+    return new C2Detect(args, out);
+  }
+
+  public static void main(String[] args) {
+    ParseCmdArgs parseCmdArgs = getParseCmdArgs(args);
+    c2Detect = getC2Detect(parseCmdArgs);
+
     if (parseCmdArgs.isHelp()) {
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("c2detect", setupOptions());
-      System.exit(0);
-      return;
+    } else if (parseCmdArgs.isChangeApiKey()) {
+      parseCmdArgs.setApiKey(parseCmdArgs.getApiKey());
+    } else {
+      startScan(args);
     }
-    C2Detect c2Detect = new C2Detect(parseCmdArgs, System.out);
+  }
+
+  public static void startScan(String[] args) {
     try {
       c2Detect.run(args);
     } catch (Exception e) {
