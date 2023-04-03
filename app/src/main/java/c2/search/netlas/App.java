@@ -46,7 +46,7 @@ public class App {
     try {
       cmd = parser.parse(setupOptions(), args);
     } catch (ParseException e) {
-      LOGGER.error("Error parsing command line arguments", e);
+      LOGGER.info("Error parsing command line arguments", e);
     }
 
     CommandLineArgumentsManager parseCmdArgs = new CommandLineArgumentsManager(cmd, config);
