@@ -46,6 +46,11 @@ public class ParseCmdArgs {
     return cmd.hasOption("v");
   }
 
+  public boolean isChangeApiKey() {
+    LOGGER.info("Checking if change api key was requested");
+    return cmd.hasOption("s");
+  }
+
   public void setApiKey(String apiKey) {
     LOGGER.info("Setting API key");
     config.save("api.key", apiKey);
@@ -53,6 +58,9 @@ public class ParseCmdArgs {
 
   public String getApiKey() {
     LOGGER.info("Getting API key");
+    if (cmd.hasOption("s")) {
+      return cmd.getOptionValue("s");
+    }
     return config.get("api.key");
   }
 
