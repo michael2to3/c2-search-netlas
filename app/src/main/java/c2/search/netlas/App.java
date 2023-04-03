@@ -3,6 +3,7 @@ package c2.search.netlas;
 import c2.search.netlas.cli.CommandLineArgumentsManager;
 import c2.search.netlas.cli.Config;
 import java.io.PrintStream;
+import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -122,13 +123,10 @@ public class App {
         Option.builder("v").longOpt("verbose").hasArg(false).desc("Print verbose output").build();
     Option helpOption = Option.builder("h").longOpt("help").desc("Print this help message").build();
 
-    options.addOption(setOption);
-    options.addOption(getOption);
-    options.addOption(targetOption);
-    options.addOption(portOption);
-    options.addOption(helpOption);
-    options.addOption(printVerbosOption);
-
+    List<Option> list = List.of(setOption, targetOption, portOption, printVerbosOption, helpOption);
+    for (Option option : list) {
+      options.addOption(option);
+    }
     return options;
   }
 }
