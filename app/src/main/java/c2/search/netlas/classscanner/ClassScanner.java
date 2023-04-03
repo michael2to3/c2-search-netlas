@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -24,7 +27,7 @@ public class ClassScanner {
     if (inputStream == null) {
       throw new IllegalArgumentException("Package not found: " + packageName);
     }
-    if (path.endsWith(".jar")) {
+    if (checkJar()) {
       JarInputStream jarInputStream = new JarInputStream(inputStream);
       scanClasses(jarInputStream, packageName);
     } else {
@@ -33,6 +36,7 @@ public class ClassScanner {
   }
 
   private void scanClasses(InputStream inputStream, String packageName) throws IOException {
+    LOGGER.info("Scanning Dir classes in package: {}", packageName);
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
     while ((line = reader.readLine()) != null) {
@@ -62,6 +66,7 @@ public class ClassScanner {
   }
 
   private void scanClasses(JarInputStream jarInputStream, String packageName) throws IOException {
+    LOGGER.info("Scanning Jar classes in package: {}", packageName);
     JarEntry entry;
     while ((entry = jarInputStream.getNextJarEntry()) != null) {
       if (entry.getName().endsWith(".class")) {
@@ -107,5 +112,18 @@ public class ClassScanner {
       LOGGER.warn("No class annotated with {}", classAnotation);
     }
     return annotatedClasses;
+  }
+
+  private boolean checkJar() {
+    Class<?> clazz = ClassScanner.class;
+    ProtectionDomain protectionDomain = clazz.getProtectionDomain();
+    CodeSource codeSource = protectionDomain.getCodeSource();
+    if (codeSource == null) {
+      return false;
+    } else {
+      URL location = codeSource.getLocation();
+      LOGGER.info("File location: {}", location);
+      return location.getPath().endsWith(".jar");
+    }
   }
 }
