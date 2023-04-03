@@ -69,10 +69,13 @@ public class ClassScanner {
     LOGGER.info("Scanning Jar classes in package: {}", packageName);
     JarEntry entry;
     while ((entry = jarInputStream.getNextJarEntry()) != null) {
+      LOGGER.debug("Jar entry: {}", entry.getName());
       if (entry.getName().endsWith(".class")) {
+        LOGGER.info("Class entry: {}", entry.getName());
         String className = formatPath(entry.getName()).substring(0, entry.getName().length() - 6);
         addClass(className, Thread.currentThread().getContextClassLoader());
       } else if (entry.isDirectory()) {
+        LOGGER.info("Dir entry: {}", entry.getName());
         String subPackageName =
             formatPath(entry.getName().substring(0, entry.getName().length() - 1));
         scanClasses(jarInputStream, subPackageName);
@@ -118,6 +121,7 @@ public class ClassScanner {
     Class<?> clazz = ClassScanner.class;
     ProtectionDomain protectionDomain = clazz.getProtectionDomain();
     CodeSource codeSource = protectionDomain.getCodeSource();
+    LOGGER.info("Code source: {}", codeSource);
     if (codeSource == null) {
       return false;
     } else {
