@@ -20,10 +20,6 @@ public class App {
   private static PrintStream out = System.out;
   private static C2Detect c2Detect = null;
 
-  public static Logger getLogger() {
-    return LOGGER;
-  }
-
   public static PrintStream getOut() {
     return out;
   }
