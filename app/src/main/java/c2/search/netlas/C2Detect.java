@@ -1,7 +1,7 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.classscanner.Checker;
+import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
@@ -50,8 +50,13 @@ public class C2Detect {
   }
 
   public void run(String[] args)
-      throws ClassNotFoundException, IOException, ParseException, IllegalAccessException,
-          InstantiationException, InvocationTargetException, NoSuchMethodException,
+      throws ClassNotFoundException,
+          IOException,
+          ParseException,
+          IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
           SecurityException {
     printWelcomMessage();
     setup(args);
@@ -65,14 +70,16 @@ public class C2Detect {
     stream.flush();
   }
 
-  protected Checker createChecker(FieldValues fields)
-      throws ClassNotFoundException, IOException {
+  protected Checker createChecker(FieldValues fields) throws ClassNotFoundException, IOException {
     return new Checker(fields);
   }
 
   private void runChecker()
-      throws IllegalAccessException, InstantiationException, InvocationTargetException,
-          NoSuchMethodException, SecurityException {
+      throws IllegalAccessException,
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     Results responses = checker.run();
     printResponses(responses, cmd.isVerbose());
   }

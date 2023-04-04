@@ -1,15 +1,16 @@
 package c2.search.netlas;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import c2.search.netlas.classscanner.FieldValues;
+import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.cli.Config;
+import c2.search.netlas.scheme.Host;
 import java.net.Socket;
 import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -21,11 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import c2.search.netlas.classscanner.FieldValues;
-import c2.search.netlas.cli.CLArgumentsManager;
-import c2.search.netlas.cli.Config;
-import c2.search.netlas.scheme.Host;
-
 public class C2DetectTest {
   private static final String API = new Config("config.properties").get("api.key");
 
@@ -33,8 +29,7 @@ public class C2DetectTest {
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse(setupOptions(), args);
 
-    CLArgumentsManager parseCmdArgs =
-        new CLArgumentsManager(cmd, new Config("test.prop"));
+    CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, new Config("test.prop"));
     return parseCmdArgs;
   }
 
@@ -79,34 +74,32 @@ public class C2DetectTest {
     c2Detect.setFields(new FieldValues());
   }
 
+  @Mock Host host;
 
-  @Mock
-    Host host;
+  @BeforeEach
+  void setUp() throws Exception {
+    MockitoAnnotations.openMocks(this);
+  }
 
-    @BeforeEach
-    void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-    }
+  @Test
+  void testGetSocket() throws Exception {
+    Socket expectedSocket = mock(Socket.class);
+    when(host.getTarget()).thenReturn("localhost");
+    when(host.getPort()).thenReturn(8080);
+    doNothing().when(expectedSocket).setSoTimeout(1000);
 
-    @Test
-    void testGetSocket() throws Exception {
-        Socket expectedSocket = mock(Socket.class);
-        when(host.getTarget()).thenReturn("localhost");
-        when(host.getPort()).thenReturn(8080);
-        doNothing().when(expectedSocket).setSoTimeout(1000);
+    Socket actualSocket = C2Detect.getSocket(host, 1000);
 
-        Socket actualSocket = C2Detect.getSocket(host, 1000);
+    assertNull(actualSocket);
+  }
 
-        assertNull(actualSocket);
-    }
+  @Test
+  void testGetSocketIOException() throws Exception {
+    when(host.getTarget()).thenReturn("localhost");
+    when(host.getPort()).thenReturn(8080);
 
-    @Test
-    void testGetSocketIOException() throws Exception {
-        when(host.getTarget()).thenReturn("localhost");
-        when(host.getPort()).thenReturn(8080);
+    Socket actualSocket = C2Detect.getSocket(host, 1000);
 
-        Socket actualSocket = C2Detect.getSocket(host, 1000);
-
-        assertNull(actualSocket);
-    }
+    assertNull(actualSocket);
+  }
 }
