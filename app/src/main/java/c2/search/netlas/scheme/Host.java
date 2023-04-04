@@ -15,8 +15,10 @@ public class Host {
 
   @Override
   public boolean equals(final Object o) {
-    boolean result = this == o;
-    if (o == null || getClass() != o.getClass()) {
+    boolean result;
+    if (this == o) {
+      result = true;
+    } else if (o == null || getClass() != o.getClass()) {
       result = false;
     } else {
       final Host host = (Host) o;
