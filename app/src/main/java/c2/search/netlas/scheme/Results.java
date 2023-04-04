@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Results {
-  private static final String PATTERN_PRINT_VERSION = "%-12s ";
+  private static final String PRINT_VER = "%-12s ";
+  private Map<String, List<Response>> responses;
 
   protected static Map<String, List<Response>> sortBySuccessPercentage(
       final Map<String, List<Response>> responses) {
@@ -58,8 +59,6 @@ public class Results {
     }
     return (int) ((double) numSuccess / toolResponses.size() * 100);
   }
-
-  private Map<String, List<Response>> responses;
 
   public Results() {
     this.responses = new HashMap<>();
@@ -109,7 +108,7 @@ public class Results {
       final var resp = toolResponses.get(0);
 
       if (resp.getVersion().isEmpty()) {
-        stream.printf(PATTERN_PRINT_VERSION, tool, resp.getVersion());
+        stream.printf(PRINT_VER, tool, resp.getVersion());
       } else {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
@@ -141,7 +140,7 @@ public class Results {
       final var resp = toolResponses.get(0);
 
       if (resp.getVersion().isEmpty()) {
-        stream.printf(PATTERN_PRINT_VERSION, tool, resp.getVersion());
+        stream.printf(PRINT_VER, tool, resp.getVersion());
       } else {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }

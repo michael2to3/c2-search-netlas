@@ -10,13 +10,11 @@ public class FieldValues {
   private static final Logger LOGGER = LoggerFactory.getLogger(FieldValues.class);
   private static final Map<Class<?>, Object> FIELDS = new ConcurrentHashMap<>();
 
-  public FieldValues() {}
-
-  public void setField(Class<?> clazz, Object value) {
+  public void setField(final Class<?> clazz, final Object value) {
     FIELDS.put(clazz, value);
   }
 
-  public Object get(Field annotatedField) {
+  public Object get(final Field annotatedField) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Getting annotated field value for {}", annotatedField.getName());
     }

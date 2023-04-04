@@ -19,14 +19,17 @@ public class SocketConnection implements AutoCloseable {
   public String sendAndReceive() throws IOException {
     final String message = "echo " + trigger;
     final OutputStream output = socket.getOutputStream();
-    final InputStream input = socket.getInputStream();
+    String response = null;
+    try (final InputStream input = socket.getInputStream()) {
 
-    output.write(message.getBytes());
-    output.flush();
+      output.write(message.getBytes());
+      output.flush();
 
-    final byte[] response = new byte[BUFFER_SIZE];
-    final int responseLength = input.read(response);
-    return new String(response, 0, responseLength, StandardCharsets.UTF_8);
+      final byte[] bresponse = new byte[BUFFER_SIZE];
+      final int responseLength = input.read(bresponse);
+      response = new String(bresponse, 0, responseLength, StandardCharsets.UTF_8);
+    }
+    return response;
   }
 
   @Override

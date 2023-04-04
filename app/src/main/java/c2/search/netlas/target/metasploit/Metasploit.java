@@ -18,14 +18,14 @@ import java.util.Locale;
 @Detect(name = "Metasploit")
 public class Metasploit {
   private static final String SHELL_ID = "shell";
-  static final int STATUS_SUCCESFULL = 200;
+  final static int STATUS_SUCCESFULL = 200;
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
   @Wire private Socket socket;
   private SocketConnection socketConnection;
 
-  public void setHost(final Host host) {
-    this.host = host;
+  public void setHost(final Host lhost) {
+    this.host = lhost;
   }
 
   public void setNetlasWrapper(final NetlasWrapper netlasWrapper) {

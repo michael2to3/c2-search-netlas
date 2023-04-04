@@ -24,7 +24,9 @@ public class DependencyInjector {
           final Object dependency = fieldValues.get(field);
 
           if (dependency == null) {
-            LOGGER.warn("Could not find a value for field {}", field.getName());
+            if (LOGGER.isWarnEnabled()) {
+              LOGGER.warn("Could not find a value for field {}", field.getName());
+            }
           } else {
             inject(object, field, dependency);
           }
@@ -36,16 +38,27 @@ public class DependencyInjector {
   }
 
   private void inject(final Object object, final Field field, final Object dependency) {
-    field.setAccessible(true);
+    boolean isAccessible = field.canAccess(object);
+    if (!isAccessible) {
+      field.setAccessible(true);
+    }
     try {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(
+            "Injected dependency {} into field {} of class {}",
+            dependency.getClass().getSimpleName(),
+            field.getName(),
+            object.getClass().getSimpleName());
+      }
       field.set(object, dependency);
-      LOGGER.info(
-          "Injected dependency {} into field {} of class {}",
-          dependency.getClass().getSimpleName(),
-          field.getName(),
-          object.getClass().getSimpleName());
     } catch (final IllegalAccessException e) {
-      LOGGER.error("Failed to inject dependency into field {}", field.getName(), e);
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error("Failed to inject dependency into field {}", field.getName(), e);
+      }
+    } finally {
+      if (!isAccessible) {
+        field.setAccessible(false);
+      }
     }
   }
 }

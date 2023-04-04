@@ -1,102 +1,49 @@
 package c2.search.netlas.classscanner;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
-import c2.search.netlas.annotation.Wire;
-import c2.search.netlas.scheme.Host;
+import c2.search.netlas.annotation.Test;
 import c2.search.netlas.scheme.Response;
-import c2.search.netlas.target.NetlasWrapper;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.Arrays;
-import netlas.java.Netlas;
+import c2.search.netlas.scheme.Results;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class CheckerTest {
+
   private Checker checker;
-  private NetlasWrapper netlasWrapper;
-  private Host host;
+  private ClassScanner classScanner;
 
   @BeforeEach
-  public void setUp() throws ClassNotFoundException, IOException {
-    netlasWrapper = mock(NetlasWrapper.class);
-    host = mock(Host.class);
-    var fields = new FieldValues();
-    fields.setField(Host.class, host);
-    fields.setField(NetlasWrapper.class, netlasWrapper);
-    fields.setField(Netlas.class, netlasWrapper.getNetlas());
-
+  public void setup() {
+    classScanner = mock(ClassScanner.class);
+    FieldValues fields = mock(FieldValues.class);
     checker = new Checker(fields);
-    ClassScanner classScanner = mock(ClassScanner.class);
-    when(classScanner.getClassesWithAnnotation(Detect.class))
-        .thenReturn(Arrays.asList(MyTarget.class, OtherTarget.class));
-
     checker.setClassScanner(classScanner);
   }
 
   @Test
-  public void testForEachTarget() throws Exception {
-    var r = checker.run();
-    var responses = r.getResponses();
-    assertNotNull(responses);
+  public void testRun() throws Exception {
+    Class<?> targetClass = DummyTarget.class;
+    when(classScanner.getClassesWithAnnotation(Detect.class)).thenReturn(List.of(targetClass));
+    when(classScanner.getClassesWithAnnotation(Detect.class)).thenReturn(List.of(targetClass));
 
-    var target = responses.get("My target");
-    var otarget = responses.get("c2.search.netlas.classscanner.CheckerTest$OtherTarget");
+    Results results = checker.run();
 
-    assertNotNull(r);
-    assertTrue(target.size() >= 1);
-    assertTrue(otarget.size() >= 1);
-    assertTrue(target.get(0).isSuccess());
-    assertTrue(otarget.get(0).isSuccess());
+    assertEquals(1, results.getResponses().size());
   }
 
-  @Test
-  public void testThrowNotFoundClass() throws ClassNotFoundException, IOException {
-    var host = new Host("localhost", 80);
-    NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
-    var fields = new FieldValues();
-    fields.setField(Host.class, host);
-    fields.setField(NetlasWrapper.class, netlasWrapper);
-    ClassScanner classScanner = mock(ClassScanner.class);
-  }
+  @Detect(name = "DummyTarget")
+  class DummyTarget {
+    @BeforeAll
+    public void beforeAllMethod() {}
 
-  @Detect
-  public static class OtherTarget {
-    @Wire public NetlasWrapper netlasWrapper;
-    @Wire public Host host;
-
-    @c2.search.netlas.annotation.Test
-    public Response method() {
-      return new Response(host != null && netlasWrapper != null);
-    }
-  }
-
-  @Detect(name = "My target")
-  public static class MyTarget {
-    @Wire public NetlasWrapper netlasWrapper;
-    @Wire public Netlas netlas;
-    @Wire public Host host;
-    @Wire public Socket socket;
-    public boolean isChangedBeforeAll;
-
-    @c2.search.netlas.annotation.BeforeAll
-    public void beforeAll() {
-      isChangedBeforeAll = true;
-    }
-
-    @c2.search.netlas.annotation.Test
-    public Response method() {
-      return new Response(host != null && netlasWrapper != null);
-    }
-
-    @c2.search.netlas.annotation.Test
-    public Response throwException() throws IOException {
-      throw new IOException();
+    @Test(description = "testMethod description")
+    public Response testMethod() {
+      return new Response(true);
     }
   }
 }

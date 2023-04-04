@@ -40,7 +40,9 @@ public class Checker {
   }
 
   private Object instantiateClass(final Class<?> clazz) {
-    LOGGER.info("Instantiating {}", clazz.getName());
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Instantiating {}", clazz.getName());
+    }
     Object instant = null;
     try {
       instant = clazz.getDeclaredConstructor().newInstance();
@@ -64,12 +66,14 @@ public class Checker {
 
   private List<Response> invokeTestMethods(final Object instant) {
     final List<Response> responses = new ArrayList<>();
+    Response response = null;
     for (final Method method : getTestMethods(instant.getClass())) {
-      Response response = new Response(false);
       try {
         response = invokeTestMethod(method, instant);
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         handleInvocationError(method, instant, e);
+        response = new Response(false);
+        response.setError(e.getMessage());
       }
       responses.add(response);
     }
@@ -95,19 +99,24 @@ public class Checker {
   }
 
   private Response invokeTestMethod(final Method method, final Object instant)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-    LOGGER.info("Invoking test methods of {}", instant.getClass().getName());
+      throws IllegalAccessException, InvocationTargetException {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Invoking test methods of {}", instant.getClass().getName());
+    }
     final Response response = (Response) method.invoke(instant);
     response.setDescription(getDescriptionOfTestMethod(method));
     return response;
   }
 
-  private void handleInvocationError(final Method method, final Object instant, final Exception e) {
-    LOGGER.info(
-        "Error invoking test method {} on {} - {}",
-        method.getName(),
-        instant.getClass().getName(),
-        e.getMessage());
+  private void handleInvocationError(
+      final Method method, final Object instant, final Exception exception) {
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.info(
+          "Error invoking test method {} on {} - {}",
+          method.getName(),
+          instant.getClass().getName(),
+          exception.getMessage());
+    }
   }
 
   private List<Method> getBeforeAllMethods(final Class<?> clazz) {
@@ -121,7 +130,9 @@ public class Checker {
   }
 
   private void invokeBeforeAllMethods(final Object instant) {
-    LOGGER.info("Invoking beforeAll methods of {}", instant.getClass().getName());
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Invoking beforeAll methods of {}", instant.getClass().getName());
+    }
     final List<Method> beforeAllMethods = getBeforeAllMethods(instant.getClass());
     for (final Method method : beforeAllMethods) {
       try {

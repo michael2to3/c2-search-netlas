@@ -77,7 +77,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an error processing JSON
    */
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
-    final var commonName = getLast(".data.certificate.subject.common_name");
+    final var commonName = getLast(".data.certificate.subject.common_name", 0);
     final List<String> dnsNames = new ArrayList<>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
@@ -91,7 +91,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an error processing JSON
    */
   public String getJarm() throws JsonMappingException, JsonProcessingException {
-    return getLast(".data.jarm").asText();
+    return getLast(".data.jarm", 0).asText();
   }
 
   /**
@@ -102,7 +102,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an error processing JSON
    */
   public String getBody() throws JsonMappingException, JsonProcessingException {
-    return getLast(".data.http.body").asText();
+    return getLast(".data.http.body", 0).asText();
   }
 
   /**
@@ -113,7 +113,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an error processing JSON
    */
   public String getBodyAsSha256() throws JsonMappingException, JsonProcessingException {
-    return getLast(".data.http.body_sha256").asText();
+    return getLast(".data.http.body_sha256", 0).asText();
   }
 
   /**
@@ -126,19 +126,6 @@ public class NetlasWrapper {
    */
   public JsonNode getItem(final int item) throws JsonMappingException, JsonProcessingException {
     return get().get(item);
-  }
-
-  /**
-   * Returns the last JsonNode with the given keyPath, starting from the end of the list.
-   *
-   * @param keyPath the path of the key to search for
-   * @return the last JsonNode with the given keyPath, or null if not found
-   * @throws JsonMappingException if there is an issue with mapping json to objects
-   * @throws JsonProcessingException if there is an issue with processing json
-   */
-  public JsonNode getLast(final String keyPath)
-      throws JsonMappingException, JsonProcessingException {
-    return getLast(keyPath, 0);
   }
 
   /**
@@ -221,7 +208,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an issue with processing json
    */
   public JsonNode getHeaders() throws JsonMappingException, JsonProcessingException {
-    return getLast(".data.http.headers");
+    return getLast(".data.http.headers", 0);
   }
 
   /**
@@ -233,7 +220,7 @@ public class NetlasWrapper {
    */
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
     final List<String> servers = new ArrayList<>();
-    final JsonNode items = getLast(".data.http.headers.server");
+    final JsonNode items = getLast(".data.http.headers.server", 0);
 
     items.forEach(
         item -> {
@@ -250,6 +237,6 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an issue with processing json
    */
   public int getStatusCode() throws JsonMappingException, JsonProcessingException {
-    return getLast(".data.http.status_code").asInt();
+    return getLast(".data.http.status_code", 0).asInt();
   }
 }

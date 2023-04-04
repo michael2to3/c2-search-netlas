@@ -87,7 +87,7 @@ public class C2Detect {
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
-    fields.setField(Socket.class, getSocket(host, cmd.getSocketTimeoutMs()));
+    fields.setField(Socket.class, getSocket(host, cmd.getSocketMs()));
     return fields;
   }
 

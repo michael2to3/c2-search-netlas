@@ -27,7 +27,9 @@ class NetlasWrapperTest {
 
   @BeforeAll
   static void setup() throws JsonMappingException, JsonProcessingException {
-    LOGGER.info("Use API key: {}", API);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Use API key: {}", API);
+    }
     netlas = new NetlasWrapper(API, HOST);
   }
 
@@ -104,7 +106,7 @@ class NetlasWrapperTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> {
-          netlas.getLast("notExistKey");
+          netlas.getLast("notExistKey", 0);
         });
   }
 }

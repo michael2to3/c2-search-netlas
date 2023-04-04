@@ -1,13 +1,13 @@
 package c2.search.netlas.cli;
 
-import c2.search.netlas.*;
+import c2.search.netlas.C2Detect;
 import c2.search.netlas.scheme.Host;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CLArgumentsManager {
-  private static final int SOCKET_TIMEOUT_MS = 1000;
+  private static final int SOCKET_MS = 1000;
   private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private static final String PATH_API_KEY = "api.key";
   private final Config config;
@@ -36,11 +36,15 @@ public class CLArgumentsManager {
     LOGGER.info("Getting target port from command line arguments");
     final String portStr = cmd.getOptionValue("p");
 
+    int port = -1;
     try {
-      return Integer.parseInt(portStr);
+      port = Integer.parseInt(portStr);
     } catch (final NumberFormatException e) {
-      throw new IllegalArgumentException("Invalid target port: " + portStr);
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Invalid port number: " + portStr);
+      }
     }
+    return port;
   }
 
   public boolean isHelp() {
@@ -65,26 +69,25 @@ public class CLArgumentsManager {
 
   public String getApiKey() {
     LOGGER.info("Getting API key");
+    String apiKey = config.get(PATH_API_KEY);
     if (cmd.hasOption("s")) {
-      return cmd.getOptionValue("s");
+      apiKey = cmd.getOptionValue("s");
     }
-    return config.get(PATH_API_KEY);
+    return apiKey;
   }
 
-  public int getSocketTimeoutMs() {
+  public int getSocketMs() {
     LOGGER.info("Getting socket timeout");
-    return getSocketTimeoutMs(SOCKET_TIMEOUT_MS);
-  }
 
-  private int getSocketTimeoutMs(final int defaultTimeout) {
+    int socketMs = SOCKET_MS;
     final String timeout = config.get("socket.timeout");
-    if (timeout == null) {
-      return defaultTimeout;
-    }
     try {
-      return Integer.parseInt(timeout);
+      socketMs = Integer.parseInt(timeout);
     } catch (final NumberFormatException e) {
-      return defaultTimeout;
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Invalid socket timeout: " + timeout);
+      }
     }
+    return socketMs;
   }
 }

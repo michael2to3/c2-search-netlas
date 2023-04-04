@@ -13,45 +13,45 @@ public class Config {
   private final String fileName;
   private final Properties props;
 
-  public Config(String fileName) {
+  public Config(final String fileName) {
     this.fileName = fileName;
     this.props = new Properties();
 
     try (FileInputStream input = new FileInputStream(fileName)) {
       props.load(input);
-    } catch (FileNotFoundException e) {
+    } catch (final FileNotFoundException e) {
       LOGGER.error("Config file not found: {}", fileName);
       createFile(fileName);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private void createFile(String fileName) {
+  private void createFile(final String fileName) {
     try (FileOutputStream output = new FileOutputStream(fileName)) {
       props.store(output, null);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Failed to create config file: {}", fileName);
     }
   }
 
-  public String get(String key) {
+  public String get(final String key) {
     String value = props.getProperty(key);
     if (value == null) {
       value = System.getenv(key);
     }
     if (value == null) {
-      String upperKey = key.toUpperCase().replace('.', '_');
+      final String upperKey = key.toUpperCase().replace('.', '_');
       value = System.getenv(upperKey);
     }
     return value;
   }
 
-  public void save(String key, String value) {
+  public void save(final String key, final String value) {
     props.setProperty(key, value);
     try (FileOutputStream output = new FileOutputStream(fileName)) {
       props.store(output, null);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }
