@@ -11,10 +11,10 @@ public class CLArgumentsManager {
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private final String PATH_API_KEY = "api.key";
   private final Config config;
-  private CommandLine cmd;
-  private boolean isInvalid;
+  private final CommandLine cmd;
+  private final boolean isInvalid;
 
-  public CLArgumentsManager(CommandLine cmd, Config config) {
+  public CLArgumentsManager(final CommandLine cmd, final Config config) {
     LOGGER.info("Parsing command line arguments");
     this.cmd = cmd;
     this.config = config;
@@ -27,18 +27,18 @@ public class CLArgumentsManager {
 
   public Host getHost() {
     LOGGER.info("Getting host from command line arguments");
-    String domain = cmd.getOptionValue("t");
-    int port = getTargetPort();
+    final String domain = cmd.getOptionValue("t");
+    final int port = getTargetPort();
     return new Host(domain, port);
   }
 
   public int getTargetPort() {
     LOGGER.info("Getting target port from command line arguments");
-    String portStr = cmd.getOptionValue("p");
+    final String portStr = cmd.getOptionValue("p");
 
     try {
       return Integer.parseInt(portStr);
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       throw new IllegalArgumentException("Invalid target port: " + portStr);
     }
   }
@@ -58,7 +58,7 @@ public class CLArgumentsManager {
     return cmd.hasOption("s");
   }
 
-  public void setApiKey(String apiKey) {
+  public void setApiKey(final String apiKey) {
     LOGGER.info("Setting API key");
     config.save(PATH_API_KEY, apiKey);
   }
@@ -76,14 +76,14 @@ public class CLArgumentsManager {
     return getSocketTimeoutMs(DEFAULT_SOCKET_TIMEOUT_MS);
   }
 
-  private int getSocketTimeoutMs(int defaultTimeout) {
-    String timeout = config.get("socket.timeout");
+  private int getSocketTimeoutMs(final int defaultTimeout) {
+    final String timeout = config.get("socket.timeout");
     if (timeout == null) {
       return defaultTimeout;
     }
     try {
       return Integer.parseInt(timeout);
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       return defaultTimeout;
     }
   }

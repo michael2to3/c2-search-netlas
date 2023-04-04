@@ -119,13 +119,13 @@ public class NetlasWrapper {
   /**
    * Gets the Netlas response item at the specified index.
    *
-   * @param i the index of the item to retrieve
+   * @param item the index of the item to retrieve
    * @return the Netlas response item
    * @throws JsonMappingException if there is an error mapping JSON to Java objects
    * @throws JsonProcessingException if there is an error processing JSON
    */
-  public JsonNode getItem(final int i) throws JsonMappingException, JsonProcessingException {
-    return get().get(i);
+  public JsonNode getItem(final int item) throws JsonMappingException, JsonProcessingException {
+    return get().get(item);
   }
 
   /**
@@ -180,13 +180,15 @@ public class NetlasWrapper {
       throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
     final int count = get().size();
+    JsonNode node = null;
     for (int i = skip; i < count; ++i) {
       final JsonNode value = getNodeFromItem(getItem(i), keyPath);
       if (value != null) {
-        return value;
+        node = value;
+        break;
       }
     }
-    return null;
+    return node;
   }
 
   /**
@@ -236,9 +238,6 @@ public class NetlasWrapper {
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
     final List<String> servers = new ArrayList<>();
     final JsonNode items = getLast(".data.http.headers.server");
-    if (items == null) {
-      return null;
-    }
 
     items.forEach(
         item -> {
