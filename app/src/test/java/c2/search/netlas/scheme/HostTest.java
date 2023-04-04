@@ -27,4 +27,10 @@ class HostTest {
     assertNotEquals(null, host);
     assertNotEquals(host.getTarget(), host);
   }
+
+  @Test
+  void testToString() {
+    Host host = new Host("8.8.8.8", 53);
+    assertEquals("8.8.8.8:53", host.toString());
+  }
 }

@@ -18,8 +18,16 @@ import java.util.List;
 
 @Detect(name = "Havoc")
 public class Havoc {
-  @Wire protected Host host;
-  @Wire protected NetlasWrapper netlasWrapper;
+  @Wire private Host host;
+  @Wire private NetlasWrapper netlasWrapper;
+
+  public void setHost(Host host) {
+    this.host = host;
+  }
+
+  public void setNetlasWrapper(NetlasWrapper netlasWrapper) {
+    this.netlasWrapper = netlasWrapper;
+  }
 
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
@@ -36,19 +44,15 @@ public class Havoc {
     int rstatusCode = netlasWrapper.getStatusCode();
 
     boolean hasServerHeader = true;
-    try {
-      List<String> servers = netlasWrapper.getServers();
-      hasServerHeader = !servers.isEmpty();
-    } catch (Exception e) {
-      hasServerHeader = false;
-    }
+    List<String> servers = netlasWrapper.getServers();
+    hasServerHeader = servers != null && !servers.isEmpty();
 
     return new Response(rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader);
   }
 
   @Test(extern = true)
-  public Response checkDumbHeader() throws Exception {
-    URL url = new URL("https://" + host.getTarget() + ":" + host.getPort() + "/");
+  public Response checkDumbHeader() throws IOException {
+    URL url = new URL("https://" + host + "/");
     URLConnection connection = url.openConnection();
     HttpURLConnection http = (HttpURLConnection) connection;
     http.setRequestMethod("POST");
@@ -58,10 +62,8 @@ public class Havoc {
   }
 
   @Test(extern = true)
-  public Response checkSendHttpOverHttps() throws Exception {
+  public Response checkSendHttpOverHttps() throws IOException {
     URL url = new URL("http://" + host.getTarget() + ":" + host.getPort() + "/");
-    String body = "Client sent an HTTP request to an HTTPS server.";
-    int status = 400;
     URLConnection connection = url.openConnection();
     HttpURLConnection http = (HttpURLConnection) connection;
     http.setRequestMethod("POST");
@@ -72,7 +74,11 @@ public class Havoc {
       StringBuilder sb = new StringBuilder();
       String line;
 
-      while ((line = in.readLine()) != null) {
+      while (true) {
+        line = in.readLine();
+        if (line == null) {
+          break;
+        }
         sb.append(line);
         sb.append(System.lineSeparator());
       }
@@ -80,6 +86,8 @@ public class Havoc {
     } catch (IOException e) {
       bodyResponse = "";
     }
+    int status = 400;
+    String body = "Client sent an HTTP request to an HTTPS server.";
     return new Response(bodyResponse.contains(body) && http.getResponseCode() == status);
   }
 }

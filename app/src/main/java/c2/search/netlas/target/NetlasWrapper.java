@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
  */
 public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
-  private Map<Host, JsonNode> response;
-  private Host host;
-  private Netlas netlas;
+  private final Map<Host, JsonNode> response;
+  private final Host host;
+  private final Netlas netlas;
 
   /**
    * Creates a new NetlasWrapper instance.
@@ -61,7 +61,7 @@ public class NetlasWrapper {
    *
    * @param json the Netlas response
    */
-  public void set(JsonNode json) {
+  public void set(final JsonNode json) {
     if (response.containsKey(host)) {
       response.replace(host, json);
     } else {
@@ -77,8 +77,8 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an error processing JSON
    */
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
-    var commonName = getLast(".data.certificate.subject.common_name");
-    List<String> dnsNames = new ArrayList<String>();
+    final var commonName = getLast(".data.certificate.subject.common_name");
+    final List<String> dnsNames = new ArrayList<String>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
   }
@@ -124,7 +124,7 @@ public class NetlasWrapper {
    * @throws JsonMappingException if there is an error mapping JSON to Java objects
    * @throws JsonProcessingException if there is an error processing JSON
    */
-  public JsonNode getItem(int i) throws JsonMappingException, JsonProcessingException {
+  public JsonNode getItem(final int i) throws JsonMappingException, JsonProcessingException {
     return get().get(i);
   }
 
@@ -136,7 +136,8 @@ public class NetlasWrapper {
    * @throws JsonMappingException if there is an issue with mapping json to objects
    * @throws JsonProcessingException if there is an issue with processing json
    */
-  public JsonNode getLast(String keyPath) throws JsonMappingException, JsonProcessingException {
+  public JsonNode getLast(final String keyPath)
+      throws JsonMappingException, JsonProcessingException {
     return getLast(keyPath, 0);
   }
 
@@ -146,7 +147,7 @@ public class NetlasWrapper {
    * @param key the key to format
    * @return the formatted key
    */
-  protected String formatKey(String key) {
+  protected String formatKey(final String key) {
     return key.replace('.', '/');
   }
 
@@ -157,9 +158,9 @@ public class NetlasWrapper {
    * @param key the key to search for
    * @return the JsonNode with the given key, or null if not found
    */
-  protected JsonNode getNodeFromItem(JsonNode item, String key) {
-    JsonPointer pointer = JsonPointer.compile(formatKey(key));
-    JsonNode node = item.at(pointer);
+  protected JsonNode getNodeFromItem(final JsonNode item, final String key) {
+    final JsonPointer pointer = JsonPointer.compile(formatKey(key));
+    final JsonNode node = item.at(pointer);
     if (!node.isMissingNode()) {
       return node;
     }
@@ -175,12 +176,12 @@ public class NetlasWrapper {
    * @throws JsonMappingException if there is an issue with mapping json to objects
    * @throws JsonProcessingException if there is an issue with processing json
    */
-  public JsonNode getLast(String keyPath, int skip)
+  public JsonNode getLast(final String keyPath, final int skip)
       throws JsonMappingException, JsonProcessingException {
     LOGGER.info("getLastHas: {}", keyPath);
-    int count = get().size();
+    final int count = get().size();
     for (int i = skip; i < count; ++i) {
-      JsonNode value = getNodeFromItem(getItem(i), keyPath);
+      final JsonNode value = getNodeFromItem(getItem(i), keyPath);
       if (value != null) {
         return value;
       }
@@ -201,12 +202,12 @@ public class NetlasWrapper {
       return response.get(host);
     }
 
-    var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
-    var datatype = "responses";
-    var page = 0;
-    var indices = "";
-    var fields = "";
-    var excludeFields = false;
+    final var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
+    final var datatype = "responses";
+    final var page = 0;
+    final var indices = "";
+    final var fields = "";
+    final var excludeFields = false;
     var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
     resp = resp.get("items");
     set(resp);
@@ -233,8 +234,8 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an issue with processing json
    */
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
-    List<String> servers = new ArrayList<>();
-    JsonNode items = getLast(".data.http.headers.server");
+    final List<String> servers = new ArrayList<>();
+    final JsonNode items = getLast(".data.http.headers.server");
     if (items == null) {
       return null;
     }

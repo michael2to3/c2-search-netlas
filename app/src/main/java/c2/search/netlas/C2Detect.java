@@ -23,25 +23,25 @@ public class C2Detect {
   private Checker checker;
   private CLArgumentsManager cmd;
 
-  public C2Detect(CLArgumentsManager cmd, PrintStream stream) {
+  public C2Detect(final CLArgumentsManager cmd, final PrintStream stream) {
     LOGGER.info("Initializing C2Detect");
     this.cmd = cmd;
     this.stream = stream;
   }
 
-  public void setStream(PrintStream stream) {
+  public void setStream(final PrintStream stream) {
     this.stream = stream;
   }
 
-  public void setCommandLineArgumentsManager(CLArgumentsManager cmd) {
+  public void setCommandLineArgumentsManager(final CLArgumentsManager cmd) {
     this.cmd = cmd;
   }
 
-  public void setFields(FieldValues fields) {
+  public void setFields(final FieldValues fields) {
     this.fields = fields;
   }
 
-  public void setup(String[] args) throws IOException, ParseException, ClassNotFoundException {
+  public void setup(final String[] args) throws IOException, ParseException, ClassNotFoundException {
     if (cmd.getHost() != null) {
       this.netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
       this.fields = createFields(cmd.getHost(), netlas);
@@ -49,7 +49,7 @@ public class C2Detect {
     }
   }
 
-  public void run(String[] args)
+  public void run(final String[] args)
       throws ClassNotFoundException,
           IOException,
           ParseException,
@@ -70,7 +70,7 @@ public class C2Detect {
     stream.flush();
   }
 
-  protected Checker createChecker(FieldValues fields) throws ClassNotFoundException, IOException {
+  protected Checker createChecker(final FieldValues fields) throws ClassNotFoundException, IOException {
     return new Checker(fields);
   }
 
@@ -80,12 +80,12 @@ public class C2Detect {
           InvocationTargetException,
           NoSuchMethodException,
           SecurityException {
-    Results responses = checker.run();
+    final Results responses = checker.run();
     printResponses(responses, cmd.isVerbose());
   }
 
-  private FieldValues createFields(Host host, NetlasWrapper netlas) {
-    FieldValues fields = new FieldValues();
+  private FieldValues createFields(final Host host, final NetlasWrapper netlas) {
+    final FieldValues fields = new FieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
@@ -93,16 +93,16 @@ public class C2Detect {
     return fields;
   }
 
-  private void printResponses(Results responses, boolean verbose) {
+  private void printResponses(final Results responses, final boolean verbose) {
     responses.print(stream, verbose);
   }
 
-  protected static Socket getSocket(Host host, int socketTimeout) {
+  protected static Socket getSocket(final Host host, final int socketTimeout) {
     try {
-      Socket socket = new Socket(host.getTarget(), host.getPort());
+      final Socket socket = new Socket(host.getTarget(), host.getPort());
       socket.setSoTimeout(socketTimeout);
       return socket;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       return null;
     }
   }

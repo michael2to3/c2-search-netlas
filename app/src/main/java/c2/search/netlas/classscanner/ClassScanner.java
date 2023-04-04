@@ -12,7 +12,7 @@ public class ClassScanner {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
   private final List<Class<?>> classes;
 
-  public ClassScanner(String packageName) {
+  public ClassScanner(final String packageName) {
     classes = new ArrayList<>();
     try (ScanResult scanResult =
         new ClassGraph().enableAllInfo().acceptPackages(packageName).scan()) {
@@ -20,7 +20,7 @@ public class ClassScanner {
     }
   }
 
-  protected void addClass(Class<?> clazz) {
+  protected void addClass(final Class<?> clazz) {
     classes.add(clazz);
   }
 
@@ -28,11 +28,12 @@ public class ClassScanner {
     return classes;
   }
 
-  public List<Class<?>> getClassesWithAnnotation(Class<? extends Annotation> classAnnotation) {
-    List<Class<?>> annotatedClasses = new ArrayList<>();
-    for (Class<?> clazz : classes) {
-      Annotation[] classAnnotations = clazz.getAnnotations();
-      for (Annotation annotation : classAnnotations) {
+  public List<Class<?>> getClassesWithAnnotation(
+      final Class<? extends Annotation> classAnnotation) {
+    final List<Class<?>> annotatedClasses = new ArrayList<>();
+    for (final Class<?> clazz : classes) {
+      final Annotation[] classAnnotations = clazz.getAnnotations();
+      for (final Annotation annotation : classAnnotations) {
         if (annotation.annotationType() == classAnnotation) {
           annotatedClasses.add(clazz);
           break;

@@ -7,24 +7,25 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class SocketConnection implements AutoCloseable {
-  private final String id;
+  private static final int BUFFER_SIZE = 4096;
+  private final String trigger;
   private final Socket socket;
 
-  public SocketConnection(Socket socket, String id) {
+  public SocketConnection(final Socket socket, final String trigger) {
     this.socket = socket;
-    this.id = id;
+    this.trigger = trigger;
   }
 
   public String sendAndReceive() throws IOException {
-    String message = "echo " + id;
-    OutputStream output = socket.getOutputStream();
-    InputStream input = socket.getInputStream();
+    final String message = "echo " + trigger;
+    final OutputStream output = socket.getOutputStream();
+    final InputStream input = socket.getInputStream();
 
     output.write(message.getBytes());
     output.flush();
 
-    byte[] response = new byte[1024];
-    int responseLength = input.read(response);
+    final byte[] response = new byte[BUFFER_SIZE];
+    final int responseLength = input.read(response);
     return new String(response, 0, responseLength, StandardCharsets.UTF_8);
   }
 

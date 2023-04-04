@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 public class CLArgumentsManager {
   private static final int DEFAULT_SOCKET_TIMEOUT_MS = 1000;
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
+  private final String PATH_API_KEY = "api.key";
   private final Config config;
   private CommandLine cmd;
   private boolean isInvalid;
@@ -59,7 +60,7 @@ public class CLArgumentsManager {
 
   public void setApiKey(String apiKey) {
     LOGGER.info("Setting API key");
-    config.save("api.key", apiKey);
+    config.save(PATH_API_KEY, apiKey);
   }
 
   public String getApiKey() {
@@ -67,7 +68,7 @@ public class CLArgumentsManager {
     if (cmd.hasOption("s")) {
       return cmd.getOptionValue("s");
     }
-    return config.get("api.key");
+    return config.get(PATH_API_KEY);
   }
 
   public int getSocketTimeoutMs() {

@@ -2,7 +2,9 @@ package c2.search.netlas;
 
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -31,7 +33,7 @@ public class App {
     return out;
   }
 
-  public static void setOut(PrintStream out) {
+  public static void setOut(final PrintStream out) {
     App.out = out;
   }
 
@@ -43,20 +45,20 @@ public class App {
     return config;
   }
 
-  public static void setConfig(Config config) {
+  public static void setConfig(final Config config) {
     App.config = config;
   }
 
-  public static CLArgumentsManager getParseCmdArgs(String[] args) {
+  public static CLArgumentsManager getParseCmdArgs(final String[] args) {
     CommandLine cmd = null;
-    CommandLineParser parser = getDefaultParser();
+    final CommandLineParser parser = getDefaultParser();
     try {
       cmd = parser.parse(setupOptions(), args);
-    } catch (ParseException e) {
+    } catch (final ParseException e) {
       LOGGER.info("Error parsing command line arguments", e);
     }
 
-    CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, config);
+    final CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, config);
     return parseCmdArgs;
   }
 
@@ -64,16 +66,16 @@ public class App {
     return c2detect;
   }
 
-  public static void setC2detect(C2Detect c2Detect) {
+  public static void setC2detect(final C2Detect c2Detect) {
     App.c2detect = c2Detect;
   }
 
-  public static void main(String[] args) {
-    CLArgumentsManager parseCmdArgs = getParseCmdArgs(args);
+  public static void main(final String[] args) {
+    final CLArgumentsManager parseCmdArgs = getParseCmdArgs(args);
     c2detect.setCommandLineArgumentsManager(parseCmdArgs);
 
     if (parseCmdArgs.isInvalid() || parseCmdArgs.isHelp()) {
-      HelpFormatter formatter = new HelpFormatter();
+      final HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("c2detect", setupOptions());
     } else if (parseCmdArgs.isChangeApiKey()) {
       parseCmdArgs.setApiKey(parseCmdArgs.getApiKey());
@@ -82,11 +84,18 @@ public class App {
     }
   }
 
-  public static void startScan(String[] args) {
+  public static void startScan(final String[] args) {
     try {
       c2detect.run(args);
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
+    } catch (ClassNotFoundException
+        | IllegalAccessException
+        | InstantiationException
+        | InvocationTargetException
+        | NoSuchMethodException
+        | SecurityException
+        | IOException
+        | ParseException e) {
+      LOGGER.error("Error running c2detect", e);
     }
   }
 
@@ -95,34 +104,36 @@ public class App {
   }
 
   protected static Options setupOptions() {
-    Options options = new Options();
-    Option setOption =
+    final Options options = new Options();
+    final Option setOption =
         Option.builder("s")
             .longOpt("set")
             .hasArg(true)
             .argName("API_KEY")
             .desc("Set the API key to use for the application")
             .build();
-    Option targetOption =
+    final Option targetOption =
         Option.builder("t")
             .longOpt("target")
             .hasArg(true)
             .argName("TARGET_DOMAIN")
             .desc("Set the target domain for the application")
             .build();
-    Option portOption =
+    final Option portOption =
         Option.builder("p")
             .longOpt("port")
             .hasArg(true)
             .argName("TARGET_PORT")
             .desc("Set the target port for the application")
             .build();
-    Option printVerbosOption =
+    final Option printVerbosOption =
         Option.builder("v").longOpt("verbose").hasArg(false).desc("Print verbose output").build();
-    Option helpOption = Option.builder("h").longOpt("help").desc("Print this help message").build();
+    final Option helpOption =
+        Option.builder("h").longOpt("help").desc("Print this help message").build();
 
-    List<Option> list = List.of(setOption, targetOption, portOption, printVerbosOption, helpOption);
-    for (Option option : list) {
+    final List<Option> list =
+        List.of(setOption, targetOption, portOption, printVerbosOption, helpOption);
+    for (final Option option : list) {
       options.addOption(option);
     }
     return options;
