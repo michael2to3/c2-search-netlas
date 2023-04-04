@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Results {
-  private static String PATTERN_PRINT_VERSION = "%-12s ";
+  private static final String PATTERN_PRINT_VERSION = "%-12s ";
 
   protected static Map<String, List<Response>> sortBySuccessPercentage(
       final Map<String, List<Response>> responses) {
@@ -27,12 +26,12 @@ public class Results {
         new Comparator<Map.Entry<String, Integer>>() {
           @Override
           public int compare(
-              final Map.Entry<String, Integer> e1, final Map.Entry<String, Integer> e2) {
-            return e2.getValue().compareTo(e1.getValue());
+              final Map.Entry<String, Integer> lhs, final Map.Entry<String, Integer> rhs) {
+            return rhs.getValue().compareTo(lhs.getValue());
           }
         });
 
-    final Map<String, List<Response>> sortedResponses = new LinkedHashMap<>();
+    final Map<String, List<Response>> sortedResponses = new ConcurrentHashMap<>();
     for (final Map.Entry<String, Integer> entry : sortedEntries) {
       sortedResponses.put(entry.getKey(), responses.get(entry.getKey()));
     }
@@ -158,16 +157,14 @@ public class Results {
     final int numBlocks = (int) Math.ceil((successPercentage / max) * len);
 
     final StringBuilder progress = new StringBuilder();
-    progress.append("[");
+    progress.append('[');
     for (int i = 0; i < numBlocks; i++) {
       progress.append(symbol);
     }
     for (int i = numBlocks; i < len; i++) {
-      progress.append(" ");
+      progress.append(' ');
     }
-    progress.append("] ");
-    progress.append(successPercentage);
-    progress.append("%");
+    progress.append("] ").append(successPercentage).append('%');
 
     stream.print(progress.toString());
   }
