@@ -13,6 +13,14 @@ public class Results {
   private static final String PRINT_VER = "%-12s ";
   private Map<String, List<Response>> responses;
 
+  public Results() {
+    this.responses = new HashMap<>();
+  }
+
+  public Results(final Map<String, List<Response>> responses) {
+    this.responses = sortBySuccessPercentage(responses);
+  }
+
   protected static Map<String, List<Response>> sortBySuccessPercentage(
       final Map<String, List<Response>> responses) {
     final Map<String, Integer> successCount = new ConcurrentHashMap<>();
@@ -58,14 +66,6 @@ public class Results {
       }
     }
     return (int) ((double) numSuccess / toolResponses.size() * 100);
-  }
-
-  public Results() {
-    this.responses = new HashMap<>();
-  }
-
-  public Results(final Map<String, List<Response>> responses) {
-    this.responses = sortBySuccessPercentage(responses);
   }
 
   public void addResponse(final String name, final List<Response> responses) {
