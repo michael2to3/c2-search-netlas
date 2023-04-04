@@ -27,7 +27,7 @@ public class CheckerTest {
   public void setUp() throws ClassNotFoundException, IOException {
     netlasWrapper = mock(NetlasWrapper.class);
     host = mock(Host.class);
-    var fields = new AnnotatedFieldValues();
+    var fields = new FieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlasWrapper);
     fields.setField(Netlas.class, netlasWrapper.getNetlas());
@@ -64,7 +64,7 @@ public class CheckerTest {
 
     var host = new Host("localhost", 80);
     NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
-    var fields = new AnnotatedFieldValues();
+    var fields = new FieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlasWrapper);
     ClassScanner classScanner = mock(ClassScanner.class);

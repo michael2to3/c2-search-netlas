@@ -21,9 +21,9 @@ public class Checker {
   private static final Logger LOGGER = LoggerFactory.getLogger(Checker.class);
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private ClassScanner classScanner;
-  private AnnotatedFieldValues fields;
+  private FieldValues fields;
 
-  public Checker(AnnotatedFieldValues fields) throws ClassNotFoundException, IOException {
+  public Checker(FieldValues fields) throws ClassNotFoundException, IOException {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
     this.fields = fields;
   }
