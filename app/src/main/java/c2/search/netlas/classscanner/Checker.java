@@ -50,7 +50,9 @@ public class Checker {
         | IllegalAccessException
         | InvocationTargetException
         | NoSuchMethodException e) {
-      LOGGER.error("Failed to instantiate {}", clazz.getName(), e);
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error("Failed to instantiate {}", clazz.getName(), e);
+      }
     }
     return instant;
   }
@@ -66,16 +68,14 @@ public class Checker {
 
   private List<Response> invokeTestMethods(final Object instant) {
     final List<Response> responses = new ArrayList<>();
-    Response response = null;
+    Response response;
     for (final Method method : getTestMethods(instant.getClass())) {
       try {
         response = invokeTestMethod(method, instant);
+        responses.add(response);
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         handleInvocationError(method, instant, e);
-        response = new Response(false);
-        response.setError(e.getMessage());
       }
-      responses.add(response);
     }
     return responses;
   }
