@@ -15,8 +15,12 @@ public class Host {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     Host host = (Host) o;
     return port == host.port && target.equals(host.target);
   }
