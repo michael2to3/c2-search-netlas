@@ -110,8 +110,7 @@ public class Metasploit {
 
   @Test(extern = true)
   public Response checkBindShell() throws IOException {
-    final String id = SHELL_ID;
     final String response = socketConnection.sendAndReceive();
-    return new Response(response.contains(id));
+    return new Response(response.contains(SHELL_ID));
   }
 }
