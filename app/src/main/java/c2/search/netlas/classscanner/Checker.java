@@ -16,11 +16,11 @@ public class Checker {
   private static final Logger LOGGER = LoggerFactory.getLogger(Checker.class);
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private ClassScanner classScanner;
-  private final DependencyInjector dependencyInjector;
+  private final DependencyInjector depInjector;
 
   public Checker(final FieldValues fields) {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
-    this.dependencyInjector = new DependencyInjector(fields);
+    this.depInjector = new DependencyInjector(fields);
   }
 
   public void setClassScanner(final ClassScanner classScanner) {
@@ -32,7 +32,7 @@ public class Checker {
     final Results results = new Results();
     for (final Class<?> clazz : detectedClasses) {
       final Object instant = instantiateClass(clazz);
-      dependencyInjector.inject(instant);
+      depInjector.inject(instant);
       invokeBeforeAllMethods(instant);
       results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
     }
