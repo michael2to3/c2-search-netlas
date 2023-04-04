@@ -4,14 +4,12 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
-import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -45,11 +43,8 @@ public class Checker {
   }
 
   public Results run()
-      throws IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+      throws IllegalAccessException, InstantiationException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -66,12 +61,8 @@ public class Checker {
   }
 
   private Object instantiateClass(Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          IllegalArgumentException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+          InvocationTargetException, NoSuchMethodException, SecurityException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }
@@ -154,18 +145,6 @@ public class Checker {
           annotatedField.getType().getSimpleName(),
           instant.getClass().getSimpleName());
     }
-  }
-
-  private static Socket getSocket(Host host, int timeout) {
-    LOGGER.info("Getting socket");
-    Socket socket = null;
-    try {
-      socket = new Socket(host.getTarget(), host.getPort());
-      socket.setSoTimeout(timeout);
-    } catch (IOException e) {
-      LOGGER.error("Failed to connect to {}:{}", host.getTarget(), host.getPort());
-    }
-    return socket;
   }
 
   private List<Method> getBeforeAllMethods(Class<?> clazz) {
