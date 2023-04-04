@@ -21,9 +21,18 @@ public class Config {
       props.load(input);
     } catch (FileNotFoundException e) {
       LOGGER.error("Config file not found: {}", fileName);
+      createFile(fileName);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private void createFile(String fileName) {
+    try (FileOutputStream output = new FileOutputStream(fileName)) {
+      props.store(output, null);
+    } catch (IOException e) {
+      LOGGER.error("Failed to create config file: {}", fileName);
+    } 
   }
 
   public String get(String key) {
