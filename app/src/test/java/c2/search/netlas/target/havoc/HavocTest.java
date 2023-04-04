@@ -26,8 +26,8 @@ public class HavocTest {
 
   @BeforeEach
   public void setUp() {
-    havoc.host = host;
-    havoc.netlasWrapper = netlasWrapper;
+    havoc.setHost(host);
+    havoc.setNetlasWrapper(netlasWrapper);
   }
 
   @Test

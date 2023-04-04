@@ -35,10 +35,10 @@ jobs:
     - name: Create Jacoco report
       run: gradle jacocoTestReport
 
-    - name: Upload coverage reports to Codecov
+    - name: Upload coverage reports to Codacy
       env:
-        CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-      uses: codecov/codecov-action@v3
+        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
   formatting:
     runs-on: ubuntu-latest

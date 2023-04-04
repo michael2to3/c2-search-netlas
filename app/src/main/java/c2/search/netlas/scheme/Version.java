@@ -4,7 +4,7 @@ public class Version implements Comparable<Version> {
   private String max;
   private String min;
 
-  public Version(String max, String min) {
+  public Version(final String max, final String min) {
     this.max = max;
     this.min = min;
   }
@@ -19,7 +19,7 @@ public class Version implements Comparable<Version> {
   }
 
   @Override
-  public int compareTo(Version other) {
+  public int compareTo(final Version other) {
     int result = this.min.compareTo(other.min);
     if (result == 0) {
       result = this.max.compareTo(other.max);
@@ -28,11 +28,17 @@ public class Version implements Comparable<Version> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Version version = (Version) o;
-    return min.equals(version.min) && max.equals(version.max);
+  public boolean equals(final Object o) {
+    boolean result;
+    if (this == o) {
+      result = true;
+    } else if (o == null || getClass() != o.getClass()) {
+      result = false;
+    } else {
+      final Version version = (Version) o;
+      result = min.equals(version.min) && max.equals(version.max);
+    }
+    return result;
   }
 
   @Override
@@ -48,7 +54,7 @@ public class Version implements Comparable<Version> {
     return min;
   }
 
-  public void setMin(String min) {
+  public void setMin(final String min) {
     this.min = min;
   }
 
@@ -56,7 +62,7 @@ public class Version implements Comparable<Version> {
     return max;
   }
 
-  public void setMax(String max) {
+  public void setMax(final String max) {
     this.max = max;
   }
 }

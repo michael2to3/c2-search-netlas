@@ -8,17 +8,23 @@ public class Host {
 
   public Host() {}
 
-  public Host(String target, int port) {
+  public Host(final String target, final int port) {
     this.target = target;
     this.port = port;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Host host = (Host) o;
-    return port == host.port && target.equals(host.target);
+  public boolean equals(final Object o) {
+    boolean result;
+    if (this == o) {
+      result = true;
+    } else if (o == null || getClass() != o.getClass()) {
+      result = false;
+    } else {
+      final Host host = (Host) o;
+      result = port == host.port && target.equals(host.target);
+    }
+    return result;
   }
 
   @Override
@@ -35,7 +41,7 @@ public class Host {
     return target;
   }
 
-  public void setTarget(String target) {
+  public void setTarget(final String target) {
     this.target = target;
   }
 
@@ -43,7 +49,7 @@ public class Host {
     return port;
   }
 
-  public void setPort(int port) {
+  public void setPort(final int port) {
     this.port = port;
   }
 }

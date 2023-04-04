@@ -21,10 +21,18 @@ class HostTest {
     assertEquals(8080, host.getPort());
 
     Host other = new Host("www.yahoo.com", 8080);
+    assertEquals(other, other);
     assertEquals(host, other);
+    assertNotEquals(host, new String());
     assertEquals(host.toString(), other.toString());
     assertEquals(host.hashCode(), other.hashCode());
     assertNotEquals(null, host);
     assertNotEquals(host.getTarget(), host);
+  }
+
+  @Test
+  void testToString() {
+    Host host = new Host("8.8.8.8", 53);
+    assertEquals("8.8.8.8:53", host.toString());
   }
 }

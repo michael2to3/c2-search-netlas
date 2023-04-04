@@ -2,7 +2,7 @@ package c2.search.netlas.classscanner;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import c2.search.netlas.annotation.*;
+import c2.search.netlas.annotation.Detect;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,12 @@ class ClassScannerTest {
     ClassScanner scanner = new ClassScanner(packageName);
     List<Class<?>> classes = scanner.getClassesWithAnnotation(Detect.class);
     assertTrue(classes.size() > 0);
+
+    classes = scanner.getClassesWithAnnotation(NotExists.class);
+    assertTrue(classes.isEmpty());
   }
 
   static class MyTestClass {}
+
+  static @interface NotExists {}
 }

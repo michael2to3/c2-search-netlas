@@ -5,40 +5,52 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Results {
+  private static final String PRINT_VER = "%-12s ";
+  private Map<String, List<Response>> responses;
+
+  public Results() {
+    this.responses = new HashMap<>();
+  }
+
+  public Results(final Map<String, List<Response>> responses) {
+    this.responses = sortBySuccessPercentage(responses);
+  }
+
   protected static Map<String, List<Response>> sortBySuccessPercentage(
-      Map<String, List<Response>> responses) {
-    Map<String, Integer> successCount = new HashMap<>();
-    for (Map.Entry<String, List<Response>> entry : responses.entrySet()) {
-      int count = getSuccessPercentage(entry.getValue());
+      final Map<String, List<Response>> responses) {
+    final Map<String, Integer> successCount = new ConcurrentHashMap<>();
+    for (final Map.Entry<String, List<Response>> entry : responses.entrySet()) {
+      final int count = getSuccessPercentage(entry.getValue());
       successCount.put(entry.getKey(), count);
     }
 
-    List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(successCount.entrySet());
+    final List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(successCount.entrySet());
     Collections.sort(
         sortedEntries,
         new Comparator<Map.Entry<String, Integer>>() {
           @Override
-          public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-            return e2.getValue().compareTo(e1.getValue());
+          public int compare(
+              final Map.Entry<String, Integer> lhs, final Map.Entry<String, Integer> rhs) {
+            return rhs.getValue().compareTo(lhs.getValue());
           }
         });
 
-    Map<String, List<Response>> sortedResponses = new LinkedHashMap<>();
-    for (Map.Entry<String, Integer> entry : sortedEntries) {
+    final Map<String, List<Response>> sortedResponses = new ConcurrentHashMap<>();
+    for (final Map.Entry<String, Integer> entry : sortedEntries) {
       sortedResponses.put(entry.getKey(), responses.get(entry.getKey()));
     }
 
     return sortedResponses;
   }
 
-  private static int getSuccessCount(List<Response> toolResponses) {
+  private static int getSuccessCount(final List<Response> toolResponses) {
     int numSuccess = 0;
-    for (Response response : toolResponses) {
+    for (final Response response : toolResponses) {
       if (response.isSuccess()) {
         numSuccess++;
       }
@@ -46,9 +58,9 @@ public class Results {
     return numSuccess;
   }
 
-  private static int getSuccessPercentage(List<Response> toolResponses) {
+  private static int getSuccessPercentage(final List<Response> toolResponses) {
     int numSuccess = 0;
-    for (Response response : toolResponses) {
+    for (final Response response : toolResponses) {
       if (response.isSuccess()) {
         numSuccess++;
       }
@@ -56,22 +68,12 @@ public class Results {
     return (int) ((double) numSuccess / toolResponses.size() * 100);
   }
 
-  private Map<String, List<Response>> responses;
-
-  public Results() {
-    this.responses = new HashMap<>();
-  }
-
-  public Results(Map<String, List<Response>> responses) {
-    this.responses = sortBySuccessPercentage(responses);
-  }
-
-  public void addResponse(String name, List<Response> responses) {
+  public void addResponse(final String name, final List<Response> responses) {
     this.responses.put(name, responses);
     this.responses = sortBySuccessPercentage(this.responses);
   }
 
-  public void addResponse(String name, Response response) {
+  public void addResponse(final String name, final Response response) {
     List<Response> responses = this.responses.get(name);
     if (responses == null) {
       responses = new ArrayList<>();
@@ -84,15 +86,15 @@ public class Results {
     return responses;
   }
 
-  public void setResponses(Map<String, List<Response>> responses) {
+  public void setResponses(final Map<String, List<Response>> responses) {
     this.responses = responses;
   }
 
-  public void print(PrintStream stream) {
+  public void print(final PrintStream stream) {
     printShort(stream);
   }
 
-  public void print(PrintStream stream, boolean verbose) {
+  public void print(final PrintStream stream, final boolean verbose) {
     if (verbose) {
       printVerbose(stream);
     } else {
@@ -100,13 +102,13 @@ public class Results {
     }
   }
 
-  public void printVerbose(PrintStream stream) {
-    for (String tool : responses.keySet()) {
-      List<Response> toolResponses = responses.get(tool);
-      var resp = toolResponses.get(0);
+  public void printVerbose(final PrintStream stream) {
+    for (final String tool : responses.keySet()) {
+      final List<Response> toolResponses = responses.get(tool);
+      final var resp = toolResponses.get(0);
 
-      if (resp.getVersion() == null) {
-        stream.printf("%-12s ", tool, resp.getVersion());
+      if (resp.getVersion().isEmpty()) {
+        stream.printf(PRINT_VER, tool, resp.getVersion());
       } else {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
@@ -114,7 +116,7 @@ public class Results {
       printProgressBar(stream, getSuccessPercentage(toolResponses));
       stream.printf(" (%d/%d) ", getSuccessCount(toolResponses), toolResponses.size());
 
-      for (Response response : toolResponses) {
+      for (final Response response : toolResponses) {
         if (response.isSuccess()
             && response.getDescription() != null
             && !response.getDescription().isEmpty()) {
@@ -129,16 +131,16 @@ public class Results {
     }
   }
 
-  public void printShort(PrintStream stream) {
-    for (String tool : responses.keySet()) {
-      List<Response> toolResponses = responses.get(tool);
+  public void printShort(final PrintStream stream) {
+    for (final String tool : responses.keySet()) {
+      final List<Response> toolResponses = responses.get(tool);
       if (getSuccessCount(toolResponses) == 0) {
         continue;
       }
-      var resp = toolResponses.get(0);
+      final var resp = toolResponses.get(0);
 
       if (resp.getVersion().isEmpty()) {
-        stream.printf("%-12s ", tool, resp.getVersion());
+        stream.printf(PRINT_VER, tool, resp.getVersion());
       } else {
         stream.printf("%-12s {Version: %s} ", tool, resp.getVersion());
       }
@@ -147,11 +149,22 @@ public class Results {
     }
   }
 
-  private void printProgressBar(PrintStream stream, int successPercentage) {
+  private void printProgressBar(final PrintStream stream, final int successPercentage) {
     final int len = 40;
-    String symbol = "█";
-    int numBlocks = (int) Math.ceil((successPercentage / 100.0) * len);
-    String progress = "[" + symbol.repeat(numBlocks) + " ".repeat(len - numBlocks) + "] ";
-    stream.print(progress + successPercentage + "%");
+    final double max = 100.0;
+    final String symbol = "█";
+    final int numBlocks = (int) Math.ceil((successPercentage / max) * len);
+
+    final StringBuilder progress = new StringBuilder();
+    progress.append('[');
+    for (int i = 0; i < numBlocks; i++) {
+      progress.append(symbol);
+    }
+    for (int i = numBlocks; i < len; i++) {
+      progress.append(' ');
+    }
+    progress.append("] ").append(successPercentage).append('%');
+
+    stream.print(progress.toString());
   }
 }
