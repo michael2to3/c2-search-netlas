@@ -29,14 +29,16 @@ public class Version implements Comparable<Version> {
 
   @Override
   public boolean equals(final Object o) {
+    boolean result = false;
     if (this == o) {
-      return true;
+      result = true;
+    } else if (o == null || getClass() != o.getClass()) {
+      result = false;
+    } else {
+      final Version version = (Version) o;
+      result = min.equals(version.min) && max.equals(version.max);
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    final Version version = (Version) o;
-    return min.equals(version.min) && max.equals(version.max);
+    return result;
   }
 
   @Override
