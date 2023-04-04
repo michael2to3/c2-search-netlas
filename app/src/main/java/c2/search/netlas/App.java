@@ -69,7 +69,6 @@ public class App {
   public static void main(String[] args) {
     CommandLineArgumentsManager parseCmdArgs = getParseCmdArgs(args);
     c2Detect = getC2Detect(parseCmdArgs);
-    int status = 0;
 
     if (parseCmdArgs.isInvalid() || parseCmdArgs.isHelp()) {
       HelpFormatter formatter = new HelpFormatter();
@@ -77,19 +76,16 @@ public class App {
     } else if (parseCmdArgs.isChangeApiKey()) {
       parseCmdArgs.setApiKey(parseCmdArgs.getApiKey());
     } else {
-      status = startScan(args);
+      startScan(args);
     }
-    System.exit(status);
   }
 
-  public static int startScan(String[] args) {
+  public static void startScan(String[] args) {
     try {
       c2Detect.run(args);
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
-      return 1;
     }
-    return 0;
   }
 
   protected static CommandLineParser getDefaultParser() {
