@@ -31,7 +31,12 @@ class ClassScannerTest {
     ClassScanner scanner = new ClassScanner(packageName);
     List<Class<?>> classes = scanner.getClassesWithAnnotation(Detect.class);
     assertTrue(classes.size() > 0);
+
+    classes = scanner.getClassesWithAnnotation(NotExists.class);
+    assertTrue(classes.isEmpty());
   }
 
   static class MyTestClass {}
+
+  static @interface NotExists {}
 }
