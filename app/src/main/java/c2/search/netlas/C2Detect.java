@@ -41,7 +41,8 @@ public class C2Detect {
     this.fields = fields;
   }
 
-  public void setup(final String[] args) throws IOException, ParseException, ClassNotFoundException {
+  public void setup(final String[] args)
+      throws IOException, ParseException, ClassNotFoundException {
     if (cmd.getHost() != null) {
       this.netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
       this.fields = createFields(cmd.getHost(), netlas);
@@ -70,7 +71,8 @@ public class C2Detect {
     stream.flush();
   }
 
-  protected Checker createChecker(final FieldValues fields) throws ClassNotFoundException, IOException {
+  protected Checker createChecker(final FieldValues fields)
+      throws ClassNotFoundException, IOException {
     return new Checker(fields);
   }
 
