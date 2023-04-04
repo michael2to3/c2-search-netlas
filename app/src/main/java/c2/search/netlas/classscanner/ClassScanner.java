@@ -35,7 +35,7 @@ public class ClassScanner {
     }
   }
 
-  private void scanClasses(InputStream inputStream, String packageName) throws IOException {
+  protected void scanClasses(InputStream inputStream, String packageName) throws IOException {
     LOGGER.info("Scanning Dir classes in package: {}", packageName);
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
@@ -50,7 +50,7 @@ public class ClassScanner {
     }
   }
 
-  private void scanSubPackage(String packageName) throws IOException {
+  protected void scanSubPackage(String packageName) throws IOException {
     String path = formatPath(packageName);
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream(path);
@@ -65,7 +65,7 @@ public class ClassScanner {
     }
   }
 
-  private void scanClasses(JarInputStream jarInputStream, String packageName) throws IOException {
+  protected void scanClasses(JarInputStream jarInputStream, String packageName) throws IOException {
     LOGGER.info("Scanning Jar classes in package: {}", packageName);
     JarEntry entry;
     while ((entry = jarInputStream.getNextJarEntry()) != null) {
@@ -87,7 +87,7 @@ public class ClassScanner {
     return classes;
   }
 
-  private String formatPath(String path) {
+  protected String formatPath(String path) {
     return path.replace(".", "/");
   }
 
@@ -117,7 +117,7 @@ public class ClassScanner {
     return annotatedClasses;
   }
 
-  private boolean checkJar() {
+  protected boolean checkJar() {
     Class<?> clazz = ClassScanner.class;
     ProtectionDomain protectionDomain = clazz.getProtectionDomain();
     CodeSource codeSource = protectionDomain.getCodeSource();
