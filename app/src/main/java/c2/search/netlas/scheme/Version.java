@@ -29,10 +29,8 @@ public class Version implements Comparable<Version> {
 
   @Override
   public boolean equals(final Object o) {
-    boolean result = false;
-    if (this == o) {
-      result = true;
-    } else if (o == null || getClass() != o.getClass()) {
+    boolean result = this == o;
+    if (o == null || getClass() != o.getClass()) {
       result = false;
     } else {
       final Version version = (Version) o;
