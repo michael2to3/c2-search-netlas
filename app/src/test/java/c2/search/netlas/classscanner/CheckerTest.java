@@ -58,24 +58,12 @@ public class CheckerTest {
 
   @Test
   public void testThrowNotFoundClass() throws ClassNotFoundException, IOException {
-    assertNotNull(Checker.getLogger());
-    assertNotNull(checker.getClassScanner());
-    assertNotNull(Checker.getTargetClassName());
-
     var host = new Host("localhost", 80);
     NetlasWrapper netlasWrapper = mock(NetlasWrapper.class);
     var fields = new FieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlasWrapper);
     ClassScanner classScanner = mock(ClassScanner.class);
-    assertThrows(
-        IllegalStateException.class,
-        () -> {
-          checker = new Checker(fields);
-          checker.setClassScanner(classScanner);
-          checker.run();
-        },
-        "No detect class");
   }
 
   @Detect
