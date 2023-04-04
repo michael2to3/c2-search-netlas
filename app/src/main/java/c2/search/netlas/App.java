@@ -17,9 +17,15 @@ import org.slf4j.LoggerFactory;
 public class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
   private static final String CONFIG_FILENAME = "config.properties";
-  private static Config config = new Config(CONFIG_FILENAME);
-  private static PrintStream out = System.out;
-  private static C2Detect c2detect = new C2Detect(null, out);
+  private static Config config;
+  private static PrintStream out;
+  private static C2Detect c2detect;
+
+  static {
+    config = new Config(CONFIG_FILENAME);
+    out = System.out;
+    c2detect = new C2Detect(null, out);
+  }
 
   public static PrintStream getOut() {
     return out;
