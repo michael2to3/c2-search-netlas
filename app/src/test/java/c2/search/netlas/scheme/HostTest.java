@@ -21,7 +21,9 @@ class HostTest {
     assertEquals(8080, host.getPort());
 
     Host other = new Host("www.yahoo.com", 8080);
+    assertEquals(other, other);
     assertEquals(host, other);
+    assertNotEquals(host, new String());
     assertEquals(host.toString(), other.toString());
     assertEquals(host.hashCode(), other.hashCode());
     assertNotEquals(null, host);
