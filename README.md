@@ -12,17 +12,21 @@ C2 Search Netlas is a Java utility to detect C2 servers using Netlas API. This u
 ## Installation
 
 Clone this repository to your local machine:
+
 ```bash
 git clone https://github.com/michael2to3/c2-search-netlas.git
 ```
 
 ## Usage
+
 To use this utility, you need to have a Netlas API key. You can get the key from the [Netlas](https://netlas.io/) website.
 
 Once you have the API key, create a config.properties file in the root directory of the project and add the following line:
+
 ```bash
 api.key=<your-netlas-api-key>
 ```
+
 Now you can build the project and run it using the following commands:
 
 ```bash
@@ -33,6 +37,7 @@ java -jar app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar --help
 This will display the help message with available options.
 
 To search for C2 servers, run the following command:
+
 ```bash
 java -jar app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar -t <ip-or-domain> -p <port>
 ```
@@ -57,14 +62,15 @@ This will display a list of C2 servers found in the given IP address or domain.
 | nettitude/PoshC2        | :x:                |
 
 Legend:
+
 - :white_check_mark: - Accept/good support
 - :question: - Support unknown/unclear
 - :x: - No support/poor support
 
-
 ## Contributing
 
 If you want to contribute to this project, please feel free to create a pull request.
+
 ## License
 
 This project is licensed under the License - see the [LICENSE](https://github.com/michael2to3/c2-search-netlas/blob/main/LICENSE) file for details.
