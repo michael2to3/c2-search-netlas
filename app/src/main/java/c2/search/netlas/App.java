@@ -7,9 +7,7 @@ package c2.search.netlas;
 
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -94,8 +92,7 @@ public class App {
       LOGGER.info("Error parsing command line arguments", e);
     }
 
-    final CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, config);
-    return parseCmdArgs;
+    return new CLArgumentsManager(cmd, config);
   }
 
   /**
@@ -141,18 +138,7 @@ public class App {
    * @param args The command line arguments.
    */
   public static void startScan(final String[] args) {
-    try {
-      c2detect.run(args);
-    } catch (ClassNotFoundException
-        | IllegalAccessException
-        | InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | SecurityException
-        | IOException
-        | ParseException e) {
-      LOGGER.error("Error running c2detect", e);
-    }
+    c2detect.run(args);
   }
 
   /**

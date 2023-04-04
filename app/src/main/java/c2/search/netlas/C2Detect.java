@@ -6,12 +6,11 @@ import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import netlas.java.Netlas;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,24 +40,25 @@ public class C2Detect {
     this.fields = fields;
   }
 
-  public void setup(final String[] args)
-      throws IOException, ParseException, ClassNotFoundException {
+  public void setup(final String[] args) {
     if (cmd.getHost() != null) {
-      this.netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
+      this.netlas = getNetlasWrapper();
       this.fields = createFields(cmd.getHost(), netlas);
       this.checker = createChecker(fields);
     }
   }
 
-  public void run(final String[] args)
-      throws ClassNotFoundException,
-          IOException,
-          ParseException,
-          IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+  private NetlasWrapper getNetlasWrapper() {
+    NetlasWrapper netlas = null;
+    try {
+      netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
+    } catch (JsonProcessingException e) {
+      LOGGER.error("Failed to create NetlasWrapper", e);
+    }
+    return netlas;
+  }
+
+  public void run(final String[] args) {
     printWelcomMessage();
     setup(args);
     runChecker();
@@ -67,21 +67,15 @@ public class C2Detect {
   private void printWelcomMessage() {
     stream.println("c2detect: start scanning for C2");
     stream.flush();
-    stream.println("Host: " + cmd.getHost());
+    stream.println("Target: " + cmd.getHost());
     stream.flush();
   }
 
-  protected Checker createChecker(final FieldValues fields)
-      throws ClassNotFoundException, IOException {
+  protected Checker createChecker(final FieldValues fields) {
     return new Checker(fields);
   }
 
-  private void runChecker()
-      throws IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+  private void runChecker() {
     final Results responses = checker.run();
     printResponses(responses, cmd.isVerbose());
   }
@@ -100,12 +94,13 @@ public class C2Detect {
   }
 
   protected static Socket getSocket(final Host host, final int socketTimeout) {
+    Socket socket = null;
     try {
-      final Socket socket = new Socket(host.getTarget(), host.getPort());
+      socket = new Socket(host.getTarget(), host.getPort());
       socket.setSoTimeout(socketTimeout);
-      return socket;
     } catch (final IOException e) {
-      return null;
+      LOGGER.warn("Failed to create socket", e);
     }
+    return socket;
   }
 }
