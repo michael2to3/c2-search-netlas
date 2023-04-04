@@ -18,7 +18,7 @@ import java.util.Locale;
 @Detect(name = "Metasploit")
 public class Metasploit {
   private static final String SHELL_ID = "shell";
-  static final int STATUS_SUCCESFULL = 200;
+  final static int STATUS_SUCCESFULL = 200;
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
   @Wire private Socket socket;
@@ -42,8 +42,7 @@ public class Metasploit {
 
   @BeforeAll
   public void init() throws IOException {
-    final String id = SHELL_ID;
-    socketConnection = new SocketConnection(socket, id);
+    socketConnection = new SocketConnection(socket, SHELL_ID);
   }
 
   @Test
@@ -95,19 +94,18 @@ public class Metasploit {
   public Response checkHeaders() throws JsonMappingException, JsonProcessingException {
     final List<String> servers = netlasWrapper.getServers();
     final String defaultServer = "apache";
-    boolean checkDefaultServer = false;
+    boolean hasDefaultServer = false;
     for (final String server : servers) {
       if (server.toLowerCase(Locale.getDefault()).contains(defaultServer)) {
-        checkDefaultServer = true;
+        hasDefaultServer = true;
         break;
       }
     }
 
     int status = 0;
     status = netlasWrapper.getStatusCode();
-    final boolean checkDefaultStatus = STATUS_SUCCESFULL == status;
 
-    return new Response(checkDefaultServer && checkDefaultStatus);
+    return new Response(hasDefaultServer && STATUS_SUCCESFULL == status);
   }
 
   @Test(extern = true)

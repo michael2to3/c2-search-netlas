@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class C2Detect {
-  private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private FieldValues fields;
   private NetlasWrapper netlas;
   private PrintStream stream;

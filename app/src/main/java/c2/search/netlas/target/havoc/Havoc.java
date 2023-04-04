@@ -71,7 +71,7 @@ public class Havoc {
 
     String bodyResponse;
     try (BufferedReader in = new BufferedReader(new InputStreamReader(http.getInputStream()))) {
-      final StringBuilder sb = new StringBuilder();
+      final StringBuilder response = new StringBuilder();
       String line;
 
       while (true) {
@@ -79,10 +79,10 @@ public class Havoc {
         if (line == null) {
           break;
         }
-        sb.append(line);
-        sb.append(System.lineSeparator());
+        response.append(line);
+        response.append(System.lineSeparator());
       }
-      bodyResponse = sb.toString();
+      bodyResponse = response.toString();
     } catch (final IOException e) {
       bodyResponse = "";
     }
