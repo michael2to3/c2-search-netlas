@@ -9,6 +9,7 @@ env:
   API_KEY: "${{ secrets.API_KEY }}"
   GITHUB_ACTOR: "${{ secrets.PACKAGE_ACTOR }}"
   GITHUB_TOKEN: "${{ secrets.PACKAGE_TOKEN }}"
+  CODACY_PROJECT_TOKEN: "${{ secrets.CODACY_PROJECT_TOKEN }}"
 
 jobs:
   build:
@@ -39,6 +40,9 @@ jobs:
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
       uses: codecov/codecov-action@v3
+
+    - name: Upload coverage reports to Codacy
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
   formatting:
     runs-on: ubuntu-latest
