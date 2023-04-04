@@ -7,22 +7,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CLArgumentsManager {
-  private static final int DEFAULT_SOCKET_TIMEOUT_MS = 1000;
+  private static final int SOCKET_TIMEOUT_MS = 1000;
   private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private static final String PATH_API_KEY = "api.key";
   private final Config config;
   private final CommandLine cmd;
-  private final boolean isInvalid;
+  private final boolean invalid;
 
   public CLArgumentsManager(final CommandLine cmd, final Config config) {
     LOGGER.info("Parsing command line arguments");
     this.cmd = cmd;
     this.config = config;
-    this.isInvalid = cmd == null;
+    this.invalid = cmd == null;
   }
 
   public boolean isInvalid() {
-    return isInvalid;
+    return invalid;
   }
 
   public Host getHost() {
@@ -73,7 +73,7 @@ public class CLArgumentsManager {
 
   public int getSocketTimeoutMs() {
     LOGGER.info("Getting socket timeout");
-    return getSocketTimeoutMs(DEFAULT_SOCKET_TIMEOUT_MS);
+    return getSocketTimeoutMs(SOCKET_TIMEOUT_MS);
   }
 
   private int getSocketTimeoutMs(final int defaultTimeout) {
