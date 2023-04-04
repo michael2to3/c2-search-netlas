@@ -54,15 +54,7 @@ public class ClassScanner {
     String path = formatPath(packageName);
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream(path);
-    if (inputStream == null) {
-      throw new IllegalArgumentException("Package not found: " + packageName);
-    }
-    if (path.endsWith(".jar")) {
-      JarInputStream jarInputStream = new JarInputStream(inputStream);
-      scanClasses(jarInputStream, packageName);
-    } else {
-      scanClasses(inputStream, packageName);
-    }
+    scanClasses(inputStream, packageName);
   }
 
   protected void scanClasses(JarInputStream jarInputStream, String packageName) throws IOException {
