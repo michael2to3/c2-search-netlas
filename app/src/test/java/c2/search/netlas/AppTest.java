@@ -1,14 +1,19 @@
 package c2.search.netlas;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
-import c2.search.netlas.cli.CommandLineArgumentsManager;
-import c2.search.netlas.cli.Config;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
 import org.junit.jupiter.api.Test;
+
+import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.cli.Config;
 
 class AppTest {
   @Test
@@ -41,11 +46,11 @@ class AppTest {
     System.setOut(printStream);
 
     String[] args = new String[] {"-t", "example.com", "-p", "80"};
-    CommandLineArgumentsManager pargs = App.getParseCmdArgs(args);
+    CLArgumentsManager pargs = App.getParseCmdArgs(args);
     C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
 
-    App.setC2Detect(c2Detect);
-    App.startScan(args);
+    App.setC2detect(c2Detect);
+    App.main(args);
 
     verify(c2Detect).run(args);
   }
@@ -60,5 +65,13 @@ class AppTest {
     App.main(args);
 
     assertTrue(outputStream.toString().contains("usage"));
+  }
+
+  @Test 
+  void testGettersAndSetters() {
+    assertNotNull(App.getOut());
+    assertNotNull(App.getConfigFilename());
+    assertNotNull(App.getConfig());
+    assertNotNull(App.getC2detect());
   }
 }

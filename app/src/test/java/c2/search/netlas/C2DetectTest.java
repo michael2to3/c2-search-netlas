@@ -1,26 +1,40 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.AnnotatedFieldValues;
-import c2.search.netlas.cli.CommandLineArgumentsManager;
-import c2.search.netlas.cli.Config;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.Socket;
 import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import c2.search.netlas.classscanner.FieldValues;
+import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.cli.Config;
+import c2.search.netlas.scheme.Host;
 
 public class C2DetectTest {
   private static final String API = new Config("config.properties").get("api.key");
 
-  public CommandLineArgumentsManager getParseCmdArgs(String[] args) throws ParseException {
+  public CLArgumentsManager getParseCmdArgs(String[] args) throws ParseException {
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse(setupOptions(), args);
 
-    CommandLineArgumentsManager parseCmdArgs =
-        new CommandLineArgumentsManager(cmd, new Config("test.prop"));
+    CLArgumentsManager parseCmdArgs =
+        new CLArgumentsManager(cmd, new Config("test.prop"));
     return parseCmdArgs;
   }
 
@@ -60,8 +74,39 @@ public class C2DetectTest {
 
   @Test
   public void testSettersAndGetters() throws ParseException {
-    CommandLineArgumentsManager manager = getParseCmdArgs(new String[] {});
+    CLArgumentsManager manager = getParseCmdArgs(new String[] {});
     C2Detect c2Detect = new C2Detect(manager, System.out);
-    c2Detect.setFields(new AnnotatedFieldValues());
+    c2Detect.setFields(new FieldValues());
   }
+
+
+  @Mock
+    Host host;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetSocket() throws Exception {
+        Socket expectedSocket = mock(Socket.class);
+        when(host.getTarget()).thenReturn("localhost");
+        when(host.getPort()).thenReturn(8080);
+        doNothing().when(expectedSocket).setSoTimeout(1000);
+
+        Socket actualSocket = C2Detect.getSocket(host, 1000);
+
+        assertNull(actualSocket);
+    }
+
+    @Test
+    void testGetSocketIOException() throws Exception {
+        when(host.getTarget()).thenReturn("localhost");
+        when(host.getPort()).thenReturn(8080);
+
+        Socket actualSocket = C2Detect.getSocket(host, 1000);
+
+        assertNull(actualSocket);
+    }
 }
