@@ -29,6 +29,7 @@ public class SocketConnection implements AutoCloseable {
     return new String(response, 0, responseLength, StandardCharsets.UTF_8);
   }
 
+  @Override
   public void close() throws IOException {
     socket.close();
   }
