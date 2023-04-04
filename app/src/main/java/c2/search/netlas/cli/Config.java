@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class Config {
       value = System.getenv(key);
     }
     if (value == null) {
-      final String upperKey = key.toUpperCase().replace('.', '_');
+      final String upperKey = key.toUpperCase(Locale.getDefault()).replace('.', '_');
       value = System.getenv(upperKey);
     }
     return value;
