@@ -27,7 +27,7 @@ class NetlasWrapperTest {
 
   @BeforeAll
   static void setup() throws JsonMappingException, JsonProcessingException {
-    if(LOGGER.isDebugEnabled()) {
+    if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Use API key: {}", API);
     }
     netlas = new NetlasWrapper(API, HOST);

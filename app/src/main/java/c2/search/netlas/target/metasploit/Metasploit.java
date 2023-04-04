@@ -18,7 +18,7 @@ import java.util.Locale;
 @Detect(name = "Metasploit")
 public class Metasploit {
   private static final String SHELL_ID = "shell";
-  final static int STATUS_SUCCESFULL = 200;
+  static final int STATUS_SUCCESFULL = 200;
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
   @Wire private Socket socket;
