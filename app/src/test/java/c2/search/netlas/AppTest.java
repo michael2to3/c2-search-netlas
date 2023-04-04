@@ -43,7 +43,6 @@ class AppTest {
     String[] args = new String[] {"-t", "example.com", "-p", "80"};
     CommandLineArgumentsManager pargs = App.getParseCmdArgs(args);
     C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
-    doNothing().when(c2Detect).run();
 
     App.setC2Detect(c2Detect);
     App.startScan(args);
