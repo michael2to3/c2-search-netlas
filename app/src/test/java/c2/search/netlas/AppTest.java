@@ -1,11 +1,8 @@
 package c2.search.netlas;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.withSettings;
 
 import c2.search.netlas.cli.CommandLineArgumentsManager;
 import c2.search.netlas.cli.Config;
@@ -15,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class AppTest {
   @Test
-  void printHelp() {
+  void testPrintHelp() {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
@@ -63,6 +60,6 @@ class AppTest {
     String[] args = new String[] {"--not-exists-args"};
     App.main(args);
 
-    assertTrue(outputStream.toString().contains("Usage"));
+    assertTrue(outputStream.toString().contains("usage"));
   }
 }
