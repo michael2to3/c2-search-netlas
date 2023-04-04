@@ -32,7 +32,7 @@ public class Config {
       props.store(output, null);
     } catch (IOException e) {
       LOGGER.error("Failed to create config file: {}", fileName);
-    } 
+    }
   }
 
   public String get(String key) {
