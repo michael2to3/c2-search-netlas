@@ -44,7 +44,7 @@ public class DependencyInjector {
   }
 
   private void injectFieldDep(final Object object, final Field field, final Object dependency) {
-    boolean isAccessible = field.canAccess(object);
+    final boolean isAccessible = field.canAccess(object);
     if (!isAccessible) {
       field.setAccessible(true);
     }
