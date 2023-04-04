@@ -1,8 +1,8 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.AnnotatedFieldValues;
+import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.classscanner.Checker;
-import c2.search.netlas.cli.CommandLineArgumentsManager;
+import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
@@ -17,19 +17,27 @@ import org.slf4j.LoggerFactory;
 
 public class C2Detect {
   private final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
-  private AnnotatedFieldValues fields;
+  private FieldValues fields;
   private NetlasWrapper netlas;
   private PrintStream stream;
   private Checker checker;
-  private CommandLineArgumentsManager cmd;
+  private CLArgumentsManager cmd;
 
-  public C2Detect(CommandLineArgumentsManager cmd, PrintStream stream) {
+  public C2Detect(CLArgumentsManager cmd, PrintStream stream) {
     LOGGER.info("Initializing C2Detect");
     this.cmd = cmd;
     this.stream = stream;
   }
 
-  public void setFields(AnnotatedFieldValues fields) {
+  public void setStream(PrintStream stream) {
+    this.stream = stream;
+  }
+
+  public void setCommandLineArgumentsManager(CLArgumentsManager cmd) {
+    this.cmd = cmd;
+  }
+
+  public void setFields(FieldValues fields) {
     this.fields = fields;
   }
 
@@ -42,13 +50,8 @@ public class C2Detect {
   }
 
   public void run(String[] args)
-      throws ClassNotFoundException,
-          IOException,
-          ParseException,
-          IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
+      throws ClassNotFoundException, IOException, ParseException, IllegalAccessException,
+          InstantiationException, InvocationTargetException, NoSuchMethodException,
           SecurityException {
     printWelcomMessage();
     setup(args);
@@ -62,23 +65,20 @@ public class C2Detect {
     stream.flush();
   }
 
-  protected Checker createChecker(AnnotatedFieldValues fields)
+  protected Checker createChecker(FieldValues fields)
       throws ClassNotFoundException, IOException {
     return new Checker(fields);
   }
 
   private void runChecker()
-      throws IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+      throws IllegalAccessException, InstantiationException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
     Results responses = checker.run();
     printResponses(responses, cmd.isVerbose());
   }
 
-  private AnnotatedFieldValues createFields(Host host, NetlasWrapper netlas) {
-    AnnotatedFieldValues fields = new AnnotatedFieldValues();
+  private FieldValues createFields(Host host, NetlasWrapper netlas) {
+    FieldValues fields = new FieldValues();
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
@@ -90,7 +90,7 @@ public class C2Detect {
     responses.print(stream, verbose);
   }
 
-  private Socket getSocket(Host host, int socketTimeout) {
+  protected static Socket getSocket(Host host, int socketTimeout) {
     try {
       Socket socket = new Socket(host.getTarget(), host.getPort());
       socket.setSoTimeout(socketTimeout);
