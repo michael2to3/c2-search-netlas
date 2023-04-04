@@ -78,7 +78,7 @@ public class NetlasWrapper {
    */
   public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
     final var commonName = getLast(".data.certificate.subject.common_name");
-    final List<String> dnsNames = new ArrayList<String>();
+    final List<String> dnsNames = new ArrayList<>();
     commonName.forEach(item -> dnsNames.add(item.asText()));
     return dnsNames;
   }
@@ -160,11 +160,7 @@ public class NetlasWrapper {
    */
   protected JsonNode getNodeFromItem(final JsonNode item, final String key) {
     final JsonPointer pointer = JsonPointer.compile(formatKey(key));
-    final JsonNode node = item.at(pointer);
-    if (!node.isMissingNode()) {
-      return node;
-    }
-    return null;
+    return item.at(pointer);
   }
 
   /**
