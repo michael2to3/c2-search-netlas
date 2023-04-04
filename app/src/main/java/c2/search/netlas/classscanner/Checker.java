@@ -3,11 +3,8 @@ package c2.search.netlas.classscanner;
 import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
-import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,59 +16,41 @@ public class Checker {
   private static final Logger LOGGER = LoggerFactory.getLogger(Checker.class);
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private ClassScanner classScanner;
-  private final FieldValues fields;
+  private final DependencyInjector dependencyInjector;
 
-  public Checker(final FieldValues fields) throws ClassNotFoundException, IOException {
+  public Checker(final FieldValues fields) {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
-    this.fields = fields;
-  }
-
-  public ClassScanner getClassScanner() {
-    return classScanner;
+    this.dependencyInjector = new DependencyInjector(fields);
   }
 
   public void setClassScanner(final ClassScanner classScanner) {
     this.classScanner = classScanner;
   }
 
-  public static Logger getLogger() {
-    return LOGGER;
-  }
-
-  public static String getTargetClassName() {
-    return TARGET_CLASS_NAME;
-  }
-
-  public Results run()
-      throws IllegalAccessException,
-          InstantiationException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+  public Results run() {
     final List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
-    if (detectedClasses.isEmpty()) {
-      throw new IllegalStateException(
-          "No class with @Detect annotation found in " + TARGET_CLASS_NAME);
-    }
     final Results results = new Results();
     for (final Class<?> clazz : detectedClasses) {
       final Object instant = instantiateClass(clazz);
-      injectDependencies(instant);
+      dependencyInjector.inject(instant);
       invokeBeforeAllMethods(instant);
       results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
     }
     return results;
   }
 
-  private Object instantiateClass(final Class<?> clazz)
-      throws InstantiationException,
-          IllegalAccessException,
-          IllegalArgumentException,
-          InvocationTargetException,
-          NoSuchMethodException,
-          SecurityException {
+  private Object instantiateClass(final Class<?> clazz) {
     LOGGER.info("Instantiating {}", clazz.getName());
-    return clazz.getDeclaredConstructor().newInstance();
+    Object instant = null;
+    try {
+      instant = clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException e) {
+      LOGGER.error("Failed to instantiate {}", clazz.getName(), e);
+    }
+    return instant;
   }
 
   private String getNameOfClass(final Class<?> clazz) {
@@ -131,29 +110,6 @@ public class Checker {
         e.getMessage());
   }
 
-  private void injectDependencies(final Object instant)
-      throws IllegalArgumentException, IllegalAccessException {
-    LOGGER.info("Injecting dependencies to {}", instant.getClass().getName());
-    final Field[] annotatedFields = instant.getClass().getDeclaredFields();
-    for (final Field annotatedField : annotatedFields) {
-      if (!annotatedField.isAnnotationPresent(Wire.class)) {
-        continue;
-      }
-      annotatedField.setAccessible(true);
-      final Object value = fields.get(annotatedField);
-      if (value == null) {
-        LOGGER.warn(
-            "Unrecognized field {} in {}", annotatedField.getType(), instant.getClass().getName());
-        continue;
-      }
-      annotatedField.set(instant, value);
-      LOGGER.info(
-          "Injected dependency {} to {}",
-          annotatedField.getType().getSimpleName(),
-          instant.getClass().getSimpleName());
-    }
-  }
-
   private List<Method> getBeforeAllMethods(final Class<?> clazz) {
     final List<Method> beforeAllMethods = new ArrayList<>();
     for (final Method method : clazz.getMethods()) {
@@ -164,12 +120,15 @@ public class Checker {
     return beforeAllMethods;
   }
 
-  private void invokeBeforeAllMethods(final Object instant)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  private void invokeBeforeAllMethods(final Object instant) {
     LOGGER.info("Invoking beforeAll methods of {}", instant.getClass().getName());
     final List<Method> beforeAllMethods = getBeforeAllMethods(instant.getClass());
     for (final Method method : beforeAllMethods) {
-      method.invoke(instant);
+      try {
+        method.invoke(instant);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        handleInvocationError(method, instant, e);
+      }
     }
   }
 }
