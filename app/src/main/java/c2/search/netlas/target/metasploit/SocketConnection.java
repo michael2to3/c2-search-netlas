@@ -19,8 +19,8 @@ public class SocketConnection implements AutoCloseable {
   public String sendAndReceive() throws IOException {
     final String message = "echo " + trigger;
     final OutputStream output = socket.getOutputStream();
-    String response = null;
-    try (final InputStream input = socket.getInputStream()) {
+    String response;
+    try (InputStream input = socket.getInputStream()) {
 
       output.write(message.getBytes());
       output.flush();
