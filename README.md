@@ -1,7 +1,6 @@
 # NetAtlas C2 Server Search
 
 ![Build Status](https://img.shields.io/github/actions/workflow/status/michael2to3/c2-search-netlas/build.yml?branch=main)
-[![Coverage Status](https://img.shields.io/codecov/c/github/michael2to3/c2-search-netlas?style=flat-square)](https://codecov.io/gh/michael2to3/c2-search-netlas)
 [![License](https://img.shields.io/github/license/michael2to3/pretty-caldav-politech-schedule?style=flat-square)](https://github.com/michael2to3/pretty-caldav-politech-schedule/blob/main/LICENSE)
 [![Junit Jupiter](https://img.shields.io/badge/Junit-Jupiter-green?style=flat-square)](https://junit.org/junit5/)
 [![Gradle](https://img.shields.io/badge/Gradle-blue?style=flat-square)](https://gradle.org/)

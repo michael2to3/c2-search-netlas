@@ -35,11 +35,6 @@ jobs:
     - name: Create Jacoco report
       run: gradle jacocoTestReport
 
-    - name: Upload coverage reports to Codecov
-      env:
-        CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-      uses: codecov/codecov-action@v3
-
     - name: Upload coverage reports to Codacy
       env:
         CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
