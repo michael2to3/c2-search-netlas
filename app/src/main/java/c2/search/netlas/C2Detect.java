@@ -23,7 +23,9 @@ public class C2Detect {
   private CLArgumentsManager cmd;
 
   public C2Detect(final CLArgumentsManager cmd, final PrintStream stream) {
-    LOGGER.info("Initializing C2Detect");
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Initializing C2Detect");
+    }
     this.cmd = cmd;
     this.stream = stream;
   }
