@@ -29,16 +29,6 @@ public class Config {
   public String get(String key) {
     String value = props.getProperty(key);
     if (value == null) {
-      try (FileInputStream input = new FileInputStream(fileName)) {
-        props.load(input);
-        value = props.getProperty(key);
-      } catch (FileNotFoundException e) {
-        LOGGER.error("Config file not found: {}", fileName);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    if (value == null) {
       value = System.getenv(key);
     }
     if (value == null) {
