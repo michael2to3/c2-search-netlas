@@ -9,19 +9,19 @@ public class DependencyInjector {
   private static final Logger LOGGER = LoggerFactory.getLogger(DependencyInjector.class);
   private final FieldValues fieldValues;
 
-  public DependencyInjector(FieldValues fieldValues) {
+  public DependencyInjector(final FieldValues fieldValues) {
     this.fieldValues = fieldValues;
   }
 
-  public void inject(Object object) {
+  public void inject(final Object object) {
     Class<?> clazz = object.getClass();
 
     while (clazz != null) {
-      Field[] fields = clazz.getDeclaredFields();
+      final Field[] fields = clazz.getDeclaredFields();
 
-      for (Field field : fields) {
+      for (final Field field : fields) {
         if (field.isAnnotationPresent(Wire.class)) {
-          Object dependency = fieldValues.get(field);
+          final Object dependency = fieldValues.get(field);
 
           if (dependency == null) {
             LOGGER.warn("Could not find a value for field {}", field.getName());
@@ -35,7 +35,7 @@ public class DependencyInjector {
     }
   }
 
-  private void inject(Object object, Field field, Object dependency) {
+  private void inject(final Object object, final Field field, final Object dependency) {
     field.setAccessible(true);
     try {
       field.set(object, dependency);
@@ -44,7 +44,7 @@ public class DependencyInjector {
           dependency.getClass().getSimpleName(),
           field.getName(),
           object.getClass().getSimpleName());
-    } catch (IllegalAccessException e) {
+    } catch (final IllegalAccessException e) {
       LOGGER.error("Failed to inject dependency into field {}", field.getName(), e);
     }
   }
