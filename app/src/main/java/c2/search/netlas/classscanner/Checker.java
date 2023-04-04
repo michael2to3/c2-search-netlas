@@ -44,10 +44,10 @@ public class Checker {
 
   public Results run()
       throws IllegalAccessException,
-      InstantiationException,
-      InvocationTargetException,
-      NoSuchMethodException,
-      SecurityException {
+          InstantiationException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     if (detectedClasses.isEmpty()) {
       throw new IllegalStateException(
@@ -65,11 +65,11 @@ public class Checker {
 
   private Object instantiateClass(Class<?> clazz)
       throws InstantiationException,
-      IllegalAccessException,
-      IllegalArgumentException,
-      InvocationTargetException,
-      NoSuchMethodException,
-      SecurityException {
+          IllegalAccessException,
+          IllegalArgumentException,
+          InvocationTargetException,
+          NoSuchMethodException,
+          SecurityException {
     LOGGER.info("Instantiating {}", clazz.getName());
     return clazz.getDeclaredConstructor().newInstance();
   }

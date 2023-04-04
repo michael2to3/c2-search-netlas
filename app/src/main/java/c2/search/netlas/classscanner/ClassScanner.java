@@ -14,7 +14,8 @@ public class ClassScanner {
 
   public ClassScanner(String packageName) {
     classes = new ArrayList<>();
-    try (ScanResult scanResult = new ClassGraph().enableAllInfo().acceptPackages(packageName).scan()) {
+    try (ScanResult scanResult =
+        new ClassGraph().enableAllInfo().acceptPackages(packageName).scan()) {
       scanResult.getAllClasses().loadClasses().forEach(this::addClass);
     }
   }
