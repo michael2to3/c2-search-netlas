@@ -17,27 +17,33 @@ public class DependencyInjector {
     Class<?> clazz = object.getClass();
 
     while (clazz != null) {
-      final Field[] fields = clazz.getDeclaredFields();
-
-      for (final Field field : fields) {
-        if (field.isAnnotationPresent(Wire.class)) {
-          final Object dependency = fieldValues.get(field);
-
-          if (dependency == null) {
-            if (LOGGER.isWarnEnabled()) {
-              LOGGER.warn("Could not find a value for field {}", field.getName());
-            }
-          } else {
-            inject(object, field, dependency);
-          }
-        }
-      }
-
+      injectClass(object, clazz);
       clazz = clazz.getSuperclass();
     }
   }
 
-  private void inject(final Object object, final Field field, final Object dependency) {
+  private void injectClass(final Object object, final Class<?> clazz) {
+    final Field[] fields = clazz.getDeclaredFields();
+
+    for (final Field field : fields) {
+      if (field.isAnnotationPresent(Wire.class)) {
+        injectField(object, field);
+      }
+    }
+  }
+
+  private void injectField(final Object object, final Field field) {
+    final Object dependency = fieldValues.get(field);
+    if (dependency == null) {
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Could not find a value for field {}", field.getName());
+      }
+    } else {
+      injectFieldDep(object, field, dependency);
+    }
+  }
+
+  private void injectFieldDep(final Object object, final Field field, final Object dependency) {
     boolean isAccessible = field.canAccess(object);
     if (!isAccessible) {
       field.setAccessible(true);
@@ -60,5 +66,13 @@ public class DependencyInjector {
         field.setAccessible(false);
       }
     }
+  }
+
+  public static Logger getLogger() {
+    return LOGGER;
+  }
+
+  public FieldValues getFieldValues() {
+    return fieldValues;
   }
 }
