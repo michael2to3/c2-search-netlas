@@ -10,7 +10,7 @@ public class FieldValues {
   private static final Logger LOGGER = LoggerFactory.getLogger(FieldValues.class);
   private static final Map<Class<?>, Object> FIELDS = new ConcurrentHashMap<>();
 
-  private FieldValues() {}
+  public FieldValues() {}
 
   public void setField(final Class<?> clazz, final Object value) {
     FIELDS.put(clazz, value);
