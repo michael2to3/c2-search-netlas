@@ -1,6 +1,6 @@
 package c2.search.netlas;
 
-import c2.search.netlas.cli.CommandLineArgumentsManager;
+import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
 import java.io.PrintStream;
 import java.util.List;
@@ -19,7 +19,7 @@ public class App {
   private static final String CONFIG_FILENAME = "config.properties";
   private static Config config = new Config(CONFIG_FILENAME);
   private static PrintStream out = System.out;
-  private static C2Detect c2Detect = null;
+  private static C2Detect c2detect = new C2Detect(null, out);
 
   public static PrintStream getOut() {
     return out;
@@ -41,7 +41,7 @@ public class App {
     App.config = config;
   }
 
-  public static CommandLineArgumentsManager getParseCmdArgs(String[] args) {
+  public static CLArgumentsManager getParseCmdArgs(String[] args) {
     CommandLine cmd = null;
     CommandLineParser parser = getDefaultParser();
     try {
@@ -50,25 +50,21 @@ public class App {
       LOGGER.info("Error parsing command line arguments", e);
     }
 
-    CommandLineArgumentsManager parseCmdArgs = new CommandLineArgumentsManager(cmd, config);
+    CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, config);
     return parseCmdArgs;
   }
 
-  public static C2Detect getC2Detect() {
-    return c2Detect;
+  public static C2Detect getC2detect() {
+    return c2detect;
   }
 
-  public static void setC2Detect(C2Detect c2Detect) {
-    App.c2Detect = c2Detect;
-  }
-
-  private static C2Detect getC2Detect(CommandLineArgumentsManager args) {
-    return new C2Detect(args, out);
+  public static void setC2detect(C2Detect c2Detect) {
+    App.c2detect = c2Detect;
   }
 
   public static void main(String[] args) {
-    CommandLineArgumentsManager parseCmdArgs = getParseCmdArgs(args);
-    c2Detect = getC2Detect(parseCmdArgs);
+    CLArgumentsManager parseCmdArgs = getParseCmdArgs(args);
+    c2detect.setCommandLineArgumentsManager(parseCmdArgs);
 
     if (parseCmdArgs.isInvalid() || parseCmdArgs.isHelp()) {
       HelpFormatter formatter = new HelpFormatter();
@@ -82,7 +78,7 @@ public class App {
 
   public static void startScan(String[] args) {
     try {
-      c2Detect.run(args);
+      c2detect.run(args);
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
     }
