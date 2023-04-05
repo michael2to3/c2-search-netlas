@@ -31,17 +31,14 @@ public class MetasploitTest {
   @BeforeEach
   public void setUp() throws IOException {
     metasploit.init();
-    metasploit.host = host;
-    metasploit.netlasWrapper = netlasWrapper;
-    metasploit.socketConnection = socketConnection;
+    metasploit.setHost(host);
+    metasploit.setNetlasWrapper(netlasWrapper);
+    metasploit.setSocketConnection(socketConnection);
   }
 
   @Test
   @DisplayName("Test checkDefaultBodyResponse() with default body")
   public void testCheckDefaultBodyResponseWithDefaultBody() throws IOException {
-    assertNotNull(metasploit.host);
-    assertNotNull(metasploit.netlasWrapper);
-
     String defaultBody = "<html><body><h1>It works!</h1></body></html>";
     when(netlasWrapper.getBody()).thenReturn(defaultBody);
     Response response = metasploit.checkDefaultBodyResponse();
@@ -100,9 +97,9 @@ public class MetasploitTest {
     when(socketConnection.sendAndReceive()).thenReturn("i_am_a_shell");
 
     Metasploit metasploit = new Metasploit();
-    metasploit.host = mockHost;
-    metasploit.netlasWrapper = netlasWrapper;
-    metasploit.socketConnection = socketConnection;
+    metasploit.setHost(mockHost);
+    metasploit.setNetlasWrapper(netlasWrapper);
+    metasploit.setSocketConnection(socketConnection);
 
     try {
       result = metasploit.checkBindShell();

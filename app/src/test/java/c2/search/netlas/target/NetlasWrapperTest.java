@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import netlas.java.Netlas;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,7 +27,9 @@ class NetlasWrapperTest {
 
   @BeforeAll
   static void setup() throws JsonMappingException, JsonProcessingException {
-    LOGGER.info("Use API key: {}", API);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Use API key: {}", API);
+    }
     netlas = new NetlasWrapper(API, HOST);
   }
 
@@ -85,11 +86,6 @@ class NetlasWrapperTest {
     var netlas = new NetlasWrapper(API, HOST);
     assertNotNull(netlas.getHost());
     assertNotNull(netlas.getNetlas());
-
-    netlas.setHost(HOST);
-    netlas.setNetlas(new Netlas(API));
-    assertNotNull(netlas.getHost());
-    assertNotNull(netlas.getNetlas());
   }
 
   @Test
@@ -110,7 +106,7 @@ class NetlasWrapperTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> {
-          netlas.getLastHas("notExistKey");
+          netlas.getLast("notExistKey", 0);
         });
   }
 }

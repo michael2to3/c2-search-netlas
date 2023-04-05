@@ -1,74 +1,108 @@
 package c2.search.netlas;
 
-import c2.search.netlas.cli.Config;
+import c2.search.netlas.classscanner.Checker;
+import c2.search.netlas.classscanner.FieldValues;
+import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
-import c2.search.netlas.target.Checker;
 import c2.search.netlas.target.NetlasWrapper;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
+import netlas.java.Netlas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class C2Detect {
-  private final Logger logger = LoggerFactory.getLogger(C2Detect.class);
-  private final Config config;
-  private final Options options;
+  private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
+  private FieldValues fields;
+  private NetlasWrapper netlas;
+  private PrintStream stream;
+  private Checker checker;
+  private CLArgumentsManager cmd;
 
-  public C2Detect(Config config, Options options) {
-    this.config = config;
-    this.options = options;
+  public C2Detect(final CLArgumentsManager cmd, final PrintStream stream) {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Initializing C2Detect");
+    }
+    this.cmd = cmd;
+    this.stream = stream;
   }
 
-  public void run(String[] args) throws Exception {
-    CommandLineParser parser = new DefaultParser();
-    CommandLine cmd = parser.parse(options, args);
-
-    if (cmd.hasOption("h")) {
-      printHelp();
-      return;
-    }
-
-    if (cmd.hasOption("s")) {
-      config.save("api.key", cmd.getOptionValue("s"));
-      return;
-    }
-
-    boolean verbose = cmd.hasOption("v");
-
-    String apiKey = config.get("api.key");
-    if (apiKey == null || apiKey.isEmpty()) {
-      throw new IllegalArgumentException("API key is required");
-    }
-
-    Host host = createHost(cmd);
-    NetlasWrapper netlas = new NetlasWrapper(apiKey, host);
-    Results responses = new Checker(netlas, host).run();
-    responses.print(System.out, verbose);
+  public void setStream(final PrintStream stream) {
+    this.stream = stream;
   }
 
-  protected static Host createHost(CommandLine cmd) {
-    String domain = cmd.getOptionValue("t");
-    if (domain == null) {
-      throw new IllegalArgumentException("Target domain is not set");
-    }
+  public void setCommandLineArgumentsManager(final CLArgumentsManager cmd) {
+    this.cmd = cmd;
+  }
 
-    int port;
+  public void setFields(final FieldValues fields) {
+    this.fields = fields;
+  }
+
+  public void setup(final String[] args) {
+    if (cmd.getHost() != null) {
+      this.netlas = getNetlasWrapper();
+      this.fields = createFields(cmd.getHost(), netlas);
+      this.checker = createChecker(fields);
+    }
+  }
+
+  private NetlasWrapper getNetlasWrapper() {
+    NetlasWrapper netlas = null;
     try {
-      String portStr = cmd.getOptionValue("p");
-      port = Integer.parseInt(portStr);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Target port is not set");
+      netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
+    } catch (JsonProcessingException e) {
+      LOGGER.error("Failed to create NetlasWrapper", e);
     }
-
-    return new Host(domain, port);
+    return netlas;
   }
 
-  protected void printHelp() {
-    HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("c2detect", options);
+  public void run(final String[] args) {
+    printWelcomMessage();
+    setup(args);
+    runChecker();
+  }
+
+  private void printWelcomMessage() {
+    stream.println("c2detect: start scanning for C2");
+    stream.flush();
+    stream.println("Target: " + cmd.getHost());
+    stream.flush();
+  }
+
+  protected Checker createChecker(final FieldValues fields) {
+    return new Checker(fields);
+  }
+
+  private void runChecker() {
+    final Results responses = checker.run();
+    printResponses(responses, cmd.isVerbose());
+  }
+
+  private FieldValues createFields(final Host host, final NetlasWrapper netlas) {
+    final FieldValues fields = new FieldValues();
+    fields.setField(Host.class, host);
+    fields.setField(NetlasWrapper.class, netlas);
+    fields.setField(Netlas.class, netlas.getNetlas());
+    fields.setField(Socket.class, getSocket(host, cmd.getSocketMs()));
+    return fields;
+  }
+
+  private void printResponses(final Results responses, final boolean verbose) {
+    responses.print(stream, verbose);
+  }
+
+  protected static Socket getSocket(final Host host, final int socketTimeout) {
+    Socket socket = null;
+    try {
+      socket = new Socket(host.getTarget(), host.getPort());
+      socket.setSoTimeout(socketTimeout);
+    } catch (final IOException e) {
+      LOGGER.warn("Failed to create socket", e);
+    }
+    return socket;
   }
 }

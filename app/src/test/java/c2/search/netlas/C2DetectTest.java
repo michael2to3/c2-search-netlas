@@ -1,75 +1,105 @@
 package c2.search.netlas;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import c2.search.netlas.cli.*;
-import c2.search.netlas.scheme.*;
+import c2.search.netlas.classscanner.FieldValues;
+import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.cli.Config;
 import c2.search.netlas.scheme.Host;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import org.apache.commons.cli.*;
-import org.junit.jupiter.api.BeforeAll;
+import java.net.Socket;
+import java.util.List;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 public class C2DetectTest {
-  @BeforeAll
-  public static void setup() {
-    mockStatic(Config.class);
+  private static final String API = new Config("config.properties").get("api.key");
+
+  public CLArgumentsManager getParseCmdArgs(String[] args) throws ParseException {
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd = parser.parse(setupOptions(), args);
+
+    CLArgumentsManager parseCmdArgs = new CLArgumentsManager(cmd, new Config("test.prop"));
+    return parseCmdArgs;
+  }
+
+  private Options setupOptions() {
+    Options options = new Options();
+    Option setOption =
+        Option.builder("s")
+            .longOpt("set")
+            .hasArg(true)
+            .argName("API_KEY")
+            .desc("Set the API key to use for the application")
+            .build();
+    Option targetOption =
+        Option.builder("t")
+            .longOpt("target")
+            .hasArg(true)
+            .argName("TARGET_DOMAIN")
+            .desc("Set the target domain for the application")
+            .build();
+    Option portOption =
+        Option.builder("p")
+            .longOpt("port")
+            .hasArg(true)
+            .argName("TARGET_PORT")
+            .desc("Set the target port for the application")
+            .build();
+    Option printVerbosOption =
+        Option.builder("v").longOpt("verbose").hasArg(false).desc("Print verbose output").build();
+    Option helpOption = Option.builder("h").longOpt("help").desc("Print this help message").build();
+
+    List<Option> list = List.of(setOption, targetOption, portOption, printVerbosOption, helpOption);
+    for (Option option : list) {
+      options.addOption(option);
+    }
+    return options;
   }
 
   @Test
-  public void testCreateHost() {
-    CommandLine cmd = mock(CommandLine.class);
-    when(cmd.getOptionValue("t")).thenReturn("example.com");
-    when(cmd.getOptionValue("p")).thenReturn("8080");
+  public void testSettersAndGetters() throws ParseException {
+    CLArgumentsManager manager = getParseCmdArgs(new String[] {});
+    C2Detect c2Detect = new C2Detect(manager, System.out);
+    c2Detect.setFields(new FieldValues());
+  }
 
-    Host host = C2Detect.createHost(cmd);
+  @Mock Host host;
 
-    assertNotNull(host);
-    assertEquals("example.com", host.getTarget());
-    assertEquals(8080, host.getPort());
-
-    when(cmd.getOptionValue("t")).thenReturn(null);
-    assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
-
-    when(cmd.getOptionValue("t")).thenReturn("google.com");
-    when(cmd.getOptionValue("p")).thenReturn("asd");
-    assertThrows(IllegalArgumentException.class, () -> C2Detect.createHost(cmd));
+  @BeforeEach
+  void setUp() throws Exception {
+    MockitoAnnotations.openMocks(this);
   }
 
   @Test
-  public void testPrintHelp() {
-    String[] args = new String[] {"--help"};
+  void testGetSocket() throws Exception {
+    Socket expectedSocket = mock(Socket.class);
+    when(host.getTarget()).thenReturn("localhost");
+    when(host.getPort()).thenReturn(8080);
+    doNothing().when(expectedSocket).setSoTimeout(1000);
 
-    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
+    Socket actualSocket = C2Detect.getSocket(host, 1000);
 
-    App.main(args);
-
-    assertTrue(outContent.toString().contains("-h"));
+    assertNull(actualSocket);
   }
 
   @Test
-  public void testChangeSettings() throws Exception {
-    String args[] = new String[] {"-s", "test.test"};
-    Config configMock = mock(Config.class);
-    C2Detect c2 = new C2Detect(configMock, App.setupOptions());
-    c2.run(args);
-    verify(configMock).save("api.key", "test.test");
-  }
+  void testGetSocketIOException() throws Exception {
+    when(host.getTarget()).thenReturn("localhost");
+    when(host.getPort()).thenReturn(8080);
 
-  @Test
-  public void testWithoutApi() throws Exception {
-    String args[] = new String[] {"-v", "-t", "google.com", "-p", "443"};
-    Config configMock = mock(Config.class);
-    when(configMock.get("api.key")).thenReturn(null);
-    C2Detect c2 = new C2Detect(configMock, App.setupOptions());
-    assertThrows(Exception.class, () -> c2.run(args));
+    Socket actualSocket = C2Detect.getSocket(host, 1000);
+
+    assertNull(actualSocket);
   }
 }

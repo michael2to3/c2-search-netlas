@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,46 +14,36 @@ public class Config {
   private final String fileName;
   private final Properties props;
 
-  public Config(String fileName) {
+  public Config(final String fileName) {
     this.fileName = fileName;
     this.props = new Properties();
 
     try (FileInputStream input = new FileInputStream(fileName)) {
       props.load(input);
-    } catch (FileNotFoundException e) {
+    } catch (final FileNotFoundException e) {
       LOGGER.error("Config file not found: {}", fileName);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public String get(String key) {
+  public String get(final String key) {
     String value = props.getProperty(key);
-    if (value == null) {
-      try (FileInputStream input = new FileInputStream(fileName)) {
-        props.load(input);
-        value = props.getProperty(key);
-      } catch (FileNotFoundException e) {
-        LOGGER.error("Config file not found: {}", fileName);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
     if (value == null) {
       value = System.getenv(key);
     }
     if (value == null) {
-      String upperKey = key.toUpperCase().replace('.', '_');
+      final String upperKey = key.toUpperCase(Locale.getDefault()).replace('.', '_');
       value = System.getenv(upperKey);
     }
     return value;
   }
 
-  public void save(String key, String value) {
+  public void save(final String key, final String value) {
     props.setProperty(key, value);
     try (FileOutputStream output = new FileOutputStream(fileName)) {
       props.store(output, null);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }
