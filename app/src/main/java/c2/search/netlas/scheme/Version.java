@@ -37,11 +37,12 @@ public class Version implements Comparable<Version> {
 
   @Override
   public int hashCode() {
-    return min.hashCode() * 31 + max.hashCode();
+    final int len = 31;
+    return min.hashCode() * len + max.hashCode();
   }
 
   public boolean isEmpty() {
-    return (min == null && max == null) || (min.isEmpty() && max.isEmpty());
+    return min.isEmpty() || max.isEmpty();
   }
 
   public String getMin() {

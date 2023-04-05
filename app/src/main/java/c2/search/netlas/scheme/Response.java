@@ -69,14 +69,21 @@ public class Response {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Response response = (Response) o;
-    return success == response.success
-        && version.equals(response.version)
-        && description.equals(response.description)
-        && error.equals(response.error);
+  public boolean equals(Object obj) {
+    boolean result;
+    if (this == obj) {
+      result = true;
+    } else if (obj == null || getClass() != obj.getClass()) {
+      result = false;
+    } else {
+      Response response = (Response) obj;
+      result =
+          success == response.success
+              && version.equals(response.version)
+              && description.equals(response.description)
+              && error.equals(response.error);
+    }
+    return result;
   }
 
   @Override
