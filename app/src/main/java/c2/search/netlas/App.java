@@ -87,7 +87,7 @@ public final class App {
    */
   public static CLArgumentsManager getParseCmdArgs(final String[] args) {
     CommandLine cmd = null;
-    final CommandLineParser parser = getDefaultParser();
+    final CommandLineParser parser = new DefaultParser();
     try {
       cmd = parser.parse(setupOptions(), args);
     } catch (final ParseException e) {
@@ -141,15 +141,6 @@ public final class App {
    */
   public static void startScan(final String[] args) {
     c2detect.run(args);
-  }
-
-  /**
-   * Get the default command line parser.
-   *
-   * @return The default command line parser.
-   */
-  protected static CommandLineParser getDefaultParser() {
-    return new DefaultParser();
   }
 
   /**
