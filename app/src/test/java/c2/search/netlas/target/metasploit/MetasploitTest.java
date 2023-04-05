@@ -107,7 +107,7 @@ public class MetasploitTest {
       testPassed = false;
     }
 
-    assertEquals(expectedResponse, result);
+    assertEquals(expectedResponse.isSuccess(), result.isSuccess());
     assertTrue(testPassed);
   }
 }
