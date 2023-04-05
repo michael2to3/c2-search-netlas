@@ -22,7 +22,8 @@ public class Response {
     this(success, version, description, "");
   }
 
-  public Response(final boolean success, final Version version, final String description, final String error) {
+  public Response(
+      final boolean success, final Version version, final String description, final String error) {
     this.success = success;
     this.version = version;
     this.description = description;
