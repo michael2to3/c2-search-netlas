@@ -93,21 +93,24 @@ public class NetlasWrapper {
   }
 
   public JsonNode get() throws JsonMappingException, JsonProcessingException {
+    JsonNode result;
+
     if (response.containsKey(host)) {
-      return response.get(host);
+      result = response.get(host);
+    } else {
+      var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
+      var datatype = "responses";
+      var page = 0;
+      var indices = "";
+      var fields = "";
+      var excludeFields = false;
+      var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
+      resp = resp.get("items");
+      set(resp);
+      result = resp;
     }
 
-    var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
-    var datatype = "responses";
-    var page = 0;
-    var indices = "";
-    var fields = "";
-    var excludeFields = false;
-    var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
-    resp = resp.get("items");
-    set(resp);
-
-    return resp;
+    return result;
   }
 
   public JsonNode getHeaders() throws JsonMappingException, JsonProcessingException {
