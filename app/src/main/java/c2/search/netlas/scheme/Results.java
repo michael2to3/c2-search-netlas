@@ -53,7 +53,8 @@ public class Results {
         numSuccess++;
       }
     }
-    return (int) ((double) numSuccess / toolResponses.size() * 100);
+    final int total = 100;
+    return (int) ((double) numSuccess / toolResponses.size() * total);
   }
 
   private Map<String, List<Response>> responses;
