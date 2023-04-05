@@ -14,7 +14,7 @@ public class SocketConnection implements AutoCloseable {
   private final String trigger;
   private final Socket socket;
   private final InputStream inputStream;
-  private OutputStream outputStream;
+  private final OutputStream outputStream;
 
   public SocketConnection(final Socket socket, final String trigger) {
     this.socket = socket;
@@ -36,12 +36,13 @@ public class SocketConnection implements AutoCloseable {
     final String message = "echo " + trigger;
     String response = null;
 
-    try {
-      outputStream.write(message.getBytes());
-      outputStream.flush();
+    try (OutputStream output = outputStream;
+        InputStream input = inputStream) {
+      output.write(message.getBytes());
+      output.flush();
 
       final byte[] bresponse = new byte[BUFFER_SIZE];
-      final int responseLength = inputStream.read(bresponse);
+      final int responseLength = input.read(bresponse);
       response = new String(bresponse, 0, responseLength, StandardCharsets.UTF_8);
     } catch (IOException e) {
       LOGGER.error("Failed to send message", e);
