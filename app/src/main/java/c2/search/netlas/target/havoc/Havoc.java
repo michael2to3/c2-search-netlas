@@ -77,7 +77,11 @@ public class Havoc {
       StringBuilder sbline = new StringBuilder();
       String line;
 
-      while ((line = response.readLine()) != null) {
+      while (true) {
+        line = response.readLine();
+        if (line == null) {
+          break;
+        }
         sbline.append(line);
         sbline.append(System.lineSeparator());
       }
