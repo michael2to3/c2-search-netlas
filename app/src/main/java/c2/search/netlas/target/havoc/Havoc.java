@@ -21,6 +21,8 @@ public class Havoc {
   @Wire protected Host host;
   @Wire protected NetlasWrapper netlasWrapper;
 
+  public Havoc() {}
+
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
     String jarm = "3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e";
@@ -68,15 +70,16 @@ public class Havoc {
     http.setDoOutput(true);
 
     String bodyResponse;
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(http.getInputStream()))) {
-      StringBuilder sb = new StringBuilder();
+    try (BufferedReader response =
+        new BufferedReader(new InputStreamReader(http.getInputStream()))) {
+      StringBuilder sbline = new StringBuilder();
       String line;
 
-      while ((line = in.readLine()) != null) {
-        sb.append(line);
-        sb.append(System.lineSeparator());
+      while ((line = response.readLine()) != null) {
+        sbline.append(line);
+        sbline.append(System.lineSeparator());
       }
-      bodyResponse = sb.toString();
+      bodyResponse = sbline.toString();
     } catch (IOException e) {
       bodyResponse = "";
     }
