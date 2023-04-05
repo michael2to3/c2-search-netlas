@@ -148,7 +148,7 @@ public final class App {
    *
    * @return The options for the command line.
    */
-  protected static Options setupOptions() {
+  private static Options setupOptions() {
     final Options options = new Options();
     final Option setOption =
         Option.builder("s")
