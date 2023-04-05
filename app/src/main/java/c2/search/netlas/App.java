@@ -32,6 +32,8 @@ public class App {
     c2detect = new C2Detect(null, out);
   }
 
+  private App() {}
+
   /**
    * Get the output print stream for the application.
    *

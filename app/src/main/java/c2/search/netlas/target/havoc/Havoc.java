@@ -45,9 +45,8 @@ public class Havoc {
     final int statusCode = 404;
     final int rstatusCode = netlasWrapper.getStatusCode();
 
-    boolean hasServerHeader = true;
     final List<String> servers = netlasWrapper.getServers();
-    hasServerHeader = servers != null && !servers.isEmpty();
+    boolean hasServerHeader = servers != null && !servers.isEmpty();
 
     return new Response(rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader);
   }

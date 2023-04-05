@@ -1,9 +1,11 @@
 package c2.search.netlas.cli;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -18,12 +20,12 @@ public class Config {
     this.fileName = fileName;
     this.props = new Properties();
 
-    try (FileInputStream input = new FileInputStream(fileName)) {
+    try (InputStream input = Files.newInputStream(Paths.get(fileName))) {
       props.load(input);
     } catch (final FileNotFoundException e) {
-      LOGGER.error("Config file not found: {}", fileName);
+      LOGGER.error("Config file not found: {}", fileName, e);
     } catch (final IOException e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error reading config file: {}", fileName, e);
     }
   }
 
@@ -41,10 +43,10 @@ public class Config {
 
   public void save(final String key, final String value) {
     props.setProperty(key, value);
-    try (FileOutputStream output = new FileOutputStream(fileName)) {
+    try (OutputStream output = Files.newOutputStream(Paths.get(fileName))) {
       props.store(output, null);
     } catch (final IOException e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error writing config file: {}", fileName, e);
     }
   }
 }

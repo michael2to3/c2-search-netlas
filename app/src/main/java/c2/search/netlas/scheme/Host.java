@@ -14,14 +14,14 @@ public class Host {
   }
 
   @Override
-  public boolean equals(final Object o) {
+  public boolean equals(final Object obj) {
     boolean result;
-    if (this == o) {
+    if (this == obj) {
       result = true;
-    } else if (o == null || getClass() != o.getClass()) {
+    } else if (obj == null || getClass() != obj.getClass()) {
       result = false;
     } else {
-      final Host host = (Host) o;
+      final Host host = (Host) obj;
       result = port == host.port && target.equals(host.target);
     }
     return result;
