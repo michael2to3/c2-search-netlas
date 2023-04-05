@@ -49,7 +49,7 @@ public class Metasploit {
 
   @Test
   public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
-    String body = netlasWrapper.getBody();
+    final String body = netlasWrapper.getBody();
     final String defaultBody = "It works!";
     final String defaultTagPayload = "echo";
     return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
