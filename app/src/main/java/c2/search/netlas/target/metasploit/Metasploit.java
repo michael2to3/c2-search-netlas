@@ -24,6 +24,8 @@ public class Metasploit {
   @Wire private Socket socket;
   private SocketConnection socketConnection;
 
+  public Metasploit() {}
+
   public void setHost(final Host host) {
     this.host = host;
   }
@@ -40,8 +42,6 @@ public class Metasploit {
     this.socketConnection = socketConnection;
   }
 
-  public Metasploit() {}
-
   @BeforeAll
   public void init() throws IOException {
     socketConnection = new SocketConnection(socket, SHELL_ID);
@@ -56,9 +56,9 @@ public class Metasploit {
     return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
   }
 
-  private boolean checkJarm(String body, List<String> jarms) {
+  private boolean checkJarm(final String body, final List<String> jarms) {
     boolean isJarm = false;
-    for (String jarm : jarms) {
+    for (final String jarm : jarms) {
       if (body.contains(jarm)) {
         isJarm = true;
         break;
@@ -78,7 +78,7 @@ public class Metasploit {
             "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
             "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
-    String responseJarm = netlasWrapper.getJarm();
+    final String responseJarm = netlasWrapper.getJarm();
 
     String minVersion = null;
     boolean detect = false;
@@ -105,8 +105,7 @@ public class Metasploit {
       }
     }
 
-    int status = 0;
-    status = netlasWrapper.getStatusCode();
+    int status = netlasWrapper.getStatusCode();
 
     return new Response(hasDefaultServer && STATUS_SUCCESFULL == status);
   }
