@@ -1,6 +1,5 @@
 package c2.search.netlas.scheme;
 
-
 public class Response {
   private boolean success;
   private Version version;
