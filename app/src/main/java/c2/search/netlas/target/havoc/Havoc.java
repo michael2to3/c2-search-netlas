@@ -21,6 +21,8 @@ public class Havoc {
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
 
+  public Havoc() {}
+
   public void setHost(final Host host) {
     this.host = host;
   }
@@ -28,8 +30,6 @@ public class Havoc {
   public void setNetlasWrapper(final NetlasWrapper netlasWrapper) {
     this.netlasWrapper = netlasWrapper;
   }
-
-  public Havoc() {}
 
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
@@ -74,7 +74,7 @@ public class Havoc {
     String bodyResponse;
     try (BufferedReader response =
         new BufferedReader(new InputStreamReader(http.getInputStream()))) {
-      StringBuilder sbline = new StringBuilder();
+      final StringBuilder sbline = new StringBuilder();
       String line;
 
       while (true) {
@@ -86,7 +86,7 @@ public class Havoc {
         sbline.append(System.lineSeparator());
       }
       bodyResponse = sbline.toString();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       bodyResponse = "";
     }
     final int status = 400;

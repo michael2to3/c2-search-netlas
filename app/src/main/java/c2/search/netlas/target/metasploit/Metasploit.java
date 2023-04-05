@@ -105,7 +105,7 @@ public class Metasploit {
       }
     }
 
-    int status = netlasWrapper.getStatusCode();
+    final int status = netlasWrapper.getStatusCode();
 
     return new Response(hasDefaultServer && STATUS_SUCCESFULL == status);
   }
