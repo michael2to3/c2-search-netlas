@@ -13,16 +13,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Detect(name = "Metasploit")
 public class Metasploit {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
   @Wire protected Host host;
   @Wire protected NetlasWrapper netlasWrapper;
   @Wire protected Socket socket;
   SocketConnection socketConnection;
+
+  public Metasploit() {}
 
   @BeforeAll
   public void init() throws IOException {
@@ -40,12 +39,14 @@ public class Metasploit {
   }
 
   private boolean checkJarm(String body, List<String> jarms) {
+    boolean isJarm = false;
     for (String jarm : jarms) {
       if (body.contains(jarm)) {
-        return true;
+        isJarm = true;
+        break;
       }
     }
-    return false;
+    return isJarm;
   }
 
   @Test
@@ -58,8 +59,7 @@ public class Metasploit {
             "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
             "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
-    String responseJarm = "";
-    responseJarm = netlasWrapper.getJarm();
+    String responseJarm = netlasWrapper.getJarm();
 
     String minVersion = null;
     boolean detect = false;
