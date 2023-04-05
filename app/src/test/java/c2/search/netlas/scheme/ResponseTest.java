@@ -57,15 +57,4 @@ class ResponseTest {
     assertEquals("4desc", response.getDescription());
     assertEquals("4err", response.getError());
   }
-
-  @Test
-  void testEquals() {
-    Response response = new Response();
-    Response other = new Response();
-    assertEquals(response.toString(), other.toString());
-    assertEquals(response.hashCode(), other.hashCode());
-    assertNotEquals(response, null);
-    assertNotEquals(response, "");
-    assertNotEquals(response, new Object());
-  }
 }

@@ -65,7 +65,8 @@ public class Results {
         numSuccess++;
       }
     }
-    return (int) ((double) numSuccess / toolResponses.size() * 100);
+    final int total = 100;
+    return (int) ((double) numSuccess / toolResponses.size() * total);
   }
 
   public void addResponse(final String name, final List<Response> responses) {

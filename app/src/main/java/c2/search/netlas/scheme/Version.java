@@ -28,14 +28,14 @@ public class Version implements Comparable<Version> {
   }
 
   @Override
-  public boolean equals(final Object o) {
+  public boolean equals(final Object obj) {
     boolean result;
-    if (this == o) {
+    if (this == obj) {
       result = true;
-    } else if (o == null || getClass() != o.getClass()) {
+    } else if (obj == null || getClass() != obj.getClass()) {
       result = false;
     } else {
-      final Version version = (Version) o;
+      final Version version = (Version) obj;
       result = min.equals(version.min) && max.equals(version.max);
     }
     return result;
@@ -43,11 +43,12 @@ public class Version implements Comparable<Version> {
 
   @Override
   public int hashCode() {
-    return min.hashCode() * 31 + max.hashCode();
+    final int len = 31;
+    return min.hashCode() * len + max.hashCode();
   }
 
   public boolean isEmpty() {
-    return (min == null && max == null) || (min.isEmpty() && max.isEmpty());
+    return min.isEmpty() || max.isEmpty();
   }
 
   public String getMin() {

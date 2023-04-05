@@ -19,7 +19,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class App {
+public final class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
   private static final String CONFIG_FILENAME = "config.properties";
   private static Config config;
@@ -31,6 +31,8 @@ public class App {
     out = System.out;
     c2detect = new C2Detect(null, out);
   }
+
+  private App() {}
 
   /**
    * Get the output print stream for the application.
@@ -85,7 +87,7 @@ public class App {
    */
   public static CLArgumentsManager getParseCmdArgs(final String[] args) {
     CommandLine cmd = null;
-    final CommandLineParser parser = getDefaultParser();
+    final CommandLineParser parser = new DefaultParser();
     try {
       cmd = parser.parse(setupOptions(), args);
     } catch (final ParseException e) {
@@ -142,20 +144,11 @@ public class App {
   }
 
   /**
-   * Get the default command line parser.
-   *
-   * @return The default command line parser.
-   */
-  protected static CommandLineParser getDefaultParser() {
-    return new DefaultParser();
-  }
-
-  /**
    * Set up the command line options for the application.
    *
    * @return The options for the command line.
    */
-  protected static Options setupOptions() {
+  private static Options setupOptions() {
     final Options options = new Options();
     final Option setOption =
         Option.builder("s")

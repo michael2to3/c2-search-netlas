@@ -21,6 +21,8 @@ public class Havoc {
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
 
+  public Havoc() {}
+
   public void setHost(final Host host) {
     this.host = host;
   }
@@ -43,9 +45,8 @@ public class Havoc {
     final int statusCode = 404;
     final int rstatusCode = netlasWrapper.getStatusCode();
 
-    boolean hasServerHeader = true;
     final List<String> servers = netlasWrapper.getServers();
-    hasServerHeader = servers != null && !servers.isEmpty();
+    final boolean hasServerHeader = servers != null && !servers.isEmpty();
 
     return new Response(rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader);
   }
@@ -70,19 +71,20 @@ public class Havoc {
     http.setDoOutput(true);
 
     String bodyResponse;
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(http.getInputStream()))) {
-      final StringBuilder response = new StringBuilder();
+    try (BufferedReader response =
+        new BufferedReader(new InputStreamReader(http.getInputStream()))) {
+      final StringBuilder sbline = new StringBuilder();
       String line;
 
       while (true) {
-        line = in.readLine();
+        line = response.readLine();
         if (line == null) {
           break;
         }
-        response.append(line);
-        response.append(System.lineSeparator());
+        sbline.append(line);
+        sbline.append(System.lineSeparator());
       }
-      bodyResponse = response.toString();
+      bodyResponse = sbline.toString();
     } catch (final IOException e) {
       bodyResponse = "";
     }
