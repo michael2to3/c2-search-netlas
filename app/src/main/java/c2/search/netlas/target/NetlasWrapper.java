@@ -188,12 +188,12 @@ public class NetlasWrapper {
     if (response.containsKey(host)) {
       result = response.get(host);
     } else {
-      var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
-      var datatype = "responses";
-      var page = 0;
-      var indices = "";
-      var fields = "";
-      var excludeFields = false;
+      final var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
+      final var datatype = "responses";
+      final var page = 0;
+      final var indices = "";
+      final var fields = "";
+      final var excludeFields = false;
       var resp = this.netlas.search(query, datatype, page, indices, fields, excludeFields);
       resp = resp.get("items");
       set(resp);
