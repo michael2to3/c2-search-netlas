@@ -13,31 +13,18 @@ public class SocketConnection implements AutoCloseable {
   private static final int BUFFER_SIZE = 4096;
   private final String trigger;
   private final Socket socket;
-  private final InputStream inputStream;
-  private final OutputStream outputStream;
 
   public SocketConnection(final Socket socket, final String trigger) {
     this.socket = socket;
     this.trigger = trigger;
-
-    InputStream input = null;
-    OutputStream output = null;
-    try {
-      input = socket.getInputStream();
-      output = socket.getOutputStream();
-    } catch (IOException e) {
-      LOGGER.error("Failed to get input/output streams", e);
-    }
-    this.inputStream = input;
-    this.outputStream = output;
   }
 
   public String sendAndReceive() {
     final String message = "echo " + trigger;
     String response = null;
 
-    try (OutputStream output = outputStream;
-        InputStream input = inputStream) {
+    try (OutputStream output = socket.getOutputStream();
+        InputStream input = socket.getInputStream()) {
       output.write(message.getBytes());
       output.flush();
 
@@ -52,12 +39,6 @@ public class SocketConnection implements AutoCloseable {
 
   @Override
   public void close() throws IOException {
-    if (inputStream != null) {
-      inputStream.close();
-    }
-    if (outputStream != null) {
-      outputStream.close();
-    }
     socket.close();
   }
 }
