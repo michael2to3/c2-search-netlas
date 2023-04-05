@@ -43,8 +43,10 @@ public class Metasploit {
   }
 
   @BeforeAll
-  public void init() throws IOException {
-    socketConnection = new SocketConnection(socket, SHELL_ID);
+  public void init() {
+    if (socket != null) {
+      socketConnection = new SocketConnection(socket, SHELL_ID);
+    }
   }
 
   @Test
