@@ -44,7 +44,7 @@ public class Version implements Comparable<Version> {
   }
 
   public boolean isEmpty() {
-    return min.isEmpty() || max.isEmpty();
+    return min == null || max == null || min.isEmpty() || max.isEmpty();
   }
 
   public String getMin() {
