@@ -33,11 +33,21 @@ public class Checker {
   public Results run() {
     final List<Class<?>> detectedClasses = classScanner.getClassesWithAnnotation(Detect.class);
     final Results results = new Results();
+    final List<CompletableFuture<Void>> futures = new ArrayList<>();
     for (final Class<?> clazz : detectedClasses) {
       final Object instant = instantiateClass(clazz);
       depInjector.inject(instant);
-      invokeBeforeAllMethods(instant);
-      results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
+      CompletableFuture<Void> future = CompletableFuture.runAsync(
+          () -> {
+            invokeBeforeAllMethods(instant);
+            results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
+          });
+      futures.add(future);
+    }
+    try {
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+    } catch (InterruptedException | ExecutionException e) {
+      LOGGER.error("Error while running tests", e);
     }
     return results;
   }
@@ -71,34 +81,11 @@ public class Checker {
 
   private List<Response> invokeTestMethods(final Object instant) {
     final List<Response> responses = new ArrayList<>();
-    final List<CompletableFuture<Response>> futures = new ArrayList<>();
     for (final Method method : getTestMethods(instant.getClass())) {
-      CompletableFuture<Response> future =
-          CompletableFuture.supplyAsync(
-              () -> {
-                Response response = null;
-                try {
-                  response = invokeTestMethod(method, instant);
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e) {
-                  handleInvocationError(method, instant, e);
-                }
-                return response;
-              });
-      futures.add(future);
-    }
-
-    for (CompletableFuture<Response> future : futures) {
       try {
-        Response response = future.get();
-        if (response != null) {
-          responses.add(response);
-        }
-      } catch (InterruptedException | ExecutionException e) {
-        if (LOGGER.isErrorEnabled()) {
-          LOGGER.error("Failed to execute test method", e);
-        }
+        responses.add(invokeTestMethod(method, instant));
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        handleInvocationError(method, instant, e);
       }
     }
 
