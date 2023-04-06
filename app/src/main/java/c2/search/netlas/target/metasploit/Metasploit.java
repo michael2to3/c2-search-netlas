@@ -6,6 +6,7 @@ import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,11 +56,11 @@ public class Metasploit {
   }
 
   @Test
-  public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
+  public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
     final String body = netlasWrapper.getBody();
     final String defaultBody = "It works!";
     final String defaultTagPayload = "echo";
-    return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
+    return body.contains(defaultBody) || body.contains(defaultTagPayload);
   }
 
   private boolean checkJarm(final String body, final List<String> jarms) {
@@ -96,11 +97,11 @@ public class Metasploit {
       minVersion = "6.x.x";
       detect = true;
     }
-    return new Response(detect, new Version(null, minVersion));
+    return new ResponseBuilder().success(detect).version(new Version("", minVersion)).build();
   }
 
   @Test
-  public Response checkHeaders() throws JsonMappingException, JsonProcessingException {
+  public boolean checkHeaders() throws JsonMappingException, JsonProcessingException {
     final List<String> servers = netlasWrapper.getServers();
     final String defaultServer = "apache";
     boolean hasDefaultServer = false;
@@ -113,12 +114,12 @@ public class Metasploit {
 
     final int status = netlasWrapper.getStatusCode();
 
-    return new Response(hasDefaultServer && STATUS_SUCCESFULL == status);
+    return hasDefaultServer && STATUS_SUCCESFULL == status;
   }
 
   @Test(extern = true)
-  public Response checkBindShell() throws IOException {
+  public boolean checkBindShell() throws IOException {
     final String response = socketConnection.sendAndReceive();
-    return new Response(response.contains(SHELL_ID));
+    return response.contains(SHELL_ID);
   }
 }
