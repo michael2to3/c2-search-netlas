@@ -15,7 +15,7 @@ class VersionTest {
     assertEquals("2.0", version.getMax());
     assertEquals("1.0", version.getMin());
 
-    version = new Version();
+    version = new Version("1.0", "0.1");
     version.setMax("2.0");
     version.setMin("1.0");
     assertEquals("2.0", version.getMax());
@@ -34,8 +34,14 @@ class VersionTest {
     assertNotEquals(version1, "1.0");
     assertNotEquals(version1, 1.0);
     assertNotEquals(version1, new Object());
-    assertNotEquals(version1, new Version());
-    version1 = new Version();
+    assertNotEquals(version1, new Version("1.1", "0.1"));
+    version1 = new Version("", "");
+    assertTrue(version1.isEmpty());
+    version1 = new Version(null, null);
+    assertTrue(version1.isEmpty());
+    version1 = new Version(null, "");
+    assertTrue(version1.isEmpty());
+    version1 = new Version("", null);
     assertTrue(version1.isEmpty());
   }
 
