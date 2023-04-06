@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.scheme.Response;
 import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,9 +34,9 @@ public class HavocTest {
   public void testCheckJarm() throws IOException {
     String jarm = "3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e";
     when(netlasWrapper.getJarm()).thenReturn(jarm);
-    Response response = havoc.checkJarm();
+    boolean response = havoc.checkJarm();
     assertNotNull(response);
-    assertTrue(response.isSuccess());
+    assertTrue(response);
   }
 
   @Test
@@ -45,26 +44,26 @@ public class HavocTest {
     when(netlasWrapper.getBody()).thenReturn("404 page not found");
     when(netlasWrapper.getStatusCode()).thenReturn(404);
     when(netlasWrapper.getServers()).thenReturn(new ArrayList<>());
-    Response response = havoc.checkDefaultBodyResponse();
+    boolean response = havoc.checkDefaultBodyResponse();
     assertNotNull(response);
-    assertTrue(response.isSuccess());
+    assertTrue(response);
 
     when(netlasWrapper.getServers()).thenReturn(null);
     response = havoc.checkDefaultBodyResponse();
 
     assertNotNull(response);
-    assertTrue(response.isSuccess());
+    assertTrue(response);
   }
 
   @Test
   public void testCheckDumbHeader() throws Exception {
-    Response response = havoc.checkDumbHeader();
-    assertFalse(response.isSuccess());
+    boolean response = havoc.checkDumbHeader();
+    assertFalse(response);
   }
 
   @Test
   public void testCheckSendHttpOverHttps() throws Exception {
-    Response response = havoc.checkSendHttpOverHttps();
-    assertFalse(response.isSuccess());
+    boolean response = havoc.checkSendHttpOverHttps();
+    assertFalse(response);
   }
 }
