@@ -13,22 +13,22 @@ public class ResponseBuilder {
     error = "";
   }
 
-  public ResponseBuilder success(boolean success) {
+  public ResponseBuilder setSuccess(final boolean success) {
     this.success = success;
     return this;
   }
 
-  public ResponseBuilder version(Version version) {
+  public ResponseBuilder setVersion(final Version version) {
     this.version = version;
     return this;
   }
 
-  public ResponseBuilder description(String description) {
+  public ResponseBuilder setDescription(final String description) {
     this.description = description;
     return this;
   }
 
-  public ResponseBuilder error(String error) {
+  public ResponseBuilder setError(final String error) {
     this.error = error;
     return this;
   }
