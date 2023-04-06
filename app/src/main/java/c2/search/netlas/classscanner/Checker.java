@@ -37,11 +37,12 @@ public class Checker {
     for (final Class<?> clazz : detectedClasses) {
       final Object instant = instantiateClass(clazz);
       depInjector.inject(instant);
-      CompletableFuture<Void> future = CompletableFuture.runAsync(
-          () -> {
-            invokeBeforeAllMethods(instant);
-            results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
-          });
+      CompletableFuture<Void> future =
+          CompletableFuture.runAsync(
+              () -> {
+                invokeBeforeAllMethods(instant);
+                results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
+              });
       futures.add(future);
     }
     try {
