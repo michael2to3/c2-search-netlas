@@ -44,7 +44,7 @@ public class CheckerTest {
 
     @Test(description = "testMethod description")
     public Response testMethod() {
-      return new ResponseBuilder().success(true).build();
+      return new ResponseBuilder().setSuccess(true).build();
     }
 
     public boolean testMethod2() {
