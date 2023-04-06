@@ -23,13 +23,10 @@ public class Metasploit {
   private static final int SOCKET_TIMEOUT_MS = 1000;
   private static final String SHELL_ID = "shell";
   private static final int STATUS_SUCCESFULL = 200;
-  @Wire
-  private Host host;
-  @Wire
-  private NetlasWrapper netlasWrapper;
+  @Wire private Host host;
+  @Wire private NetlasWrapper netlasWrapper;
 
-  public Metasploit() {
-  }
+  public Metasploit() {}
 
   public String getShellId() {
     return SHELL_ID;
@@ -64,12 +61,14 @@ public class Metasploit {
 
   @Test
   public Response checkJarm() throws JsonMappingException, JsonProcessingException {
-    final List<String> jarmv5 = List.of("07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823");
-    final List<String> jarmv6 = List.of(
-        "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823",
-        "07b03b12b21b21b07b07b03b07b21b23aeefb38b723c523befb314af6e95ac",
-        "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
-        "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
+    final List<String> jarmv5 =
+        List.of("07d14d16d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823");
+    final List<String> jarmv6 =
+        List.of(
+            "07d19d12d21d21d07c42d43d000000f50d155305214cf247147c43c0f1a823",
+            "07b03b12b21b21b07b07b03b07b21b23aeefb38b723c523befb314af6e95ac",
+            "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
+            "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
     final String responseJarm = netlasWrapper.getJarm();
 
