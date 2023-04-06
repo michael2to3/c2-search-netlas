@@ -4,11 +4,14 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Results;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,15 +71,37 @@ public class Checker {
 
   private List<Response> invokeTestMethods(final Object instant) {
     final List<Response> responses = new ArrayList<>();
-    Response response;
+    final List<CompletableFuture<Response>> futures = new ArrayList<>();
     for (final Method method : getTestMethods(instant.getClass())) {
+      CompletableFuture<Response> future =
+          CompletableFuture.supplyAsync(
+              () -> {
+                Response response = null;
+                try {
+                  response = invokeTestMethod(method, instant);
+                } catch (IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException e) {
+                  handleInvocationError(method, instant, e);
+                }
+                return response;
+              });
+      futures.add(future);
+    }
+
+    for (CompletableFuture<Response> future : futures) {
       try {
-        response = invokeTestMethod(method, instant);
-        responses.add(response);
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        handleInvocationError(method, instant, e);
+        Response response = future.get();
+        if (response != null) {
+          responses.add(response);
+        }
+      } catch (InterruptedException | ExecutionException e) {
+        if (LOGGER.isErrorEnabled()) {
+          LOGGER.error("Failed to execute test method", e);
+        }
       }
     }
+
     return responses;
   }
 
@@ -103,8 +128,17 @@ public class Checker {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Invoking test methods of {}", instant.getClass().getName());
     }
-    final Response response = (Response) method.invoke(instant);
-    response.setDescription(getDescriptionOfTestMethod(method));
+    Response response = null;
+    final String desc = getDescriptionOfTestMethod(method);
+    if (method.getReturnType() == boolean.class) {
+      boolean success = (boolean) method.invoke(instant);
+      response = new ResponseBuilder().success(success).description(desc).build();
+    } else if (method.getReturnType() == Response.class) {
+      response = (Response) method.invoke(instant);
+      response.setDescription(desc);
+    } else {
+      LOGGER.error("Unsupported return type of test method {}", method.getName());
+    }
     return response;
   }
 
