@@ -7,9 +7,7 @@ import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.net.Socket;
 import netlas.java.Netlas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,22 +85,10 @@ public class C2Detect {
     fields.setField(Host.class, host);
     fields.setField(NetlasWrapper.class, netlas);
     fields.setField(Netlas.class, netlas.getNetlas());
-    fields.setField(Socket.class, getSocket(host, cmd.getSocketMs()));
     return fields;
   }
 
   private void printResponses(final Results responses, final boolean verbose) {
     responses.print(stream, verbose);
-  }
-
-  protected static Socket getSocket(final Host host, final int socketTimeout) {
-    Socket socket = null;
-    try {
-      socket = new Socket(host.getTarget(), host.getPort());
-      socket.setSoTimeout(socketTimeout);
-    } catch (final IOException e) {
-      LOGGER.warn("Failed to create socket", e);
-    }
-    return socket;
   }
 }
