@@ -21,7 +21,7 @@ public class Metasploit {
   private static final int STATUS_SUCCESFULL = 200;
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
-  @Wire private Socket socket;
+  private Socket socket;
   private SocketConnection socketConnection;
 
   public Metasploit() {}
@@ -44,8 +44,13 @@ public class Metasploit {
 
   @BeforeAll
   public void init() {
-    if (socket != null) {
-      socketConnection = new SocketConnection(socket, SHELL_ID);
+    try {
+      this.socket = new Socket(this.host.getTarget(), this.host.getPort());
+      this.socket.setSoTimeout(1000);
+      this.socketConnection = new SocketConnection(this.socket, SHELL_ID);
+    } catch (IOException e) {
+      this.socket = null;
+      this.socketConnection = null;
     }
   }
 
