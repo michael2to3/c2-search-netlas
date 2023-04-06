@@ -1,6 +1,5 @@
 package c2.search.netlas;
 
-
 import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
