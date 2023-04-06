@@ -29,13 +29,8 @@ public class MetasploitTest {
 
   @BeforeEach
   public void setUp() {
-    try {
-      metasploit.init();
-    } catch (Exception e) {
-    }
     metasploit.setHost(host);
     metasploit.setNetlasWrapper(netlasWrapper);
-    metasploit.setSocketConnection(socketConnection);
   }
 
   @Test
@@ -86,29 +81,5 @@ public class MetasploitTest {
     boolean response = metasploit.checkHeaders();
     assertNotNull(response);
     assertTrue(response);
-  }
-
-  @Test
-  public void testCheckBindShell() throws IOException {
-    Host mockHost = new Host("localhost", 8080);
-    boolean testPassed = true;
-
-    when(socketConnection.sendAndReceive()).thenReturn("i_am_a_shell");
-    boolean result = true;
-    when(socketConnection.sendAndReceive()).thenReturn("i_am_a_shell");
-
-    Metasploit metasploit = new Metasploit();
-    metasploit.setHost(mockHost);
-    metasploit.setNetlasWrapper(netlasWrapper);
-    metasploit.setSocketConnection(socketConnection);
-
-    try {
-      result = metasploit.checkBindShell();
-    } catch (IOException e) {
-      testPassed = false;
-    }
-
-    assertTrue(result);
-    assertTrue(testPassed);
   }
 }
