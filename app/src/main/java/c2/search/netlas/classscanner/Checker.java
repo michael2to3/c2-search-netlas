@@ -37,12 +37,11 @@ public class Checker {
     for (final Class<?> clazz : detectedClasses) {
       final Object instant = instantiateClass(clazz);
       depInjector.inject(instant);
-      CompletableFuture<Void> future =
-          CompletableFuture.runAsync(
-              () -> {
-                invokeBeforeAllMethods(instant);
-                results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
-              });
+      final CompletableFuture<Void> future = CompletableFuture.runAsync(
+          () -> {
+            invokeBeforeAllMethods(instant);
+            results.addResponse(getNameOfClass(clazz), invokeTestMethods(instant));
+          });
       futures.add(future);
     }
     try {
@@ -119,13 +118,15 @@ public class Checker {
     Response response = null;
     final String desc = getDescriptionOfTestMethod(method);
     if (method.getReturnType() == boolean.class) {
-      boolean success = (boolean) method.invoke(instant);
-      response = new ResponseBuilder().success(success).description(desc).build();
+      final boolean success = (boolean) method.invoke(instant);
+      response = new ResponseBuilder().setSuccess(success).setDescription(desc).build();
     } else if (method.getReturnType() == Response.class) {
       response = (Response) method.invoke(instant);
       response.setDescription(desc);
     } else {
-      LOGGER.error("Unsupported return type of test method {}", method.getName());
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error("Unsupported return type of test method {}", method.getName());
+      }
     }
     return response;
   }
