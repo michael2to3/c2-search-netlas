@@ -8,6 +8,7 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Results;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,11 @@ public class CheckerTest {
 
     @Test(description = "testMethod description")
     public Response testMethod() {
-      return new Response(true);
+      return new ResponseBuilder().setSuccess(true).build();
+    }
+
+    public boolean testMethod2() {
+      return true;
     }
   }
 }

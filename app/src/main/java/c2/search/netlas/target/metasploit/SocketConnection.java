@@ -32,7 +32,7 @@ public class SocketConnection implements AutoCloseable {
       final int responseLength = input.read(bresponse);
       response = new String(bresponse, 0, responseLength, StandardCharsets.UTF_8);
     } catch (IOException e) {
-      LOGGER.error("Failed to send message", e);
+      LOGGER.warn("Failed to send message", e);
     }
     return response;
   }

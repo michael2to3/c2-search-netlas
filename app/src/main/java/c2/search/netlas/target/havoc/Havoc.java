@@ -4,7 +4,6 @@ import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.scheme.Response;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -32,14 +31,14 @@ public class Havoc {
   }
 
   @Test
-  public Response checkJarm() throws JsonMappingException, JsonProcessingException {
+  public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
     final String jarm = "3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e";
     final String rjarm = netlasWrapper.getJarm();
-    return new Response(rjarm.equals(jarm));
+    return rjarm.equals(jarm);
   }
 
   @Test
-  public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
+  public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
     final String body = "404 page not found";
     final String rbody = netlasWrapper.getBody();
     final int statusCode = 404;
@@ -48,22 +47,22 @@ public class Havoc {
     final List<String> servers = netlasWrapper.getServers();
     final boolean hasServerHeader = servers != null && !servers.isEmpty();
 
-    return new Response(rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader);
+    return rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader;
   }
 
   @Test(extern = true)
-  public Response checkDumbHeader() throws IOException {
+  public boolean checkDumbHeader() throws IOException {
     final URL url = new URL("https://" + host + "/");
     final URLConnection connection = url.openConnection();
     final HttpURLConnection http = (HttpURLConnection) connection;
     http.setRequestMethod("POST");
     http.setDoOutput(true);
     final String header = http.getHeaderField("x-ishavocframework");
-    return new Response(header != null);
+    return header != null;
   }
 
   @Test(extern = true)
-  public Response checkSendHttpOverHttps() throws IOException {
+  public boolean checkSendHttpOverHttps() throws IOException {
     final URL url = new URL("http://" + host.getTarget() + ":" + host.getPort() + "/");
     final URLConnection connection = url.openConnection();
     final HttpURLConnection http = (HttpURLConnection) connection;
@@ -90,6 +89,6 @@ public class Havoc {
     }
     final int status = 400;
     final String body = "Client sent an HTTP request to an HTTPS server.";
-    return new Response(bodyResponse.contains(body) && http.getResponseCode() == status);
+    return bodyResponse.contains(body) && http.getResponseCode() == status;
   }
 }

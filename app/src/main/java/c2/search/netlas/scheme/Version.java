@@ -9,10 +9,6 @@ public class Version implements Comparable<Version> {
     this.min = min;
   }
 
-  public Version() {
-    this("", "");
-  }
-
   @Override
   public String toString() {
     return String.format("%s-%s", max, min);
@@ -48,7 +44,7 @@ public class Version implements Comparable<Version> {
   }
 
   public boolean isEmpty() {
-    return min.isEmpty() || max.isEmpty();
+    return min == null || max == null || min.isEmpty() || max.isEmpty();
   }
 
   public String getMin() {

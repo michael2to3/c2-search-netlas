@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class SocketConnectionTest {
-  private static final String HOST = "localhost";
-  private static final int PORT = 12345;
   private static final String ID = "test_id";
   private static final String RESPONSE = "response";
 
