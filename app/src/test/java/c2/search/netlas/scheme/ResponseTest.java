@@ -23,38 +23,4 @@ class ResponseTest {
     assertEquals("other Describe", response.getDescription());
     assertEquals("other Error", response.getError());
   }
-
-  @Test
-  void testConstructor() {
-    Response response = new Response();
-    response.setSuccess(true);
-    Version ver = new Version("2.0", "0.2");
-    response.setVersion(ver);
-    response.setDescription("other Describe");
-    response.setError("other Error");
-
-    assertEquals(true, response.isSuccess());
-    assertEquals(ver, response.getVersion());
-    assertEquals("other Describe", response.getDescription());
-    assertEquals("other Error", response.getError());
-
-    response = new Response(false);
-    assertEquals(false, response.isSuccess());
-
-    Version version = new Version("3.0", "0.3");
-    response = new Response(true, version);
-    assertEquals(true, response.isSuccess());
-    assertEquals(version, response.getVersion());
-
-    response = new Response(false, version, "3desc");
-    assertEquals(false, response.isSuccess());
-    assertEquals(version, response.getVersion());
-    assertEquals("3desc", response.getDescription());
-
-    response = new Response(true, ver, "4desc", "4err");
-    assertEquals(true, response.isSuccess());
-    assertEquals(ver, response.getVersion());
-    assertEquals("4desc", response.getDescription());
-    assertEquals("4err", response.getError());
-  }
 }

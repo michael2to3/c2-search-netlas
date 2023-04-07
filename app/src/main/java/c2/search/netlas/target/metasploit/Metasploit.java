@@ -1,11 +1,11 @@
 package c2.search.netlas.target.metasploit;
 
-import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,17 +14,23 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.Locale;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Detect(name = "Metasploit")
 public class Metasploit {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Metasploit.class);
+  private static final int SOCKET_TIMEOUT_MS = 1000;
   private static final String SHELL_ID = "shell";
   private static final int STATUS_SUCCESFULL = 200;
   @Wire private Host host;
   @Wire private NetlasWrapper netlasWrapper;
-  @Wire private Socket socket;
-  private SocketConnection socketConnection;
 
   public Metasploit() {}
+
+  public String getShellId() {
+    return SHELL_ID;
+  }
 
   public void setHost(final Host host) {
     this.host = host;
@@ -34,27 +40,12 @@ public class Metasploit {
     this.netlasWrapper = netlasWrapper;
   }
 
-  public void setSocket(final Socket socket) {
-    this.socket = socket;
-  }
-
-  public void setSocketConnection(final SocketConnection socketConnection) {
-    this.socketConnection = socketConnection;
-  }
-
-  @BeforeAll
-  public void init() {
-    if (socket != null) {
-      socketConnection = new SocketConnection(socket, SHELL_ID);
-    }
-  }
-
   @Test
-  public Response checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
+  public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
     final String body = netlasWrapper.getBody();
     final String defaultBody = "It works!";
     final String defaultTagPayload = "echo";
-    return new Response(body.contains(defaultBody) || body.contains(defaultTagPayload));
+    return body.contains(defaultBody) || body.contains(defaultTagPayload);
   }
 
   private boolean checkJarm(final String body, final List<String> jarms) {
@@ -91,11 +82,11 @@ public class Metasploit {
       minVersion = "6.x.x";
       detect = true;
     }
-    return new Response(detect, new Version(null, minVersion));
+    return new ResponseBuilder().setSuccess(detect).setVersion(new Version("", minVersion)).build();
   }
 
   @Test
-  public Response checkHeaders() throws JsonMappingException, JsonProcessingException {
+  public boolean checkHeaders() throws JsonMappingException, JsonProcessingException {
     final List<String> servers = netlasWrapper.getServers();
     final String defaultServer = "apache";
     boolean hasDefaultServer = false;
@@ -108,12 +99,22 @@ public class Metasploit {
 
     final int status = netlasWrapper.getStatusCode();
 
-    return new Response(hasDefaultServer && STATUS_SUCCESFULL == status);
+    return hasDefaultServer && STATUS_SUCCESFULL == status;
   }
 
   @Test(extern = true)
-  public Response checkBindShell() throws IOException {
-    final String response = socketConnection.sendAndReceive();
-    return new Response(response.contains(SHELL_ID));
+  public boolean checkBindShell() {
+    boolean result = false;
+    try (Socket socket = new Socket(host.getTarget(), host.getPort());
+        SocketConnection conn = new SocketConnection(socket, SHELL_ID)) {
+      socket.setSoTimeout(SOCKET_TIMEOUT_MS);
+      final String response = conn.sendAndReceive();
+      result = response.contains(SHELL_ID);
+    } catch (IOException e) {
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Failed to connect to {}:{}", host.getTarget(), host.getPort(), e);
+      }
+    }
+    return result;
   }
 }

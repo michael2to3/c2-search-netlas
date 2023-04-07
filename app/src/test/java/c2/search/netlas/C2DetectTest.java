@@ -1,15 +1,9 @@
 package c2.search.netlas;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
 import c2.search.netlas.scheme.Host;
-import java.net.Socket;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -79,27 +73,5 @@ public class C2DetectTest {
   @BeforeEach
   void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
-  }
-
-  @Test
-  void testGetSocket() throws Exception {
-    Socket expectedSocket = mock(Socket.class);
-    when(host.getTarget()).thenReturn("localhost");
-    when(host.getPort()).thenReturn(8080);
-    doNothing().when(expectedSocket).setSoTimeout(1000);
-
-    Socket actualSocket = C2Detect.getSocket(host, 1000);
-
-    assertNull(actualSocket);
-  }
-
-  @Test
-  void testGetSocketIOException() throws Exception {
-    when(host.getTarget()).thenReturn("localhost");
-    when(host.getPort()).thenReturn(8080);
-
-    Socket actualSocket = C2Detect.getSocket(host, 1000);
-
-    assertNull(actualSocket);
   }
 }

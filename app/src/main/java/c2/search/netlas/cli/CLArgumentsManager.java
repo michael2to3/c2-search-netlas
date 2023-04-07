@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CLArgumentsManager {
-  private static final int SOCKET_MS = 1000;
   private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private static final String PATH_API_KEY = "api.key";
   private final Config config;
@@ -74,20 +73,5 @@ public class CLArgumentsManager {
       apiKey = cmd.getOptionValue("s");
     }
     return apiKey;
-  }
-
-  public int getSocketMs() {
-    LOGGER.info("Getting socket timeout");
-
-    int socketMs = SOCKET_MS;
-    final String timeout = config.get("socket.timeout");
-    try {
-      socketMs = Integer.parseInt(timeout);
-    } catch (final NumberFormatException e) {
-      if (LOGGER.isWarnEnabled()) {
-        LOGGER.warn("Invalid socket timeout: " + timeout);
-      }
-    }
-    return socketMs;
   }
 }

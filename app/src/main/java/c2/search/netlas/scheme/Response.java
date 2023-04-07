@@ -6,20 +6,6 @@ public class Response {
   private String description;
   private String error;
 
-  public Response() {}
-
-  public Response(final boolean success) {
-    this(success, new Version());
-  }
-
-  public Response(final boolean success, final Version version) {
-    this(success, version, "");
-  }
-
-  public Response(final boolean success, final Version version, final String description) {
-    this(success, version, description, "");
-  }
-
   public Response(
       final boolean success, final Version version, final String description, final String error) {
     this.success = success;
