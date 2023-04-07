@@ -105,13 +105,15 @@ public class Metasploit {
   @Test(extern = true)
   public boolean checkBindShell() {
     boolean result = false;
-    try (final Socket socket = new Socket(host.getTarget(), host.getPort());
-        final SocketConnection conn = new SocketConnection(socket, SHELL_ID)) {
+    try (Socket socket = new Socket(host.getTarget(), host.getPort());
+        SocketConnection conn = new SocketConnection(socket, SHELL_ID)) {
       socket.setSoTimeout(SOCKET_TIMEOUT_MS);
       final String response = conn.sendAndReceive();
       result = response.contains(SHELL_ID);
     } catch (IOException e) {
-      LOGGER.warn("Failed to connect to {}:{}", host.getTarget(), host.getPort(), e);
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Failed to connect to {}:{}", host.getTarget(), host.getPort(), e);
+      }
     }
     return result;
   }
