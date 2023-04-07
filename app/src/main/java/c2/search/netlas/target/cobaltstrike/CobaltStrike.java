@@ -4,7 +4,6 @@ import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.scheme.Response;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -14,7 +13,7 @@ public class CobaltStrike {
   @Wire private NetlasWrapper netlasWrapper;
 
   @Test
-  public Response testJarm() {
+  public boolean testJarm() {
     final String jarm = "2ad2ad16d2ad2ad00042d42d00042ddb04deffa1705e2edc44cae1ed24a4da";
     String tjarm;
     try {
@@ -23,6 +22,6 @@ public class CobaltStrike {
       tjarm = null;
     }
 
-    return new Response(jarm.equals(tjarm));
+    return jarm.equals(tjarm);
   }
 }
