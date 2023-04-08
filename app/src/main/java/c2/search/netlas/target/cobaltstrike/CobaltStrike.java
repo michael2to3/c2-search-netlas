@@ -122,18 +122,18 @@ public class CobaltStrike {
 
   @Test
   public boolean defaultHeaders() throws JsonMappingException, JsonProcessingException {
-    int defaultContentLen = 0;
-    String defaultContentType = "text/plain";
-    boolean emptyServer = netlasWrapper.getServers().isEmpty();
-    boolean len = netlasWrapper.getContentLength().contains(defaultContentLen);
-    boolean contentType = netlasWrapper.getContentType().contains(defaultContentType);
+    final int contentLen = 0;
+    final String contentType = "text/plain";
+    final boolean isEmptyServer = netlasWrapper.getServers().isEmpty();
+    final boolean isDefaultLen = netlasWrapper.getContentLength().contains(contentLen);
+    final boolean isDefaultType = netlasWrapper.getContentType().contains(contentType);
 
-    return emptyServer && len && contentType;
+    return isEmptyServer && isDefaultLen && isDefaultType;
   }
 
   @Test
   public boolean defaultPort() throws JsonMappingException, JsonProcessingException {
-    List<Integer> ports = Arrays.asList(41337, 1337, 4444, 2222, 50050);
+    final List<Integer> ports = Arrays.asList(41337, 1337, 4444, 2222, 50050);
     return ports.contains(host.getPort());
   }
 
@@ -156,18 +156,18 @@ public class CobaltStrike {
   @Test(extern = true)
   public boolean checkUA() throws IOException {
     boolean result = false;
-    List<String> paths = Arrays.asList("/accept.php", "/pixel");
-    for (String path : paths) {
-      int statusWithUA = sendHttpRequest("random", path);
-      int statusWithoutUA = sendHttpRequest(null, path);
-      int accept = 200;
-      int reject = 404;
+    final List<String> paths = Arrays.asList("/accept.php", "/pixel");
+    for (final String path : paths) {
+      final int statusWithUA = sendHttpRequest("random", path);
+      final int statusWithoutUA = sendHttpRequest(null, path);
+      final int accept = 200;
+      final int reject = 404;
       result = statusWithUA == accept && statusWithoutUA == reject;
     }
     return result;
   }
 
-  private boolean allEqual(List<List<String>> lists, String... expectedValues) {
+  private boolean allEqual(final List<List<String>> lists, final String... expectedValues) {
     boolean result;
     if (lists.size() != expectedValues.length) {
       result = false;
@@ -189,7 +189,7 @@ public class CobaltStrike {
     try {
       socket = new Socket(host.getTarget(), host.getPort());
       inputStream = socket.getInputStream();
-      byte[] buffer = new byte[1024];
+      final byte[] buffer = new byte[1024];
       int len;
       int totalLen = 0;
       while ((len = inputStream.read(buffer)) != -1) {
@@ -208,15 +208,15 @@ public class CobaltStrike {
     }
   }
 
-  public int sendHttpRequest(String ua, String path) throws IOException {
-    String urlString = "http://" + host.getTarget() + ":" + host.getPort() + path;
-    URL url = new URL(urlString);
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+  public int sendHttpRequest(final String ua, final String path) throws IOException {
+    final String urlString = "http://" + host.getTarget() + ":" + host.getPort() + path;
+    final URL url = new URL(urlString);
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
     if (!ua.isEmpty() || ua == null) {
       connection.setRequestProperty("User-Agent", "random");
     }
-    int statusCode = connection.getResponseCode();
+    final int statusCode = connection.getResponseCode();
     connection.disconnect();
     return statusCode;
   }
