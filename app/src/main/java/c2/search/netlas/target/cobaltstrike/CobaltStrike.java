@@ -61,8 +61,8 @@ public class CobaltStrike {
 
   @Test
   public boolean defaultPort() throws JsonMappingException, JsonProcessingException {
-    final List<Integer> ports = Arrays.asList(41337, 1337, 4444, 2222, 50050);
-    return ports.contains(host.getPort());
+    final int teamserver = 41337;
+    return host.getPort() == teamserver;
   }
 
   @Test(extern = true)
