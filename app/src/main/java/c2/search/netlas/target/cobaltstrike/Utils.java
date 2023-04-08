@@ -66,8 +66,10 @@ class Utils {
     final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
     final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
 
-    final List<List<String>> subject = Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-    final List<List<String>> issuer = Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
+    final List<List<String>> subject =
+        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
+    final List<List<String>> issuer =
+        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
     boolean result = true;
     for (int i = 0; i < fields.length; i++) {
