@@ -37,7 +37,7 @@ public class CobaltStrike {
       "Redmond",
       "Microsoft Corporation",
       "Microsoft Corporation",
-      "Outlook.live.com"
+      "Outlook.live.com",
     };
     return Utils.verifyDefaultCertFields(netlasWrapper, fields);
   }
