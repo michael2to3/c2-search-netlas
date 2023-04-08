@@ -14,8 +14,7 @@ import java.util.List;
 
 final class Utils {
 
-  private Utils() {
-  }
+  private Utils() {}
 
   public static int getDataLength(final Host host) throws IOException {
     final int chunk = 1024;
