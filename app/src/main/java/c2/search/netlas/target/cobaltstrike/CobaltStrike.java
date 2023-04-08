@@ -28,7 +28,7 @@ public class CobaltStrike {
   @Test
   public boolean testJarm() throws JsonMappingException, JsonProcessingException {
     final String jarm = "2ad2ad16d2ad2ad00042d42d00042ddb04deffa1705e2edc44cae1ed24a4da";
-    String tjarm = netlasWrapper.getJarm();
+    final String tjarm = netlasWrapper.getJarm();
 
     return jarm.equals(tjarm);
   }
@@ -41,7 +41,7 @@ public class CobaltStrike {
       "Redmond",
       "Microsoft Corporation",
       "Microsoft Corporation",
-      "Outlook.live.com"
+      "Outlook.live.com",
     };
     return verifyDefaultCertFields(fields);
   }
@@ -52,7 +52,7 @@ public class CobaltStrike {
     return verifyDefaultCertFields(fields);
   }
 
-  private boolean verifyDefaultCertFields(String[] fields)
+  private boolean verifyDefaultCertFields(final String[] fields)
       throws JsonMappingException, JsonProcessingException {
     final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
     final List<String> subState = netlasWrapper.getCertSubjectProvince();
@@ -73,21 +73,24 @@ public class CobaltStrike {
     final List<List<String>> issuer =
         Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
+    boolean result = true;
     for (int i = 0; i < fields.length; i++) {
       if (!fields[i].equals("")) {
         if (!allEqual(subject.get(i), fields[i])) {
-          return false;
+          result = false;
+          break;
         }
         if (!allEqual(issuer.get(i), fields[i])) {
-          return false;
+          result = false;
+          break;
         }
       }
     }
 
-    return true;
+    return result;
   }
 
-  private boolean allEqual(List<String> list, String value) {
+  private boolean allEqual(final List<String> list, final String value) {
     return list.stream().allMatch(s -> s.equals(value));
   }
 
@@ -145,7 +148,11 @@ public class CobaltStrike {
       final byte[] buffer = new byte[chunk];
       int len;
       int totalLen = 0;
-      while ((len = inputStream.read(buffer)) != -1) {
+      while (true) {
+        len = inputStream.read(buffer);
+        if (len == -1) {
+          break;
+        }
         totalLen += len;
       }
       return totalLen;
