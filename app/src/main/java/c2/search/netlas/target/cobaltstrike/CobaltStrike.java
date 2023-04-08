@@ -26,31 +26,34 @@ public class CobaltStrike {
   public CobaltStrike() {}
 
   @Test
-  public boolean testJarm() {
+  public boolean testJarm() throws JsonMappingException, JsonProcessingException {
     final String jarm = "2ad2ad16d2ad2ad00042d42d00042ddb04deffa1705e2edc44cae1ed24a4da";
-    String tjarm;
-    try {
-      tjarm = netlasWrapper.getJarm();
-    } catch (JsonProcessingException e) {
-      tjarm = null;
-    }
+    String tjarm = netlasWrapper.getJarm();
 
     return jarm.equals(tjarm);
   }
 
   @Test
   public boolean defaultCertFieldTeamServer() throws JsonMappingException, JsonProcessingException {
-    // * subject: C=US; ST=Washington; L=Redmond; O=Microsoft Corporation;
-    // OU=Microsoft Corporation; CN=Outlook.live.com
-    // * issuer: C=US; ST=Washington; L=Redmond; O=Microsoft Corporation;
-    // OU=Microsoft Corporation; CN=Outlook.live.com
-    final String country = "US";
-    final String state = "Washington";
-    final String city = "Redmond";
-    final String organization = "Microsoft Corporation";
-    final String organizationUnit = "Microsoft Corporation";
-    final String commonName = "Outlook.live.com";
+    final String[] fields = {
+      "US",
+      "Washington",
+      "Redmond",
+      "Microsoft Corporation",
+      "Microsoft Corporation",
+      "Outlook.live.com"
+    };
+    return verifyDefaultCertFields(fields);
+  }
 
+  @Test
+  public boolean defaultCertFieldListener() throws JsonMappingException, JsonProcessingException {
+    final String[] fields = {"", "", "", "", "", ""};
+    return verifyDefaultCertFields(fields);
+  }
+
+  private boolean verifyDefaultCertFields(String[] fields)
+      throws JsonMappingException, JsonProcessingException {
     final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
     final List<String> subState = netlasWrapper.getCertSubjectProvince();
     final List<String> subCity = netlasWrapper.getCertSubjectLocality();
@@ -70,54 +73,22 @@ public class CobaltStrike {
     final List<List<String>> issuer =
         Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
-    return allEqual(subject, country, state, city, organization, organizationUnit, commonName)
-        && allEqual(issuer, country, state, city, organization, organizationUnit, commonName);
+    for (int i = 0; i < fields.length; i++) {
+      if (!fields[i].equals("")) {
+        if (!allEqual(subject.get(i), fields[i])) {
+          return false;
+        }
+        if (!allEqual(issuer.get(i), fields[i])) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
-  @Test
-  public boolean defaultCertFieldListener() throws JsonMappingException, JsonProcessingException {
-    // * subject: C=; ST=; L=; O=; OU=; CN=
-    // * issuer: C=; ST=; L=; O=; OU=; CN=
-    final String country = "";
-    final String state = "";
-    final String city = "";
-    final String organization = "";
-    final String organizationUnit = "";
-    final String commonName = "";
-
-    final List<String> subjectCountry = netlasWrapper.getCertSubjectCountry();
-    final List<String> subjectState = netlasWrapper.getCertSubjectProvince();
-    final List<String> subjectCity = netlasWrapper.getCertSubjectLocality();
-    final List<String> subjectOrganization = netlasWrapper.getCertSubjectOrganization();
-    final List<String> subjectOrganizationUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-    final List<String> subjectCommonName = netlasWrapper.getCertSubjectCommonName();
-
-    final List<String> issuerCountry = netlasWrapper.getCertIssuerCountry();
-    final List<String> issuerState = netlasWrapper.getCertIssuerProvince();
-    final List<String> issuerCity = netlasWrapper.getCertIssuerLocality();
-    final List<String> issuerOrganization = netlasWrapper.getCertIssuerOrganization();
-    final List<String> issuerOrganizationUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-    final List<String> issuerCommonName = netlasWrapper.getCertIssuerCommonName();
-
-    final List<List<String>> subject =
-        Arrays.asList(
-            subjectCountry,
-            subjectState,
-            subjectCity,
-            subjectOrganization,
-            subjectOrganizationUnit,
-            subjectCommonName);
-    final List<List<String>> issuer =
-        Arrays.asList(
-            issuerCountry,
-            issuerState,
-            issuerCity,
-            issuerOrganization,
-            issuerOrganizationUnit,
-            issuerCommonName);
-
-    return allEqual(subject, country, state, city, organization, organizationUnit, commonName)
-        && allEqual(issuer, country, state, city, organization, organizationUnit, commonName);
+  private boolean allEqual(List<String> list, String value) {
+    return list.stream().allMatch(s -> s.equals(value));
   }
 
   @Test
@@ -167,44 +138,17 @@ public class CobaltStrike {
     return result;
   }
 
-  private boolean allEqual(final List<List<String>> lists, final String... expectedValues) {
-    boolean result;
-    if (lists.size() != expectedValues.length) {
-      result = false;
-    } else {
-      for (int i = 0; i < lists.size(); i++) {
-        if (!lists.get(i).contains(expectedValues[i])) {
-          result = false;
-          break;
-        }
-      }
-      result = true;
-    }
-    return result;
-  }
-
   private int getDataLength() throws IOException {
-    Socket socket = null;
-    InputStream inputStream = null;
-    try {
-      socket = new Socket(host.getTarget(), host.getPort());
-      inputStream = socket.getInputStream();
-      final byte[] buffer = new byte[1024];
+    final int chunk = 1024;
+    try (Socket socket = new Socket(host.getTarget(), host.getPort());
+        InputStream inputStream = socket.getInputStream()) {
+      final byte[] buffer = new byte[chunk];
       int len;
       int totalLen = 0;
       while ((len = inputStream.read(buffer)) != -1) {
         totalLen += len;
       }
       return totalLen;
-    } catch (IOException e) {
-      throw e;
-    } finally {
-      if (inputStream != null) {
-        inputStream.close();
-      }
-      if (socket != null) {
-        socket.close();
-      }
     }
   }
 
