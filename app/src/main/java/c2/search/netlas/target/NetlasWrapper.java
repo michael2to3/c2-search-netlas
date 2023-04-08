@@ -311,10 +311,9 @@ public class NetlasWrapper {
   private List<Integer> toArrayInt(final JsonNode node)
       throws JsonMappingException, JsonProcessingException {
     final List<Integer> servers = new ArrayList<>();
-    final JsonNode items = getLast(".data.http.headers.server", 0);
 
-    if (items != null) {
-      items.forEach(
+    if (node != null) {
+      node.forEach(
           item -> {
             servers.add(item.asInt());
           });
@@ -325,10 +324,9 @@ public class NetlasWrapper {
   private List<String> toArrayString(final JsonNode node)
       throws JsonMappingException, JsonProcessingException {
     final List<String> servers = new ArrayList<>();
-    final JsonNode items = getLast(".data.http.headers.server", 0);
 
-    if (items != null) {
-      items.forEach(
+    if (node != null) {
+      node.forEach(
           item -> {
             servers.add(item.asText());
           });
