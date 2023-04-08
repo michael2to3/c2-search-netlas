@@ -236,6 +236,14 @@ public class NetlasWrapper {
     return getLast(".data.http.status_code", 0).asInt();
   }
 
+  public List<String> getContentType() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.http.headers.content_type", 0));
+  }
+
+  public List<Integer> getContentLength() throws JsonMappingException, JsonProcessingException {
+    return toArrayInt(getLast(".data.http.headers.content_length", 0));
+  }
+
   public List<String> getCertSubjectCommonName()
       throws JsonMappingException, JsonProcessingException {
     return toArrayString(getLast(".data.certificate.subject.common_name", 0));
@@ -298,6 +306,20 @@ public class NetlasWrapper {
 
   public List<String> getCertIssuerProvince() throws JsonMappingException, JsonProcessingException {
     return toArrayString(getLast(".data.certificate.issuer.province", 0));
+  }
+
+  private List<Integer> toArrayInt(final JsonNode node)
+      throws JsonMappingException, JsonProcessingException {
+    final List<Integer> servers = new ArrayList<>();
+    final JsonNode items = getLast(".data.http.headers.server", 0);
+
+    if (items != null) {
+      items.forEach(
+          item -> {
+            servers.add(item.asInt());
+          });
+    }
+    return servers;
   }
 
   private List<String> toArrayString(final JsonNode node)
