@@ -51,36 +51,24 @@ public class CobaltStrike {
     final String organizationUnit = "Microsoft Corporation";
     final String commonName = "Outlook.live.com";
 
-    final List<String> subjectCountry = netlasWrapper.getCertSubjectCountry();
-    final List<String> subjectState = netlasWrapper.getCertSubjectProvince();
-    final List<String> subjectCity = netlasWrapper.getCertSubjectLocality();
-    final List<String> subjectOrganization = netlasWrapper.getCertSubjectOrganization();
-    final List<String> subjectOrganizationUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-    final List<String> subjectCommonName = netlasWrapper.getCertSubjectCommonName();
+    final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
+    final List<String> subState = netlasWrapper.getCertSubjectProvince();
+    final List<String> subCity = netlasWrapper.getCertSubjectLocality();
+    final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
+    final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
+    final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
 
-    final List<String> issuerCountry = netlasWrapper.getCertIssuerCountry();
-    final List<String> issuerState = netlasWrapper.getCertIssuerProvince();
-    final List<String> issuerCity = netlasWrapper.getCertIssuerLocality();
-    final List<String> issuerOrganization = netlasWrapper.getCertIssuerOrganization();
-    final List<String> issuerOrganizationUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-    final List<String> issuerCommonName = netlasWrapper.getCertIssuerCommonName();
+    final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
+    final List<String> issState = netlasWrapper.getCertIssuerProvince();
+    final List<String> issCity = netlasWrapper.getCertIssuerLocality();
+    final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
+    final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
+    final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
 
     final List<List<String>> subject =
-        Arrays.asList(
-            subjectCountry,
-            subjectState,
-            subjectCity,
-            subjectOrganization,
-            subjectOrganizationUnit,
-            subjectCommonName);
+        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
     final List<List<String>> issuer =
-        Arrays.asList(
-            issuerCountry,
-            issuerState,
-            issuerCity,
-            issuerOrganization,
-            issuerOrganizationUnit,
-            issuerCommonName);
+        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
     return allEqual(subject, country, state, city, organization, organizationUnit, commonName)
         && allEqual(issuer, country, state, city, organization, organizationUnit, commonName);
