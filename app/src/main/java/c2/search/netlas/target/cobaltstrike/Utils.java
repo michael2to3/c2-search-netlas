@@ -76,7 +76,7 @@ final class Utils {
 
     boolean result = true;
     for (int i = 0; i < fields.length; i++) {
-      if (!"".equals(fields[i])) {
+      if (!fields[i].isEmpty()) {
         if (!allEqual(subject.get(i), fields[i])) {
           result = false;
           break;
