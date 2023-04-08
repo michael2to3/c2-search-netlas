@@ -12,7 +12,11 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-class Utils {
+final class Utils {
+
+  private Utils() {
+  }
+
   public static int getDataLength(final Host host) throws IOException {
     final int chunk = 1024;
     try (Socket socket = new Socket(host.getTarget(), host.getPort());
