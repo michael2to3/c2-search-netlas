@@ -122,6 +122,17 @@ public class CobaltStrike {
         && allEqual(issuer, country, state, city, organization, organizationUnit, commonName);
   }
 
+  @Test
+  public boolean defaultHeaders() throws JsonMappingException, JsonProcessingException {
+    int defaultContentLen = 0;
+    String defaultContentType = "text/plain";
+    boolean emptyServer = netlasWrapper.getServers().isEmpty();
+    boolean len = netlasWrapper.getContentLength().contains(defaultContentLen);
+    boolean contentType = netlasWrapper.getContentType().contains(defaultContentType);
+
+    return emptyServer && len && contentType;
+  }
+
   private boolean allEqual(List<List<String>> lists, String... expectedValues) {
     boolean result;
     if (lists.size() != expectedValues.length) {
