@@ -51,7 +51,7 @@ This will display a list of C2 servers found in the given IP address or domain.
 | metasploit              | :white_check_mark: |
 | HavocFramework/Havoc    | :question:         |
 | Cobalt Strike           | :white_check_mark: |
-| BishopFox/sliver        | :x:                |
+| BishopFox/sliver        | :white_check_mark: |
 | Empire                  | :x:                |
 | Ne0nd0g/merlin          | :x:                |
 | cobbr/Covenant          | :x:                |
