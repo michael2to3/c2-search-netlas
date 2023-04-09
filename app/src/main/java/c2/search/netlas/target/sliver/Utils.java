@@ -3,9 +3,7 @@ package c2.search.netlas.target.sliver;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -77,9 +75,11 @@ final class Utils {
     final MessageDigest digest = MessageDigest.getInstance("SHA-256");
     final byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
     final StringBuilder hexString = new StringBuilder();
+    final int length = 1;
+    final int base = 0xff;
     for (final byte b : hash) {
-      final String hex = Integer.toHexString(0xff & b);
-      if (hex.length() == 1) {
+      final String hex = Integer.toHexString(base & b);
+      if (hex.length() == length) {
         hexString.append('0');
       }
       hexString.append(hex);
@@ -87,26 +87,9 @@ final class Utils {
     return hexString.toString();
   }
 
-  private static String readResponseBody(final HttpURLConnection connection) throws IOException {
-    final BufferedReader in =
-        new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    final StringBuilder response = new StringBuilder();
-    String inputLine;
-    while (true) {
-      inputLine = in.readLine();
-      if (inputLine == null) {
-        break;
-      }
-      response.append(inputLine);
-    }
-    in.close();
-    return response.toString();
-  }
-
-  public static String[] getHTTPResponse(final String path) {
+  public static int[] getHttpResponse(final String path) {
     int responseCode = -1;
     int contentLength = -1;
-    String responseBody = "";
     try {
       final URL url = new URL(path);
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -114,7 +97,6 @@ final class Utils {
 
       responseCode = connection.getResponseCode();
       contentLength = connection.getContentLength();
-      responseBody = readResponseBody(connection);
 
       connection.disconnect();
     } catch (IOException e) {
@@ -123,17 +105,15 @@ final class Utils {
       }
     }
 
-    return new String[] {String.valueOf(responseCode), String.valueOf(contentLength), responseBody};
+    return new int[] {responseCode, contentLength};
   }
 
   public static boolean testEndpoint(final String endpoint, final int expStatus, final int expLen)
       throws NoSuchAlgorithmException {
-    final String[] http = Utils.getHTTPResponse(String.format("http://%s", endpoint));
-    final String[] https = Utils.getHTTPResponse(String.format("https://%s", endpoint));
-    final boolean eqStatus =
-        Integer.parseInt(http[0]) == expStatus || Integer.parseInt(https[0]) == expStatus;
-    final boolean eqLen =
-        Integer.parseInt(http[1]) == expLen || Integer.parseInt(https[1]) == expLen;
+    final int[] http = Utils.getHttpResponse(String.format("http://%s", endpoint));
+    final int[] https = Utils.getHttpResponse(String.format("https://%s", endpoint));
+    final boolean eqStatus = http[0] == expStatus || https[0] == expStatus;
+    final boolean eqLen = http[1] == expLen || https[1] == expLen;
     return eqStatus && eqLen;
   }
 }
