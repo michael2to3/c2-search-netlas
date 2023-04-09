@@ -64,17 +64,15 @@ final class Utils {
     return result;
   }
 
-  public static String[] getHTTPResponse(final String path) {
+  public static String[] getHttpResponse(final String path) {
     int responseCode = -1;
     String responseBody = "";
     try {
       final URL url = new URL(path);
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
-
       responseCode = connection.getResponseCode();
       responseBody = readResponseBody(connection);
-
       connection.disconnect();
     } catch (IOException e) {
       if (LOGGER.isWarnEnabled()) {
@@ -86,28 +84,30 @@ final class Utils {
   }
 
   private static String readResponseBody(final HttpURLConnection connection) throws IOException {
-    final BufferedReader in =
-        new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    final StringBuilder response = new StringBuilder();
-    String inputLine;
-    while (true) {
-      inputLine = in.readLine();
-      if (inputLine == null) {
-        break;
+    try (InputStreamReader input = new InputStreamReader(connection.getInputStream());
+        BufferedReader in = new BufferedReader(input)) {
+      final StringBuilder response = new StringBuilder();
+      String inputLine;
+      while (true) {
+        inputLine = in.readLine();
+        if (inputLine == null) {
+          break;
+        }
+        response.append(inputLine);
       }
-      response.append(inputLine);
+      return response.toString();
     }
-    in.close();
-    return response.toString();
   }
 
   public static String getSHA256Hash(final String input) throws NoSuchAlgorithmException {
     final MessageDigest digest = MessageDigest.getInstance("SHA-256");
     final byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
     final StringBuilder hexString = new StringBuilder();
+    final int base = 0xff;
+    final int length = 1;
     for (final byte b : hash) {
-      final String hex = Integer.toHexString(0xff & b);
-      if (hex.length() == 1) {
+      final String hex = Integer.toHexString(base & b);
+      if (hex.length() == length) {
         hexString.append('0');
       }
       hexString.append(hex);
@@ -118,8 +118,8 @@ final class Utils {
   public static boolean testEndpoint(
       final String endpoint, final int expectedStatus, final String expectedHash)
       throws NoSuchAlgorithmException {
-    final String[] http = Utils.getHTTPResponse(String.format("http://%s", endpoint));
-    final String[] https = Utils.getHTTPResponse(String.format("https://%s", endpoint));
+    final String[] http = Utils.getHttpResponse(String.format("http://%s", endpoint));
+    final String[] https = Utils.getHttpResponse(String.format("https://%s", endpoint));
     final String rbody = Utils.getSHA256Hash(http[1]);
     final String rbody2 = Utils.getSHA256Hash(https[1]);
     final int rcode = Integer.parseInt(http[0]);
