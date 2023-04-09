@@ -222,14 +222,7 @@ public class NetlasWrapper {
    * @throws JsonProcessingException if there is an issue with processing json
    */
   public List<String> getServers() throws JsonMappingException, JsonProcessingException {
-    final List<String> servers = new ArrayList<>();
-    final JsonNode items = getLast(".data.http.headers.server", 0);
-
-    items.forEach(
-        item -> {
-          servers.add(item.asText());
-        });
-    return servers;
+    return toArrayString(getLast(".data.http.headers.server", 0));
   }
 
   /**
@@ -241,5 +234,103 @@ public class NetlasWrapper {
    */
   public int getStatusCode() throws JsonMappingException, JsonProcessingException {
     return getLast(".data.http.status_code", 0).asInt();
+  }
+
+  public List<String> getContentType() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.http.headers.content_type", 0));
+  }
+
+  public List<Integer> getContentLength() throws JsonMappingException, JsonProcessingException {
+    return toArrayInt(getLast(".data.http.headers.content_length", 0));
+  }
+
+  public List<String> getCertSubjectCommonName()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.common_name", 0));
+  }
+
+  public List<String> getCertSubjectCountry() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.country", 0));
+  }
+
+  public List<String> getCertSubjectOrganizationUnit()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.organization_unit", 0));
+  }
+
+  public List<String> getCertSubjectOrganization()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.organization", 0));
+  }
+
+  public List<String> getCertSubjectLocality()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.locality", 0));
+  }
+
+  public List<String> getCertSubjectProvince()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.subject.province", 0));
+  }
+
+  public String getCertStartDate() throws JsonMappingException, JsonProcessingException {
+    return getLast(".data.certificate.validity.start", 0).asText();
+  }
+
+  public String getCertEndDate() throws JsonMappingException, JsonProcessingException {
+    return getLast(".data.certificate.validity.end", 0).asText();
+  }
+
+  public List<String> getCertIssuerCommonName()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.common_name", 0));
+  }
+
+  public List<String> getCertIssuerOrganizationUnit()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.organization_unit", 0));
+  }
+
+  public List<String> getCertIssuerCountry() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.country", 0));
+  }
+
+  public List<String> getCertIssuerOrganization()
+      throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.organization", 0));
+  }
+
+  public List<String> getCertIssuerLocality() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.locality", 0));
+  }
+
+  public List<String> getCertIssuerProvince() throws JsonMappingException, JsonProcessingException {
+    return toArrayString(getLast(".data.certificate.issuer.province", 0));
+  }
+
+  private List<Integer> toArrayInt(final JsonNode node)
+      throws JsonMappingException, JsonProcessingException {
+    final List<Integer> servers = new ArrayList<>();
+
+    if (node != null) {
+      node.forEach(
+          item -> {
+            servers.add(item.asInt());
+          });
+    }
+    return servers;
+  }
+
+  private List<String> toArrayString(final JsonNode node)
+      throws JsonMappingException, JsonProcessingException {
+    final List<String> servers = new ArrayList<>();
+
+    if (node != null) {
+      node.forEach(
+          item -> {
+            servers.add(item.asText());
+          });
+    }
+    return servers;
   }
 }
