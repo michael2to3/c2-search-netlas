@@ -51,11 +51,11 @@ This will display a list of C2 servers found in the given IP address or domain.
 | metasploit              | :white_check_mark: |
 | HavocFramework/Havoc    | :question:         |
 | Cobalt Strike           | :white_check_mark: |
+| bruteratel              | :white_check_mark: |
 | BishopFox/sliver        | :x:                |
 | Empire                  | :x:                |
 | Ne0nd0g/merlin          | :x:                |
 | cobbr/Covenant          | :x:                |
-| bruteratel              | :x:                |
 | t3l3machus/Villain      | :x:                |
 | bats3c/shad0w           | :x:                |
 | nil0x42/phpsploit       | :x:                |
