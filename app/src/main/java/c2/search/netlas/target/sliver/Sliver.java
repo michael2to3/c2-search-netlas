@@ -32,7 +32,7 @@ public class Sliver {
       "Mount Pearl",
       "College",
       "distant lettuce, incorporated",
-      "localhost"
+      "localhost",
     };
     return Utils.verifyCertFieldsSubject(netlasWrapper, subjectFields);
   }
