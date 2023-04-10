@@ -75,7 +75,7 @@ public class Deimos {
     return sha256.equals(body);
   }
 
-  @Test 
+  @Test
   public boolean loginPage() throws JsonMappingException, JsonProcessingException {
     final String sha256 = "4bb3ee8361794353b8f76f97778fd377838b1354193b552cad5b3bf742cc9b34";
     final String body = netlasWrapper.getBodyAsSha256();
