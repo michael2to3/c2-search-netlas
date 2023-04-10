@@ -81,12 +81,12 @@ final class Utils {
   }
 
   public static String getSocketResponse(final Host host) throws IOException {
-    String target = host.getTarget();
-    int port = host.getPort();
+    final String target = host.getTarget();
+    final int port = host.getPort();
 
     try (Socket socket = new Socket(target, port)) {
-      BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      StringBuilder response = new StringBuilder();
+      final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      final StringBuilder response = new StringBuilder();
       String line;
       while (true) {
         line = in.readLine();
@@ -102,20 +102,20 @@ final class Utils {
 
   public static String sendPostRequest(final Host host, final String path)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    String urlStr = "https://" + host.getTarget() + ":" + host.getPort() + path;
+    final String urlStr = "https://" + host.getTarget() + ":" + host.getPort() + path;
     URL url = new URL(urlStr);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
     if (conn instanceof HttpsURLConnection) {
-      HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
+      final HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
 
-      TrustManager[] trustAllCerts =
+      final TrustManager[] trustAllCerts =
           new TrustManager[] {
             new X509TrustManager() {
-              public void checkClientTrusted(X509Certificate[] chain, String authType)
+              public void checkClientTrusted(final X509Certificate[] chain, final String authType)
                   throws CertificateException {}
 
-              public void checkServerTrusted(X509Certificate[] chain, String authType)
+              public void checkServerTrusted(final X509Certificate[] chain, final String authType)
                   throws CertificateException {}
 
               public X509Certificate[] getAcceptedIssuers() {
@@ -124,12 +124,12 @@ final class Utils {
             }
           };
 
-      SSLContext sslContext = SSLContext.getInstance("TLS");
+      final SSLContext sslContext = SSLContext.getInstance("TLS");
       sslContext.init(null, trustAllCerts, null);
       httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
       httpsConn.setHostnameVerifier(
           new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
+            public boolean verify(final String hostname, final SSLSession session) {
               return true;
             }
           });
@@ -146,7 +146,7 @@ final class Utils {
       writer.flush();
     }
 
-    StringBuilder response = new StringBuilder();
+    final StringBuilder response = new StringBuilder();
     try (BufferedReader reader =
         new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
       String line;
