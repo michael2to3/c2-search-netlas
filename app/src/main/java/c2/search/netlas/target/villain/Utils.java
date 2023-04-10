@@ -106,48 +106,55 @@ final class Utils {
     URL url = new URL(urlStr);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-    
     if (conn instanceof HttpsURLConnection) {
-        HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
+      HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
 
-        TrustManager[] trustAllCerts = new TrustManager[] {
+      TrustManager[] trustAllCerts =
+          new TrustManager[] {
             new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                public X509Certificate[] getAcceptedIssuers() { return null; }
-            }
-        };
+              public void checkClientTrusted(X509Certificate[] chain, String authType)
+                  throws CertificateException {}
 
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustAllCerts, null);
-        httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
-        httpsConn.setHostnameVerifier(new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) { return true; }
-        });
+              public void checkServerTrusted(X509Certificate[] chain, String authType)
+                  throws CertificateException {}
+
+              public X509Certificate[] getAcceptedIssuers() {
+                return null;
+              }
+            }
+          };
+
+      SSLContext sslContext = SSLContext.getInstance("TLS");
+      sslContext.init(null, trustAllCerts, null);
+      httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
+      httpsConn.setHostnameVerifier(
+          new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+              return true;
+            }
+          });
     } else {
-        url = new URL("http://" + host.getTarget() + ":" + host.getPort() + path);
-        conn = (HttpURLConnection) url.openConnection();
+      url = new URL("http://" + host.getTarget() + ":" + host.getPort() + path);
+      conn = (HttpURLConnection) url.openConnection();
     }
 
-    
     conn.setRequestMethod("POST");
     conn.setDoOutput(true);
 
     try (Writer writer = new OutputStreamWriter(conn.getOutputStream(), "UTF-8")) {
-        writer.write(path);
-        writer.flush();
+      writer.write(path);
+      writer.flush();
     }
 
-    
     StringBuilder response = new StringBuilder();
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-        }
+    try (BufferedReader reader =
+        new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        response.append(line);
+      }
     }
 
-    
     return response.toString();
   }
 }
