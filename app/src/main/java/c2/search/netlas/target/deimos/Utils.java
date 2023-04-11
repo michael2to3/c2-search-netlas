@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 final class Utils {
   private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+  private static int TIMEOUT = 5000;
 
   private Utils() {}
 
@@ -27,8 +28,8 @@ final class Utils {
       url = new URL("https://" + host.getTarget() + ":" + host.getPort() + path);
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
-      connection.setConnectTimeout(5000);
-      connection.setReadTimeout(5000);
+      connection.setConnectTimeout(TIMEOUT);
+      connection.setReadTimeout(TIMEOUT);
       connection.connect();
 
       final int statusCode = connection.getResponseCode();
