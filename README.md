@@ -48,19 +48,19 @@ This will display a list of C2 servers found in the given IP address or domain.
 
 | Name                    | Support            |
 |-------------------------|--------------------|
-| metasploit              | :white_check_mark: |
-| HavocFramework/Havoc    | :question:         |
+| Metasploit              | :white_check_mark: |
+| Havoc                   | :question:         |
 | Cobalt Strike           | :white_check_mark: |
-| bruteratel              | :white_check_mark: |
-| BishopFox/sliver        | :white_check_mark: |
-| DeimosC2/DeimosC2       | :white_check_mark: |
+| Bruteratel              | :white_check_mark: |
+| Sliver                  | :white_check_mark: |
+| DeimosC2                | :white_check_mark: |
+| PhoenixC2               | :white_check_mark: |
 | Empire                  | :x:                |
-| Ne0nd0g/merlin          | :x:                |
-| cobbr/Covenant          | :x:                |
-| t3l3machus/Villain      | :x:                |
-| bats3c/shad0w           | :x:                |
-| nil0x42/phpsploit       | :x:                |
-| nettitude/PoshC2        | :x:                |
+| Merlin                  | :x:                |
+| Covenant                | :x:                |
+| Villain                 | :x:                |
+| Shad0w                  | :x:                |
+| PoshC2                  | :x:                |
 
 Legend:
 
