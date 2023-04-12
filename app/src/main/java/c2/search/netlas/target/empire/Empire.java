@@ -72,18 +72,18 @@ public class Empire {
         final List<String> servers = netlasWrapper.getServers();
         final List<String> defaultHeaders =
                 List.of("Werkzeug", "Python", "Microsoft-IIS");
-        int defaultHeadersNum = defaultHeaders.size();
+        int defaultHeadersNum = 0;
         for (final String server : servers) {
             for (final String header : defaultHeaders) {
                 if (!server.toLowerCase(Locale.getDefault()).contains(header)) {
-                    defaultHeadersNum--;
+                    defaultHeadersNum++;
                 }
             }
         }
 
         final int status = netlasWrapper.getStatusCode();
 
-        return defaultHeadersNum == 0 & STATUS_SUCCESFULL == status;
+        return defaultHeadersNum > defaultHeaders.size() & STATUS_SUCCESFULL == status;
     }
 
     @Test(extern = true)
