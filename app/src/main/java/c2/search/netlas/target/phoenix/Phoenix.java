@@ -54,7 +54,7 @@ public class Phoenix {
     boolean result = true;
     for (final String path : paths) {
       result = NetworkUtils.getStatus(host, path) == accessDenied;
-      if (result == false) {
+      if (!result) {
         break;
       }
     }
