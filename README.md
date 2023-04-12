@@ -19,9 +19,84 @@ git clone https://github.com/michael2to3/c2-search-netlas.git
 
 ## Usage
 
+To use the terminal utility, you need to have a Netlas API key. You can get the key from the [Netlas|https://netlas.io] website.
+
+Once you have the API key, you can use the following command to search for C2 servers:
+
+```bash
+c2detect -t <TARGET_DOMAIN> -p <TARGET_PORT> -s <API_KEY> [-v]
+```
+
+Replace `<TARGET_DOMAIN>` with the IP address or domain you want to search for C2 servers on, `<TARGET_PORT>` with the port you want to scan, and `<API_KEY>` with your Netlas API key.
+
+The `-v` option is optional and can be used to print verbose output.
+
+Here's an example command to search for C2 servers on IP address `google.com` on port `443` using the Netlas API key 1234567890abcdef:
+
+```bash
+c2detect -t google.com -p 443 -s 1234567890abcdef
+```
+
+### Release
+
+If a release of the utility is available, you can download it from the releases page on GitHub. Follow these steps:
+- Go to the releases page of the repository.
+- Download the latest release file (usually a JAR file) to your local machine.
+- Create a config.properties file in the same directory as the JAR file and add the following line:
+```bash
+api.key=<your-netlas-api-key>
+```
+- Replace `<your-netlas-api-key>` with your actual Netlas API key.
+- Open a terminal and navigate to the directory where the JAR file and config.properties file are located.
+- Run the following command to start the utility:
+```bash
+java -jar c2-search-netlas-<version>.jar -t <ip-or-domain> -p <port>
+```
+- Replace `<version>` with the version number of the release you downloaded, `<ip-or-domain>` with the IP address or domain you want to search for C2 servers on, and `<port>` with the port you want to scan.
+
+### Docker compose
+
+If you have Docker Compose installed on your machine, you can build and run the utility using the following steps:
+- Clone the repository to your local machine:
+```bash
+git clone https://github.com/michael2to3/c2-search-netlas.git
+```
+- Navigate to the repository directory:
+```bash
+cd c2-search-netlas
+```
+- Create a `config.properties` file in the root directory of the project and add the following line:
+```bash
+api.key=<your-netlas-api-key>
+```
+- Replace `<your-netlas-api-key>` with your actual Netlas API key.
+- Open the `.env` file and replace the value of the API_KEY environment variable with your actual Netlas API key.
+- Run the following command to build and start the Docker containers:
+```bash
+docker-compose up --build
+```
+- Open another terminal and run the following command to search for C2 servers:
+```bash
+docker-compose exec c2detect c2detect -t <ip-or-domain> -p <port>
+```
+- Replace `<ip-or-domain>` with the IP address or domain you want to search for C2 servers on, and `<port>` with the port you want to scan.
+
+
+### Docker
+
+To build and start the Docker container for this project, you can run the following commands:
+
+```bash
+docker build -t <image-name> .
+docker run -p 8080:8080 <image-name>
+```
+
+Replace `<image-name>` with the name you want to give your Docker image. This will build the Docker image and start the container. You can then access the application by navigating to http://localhost:8080 in your web browser.
+
+### Source
 To use this utility, you need to have a Netlas API key. You can get the key from the [Netlas](https://netlas.io/) website.
 
-Once you have the API key, create a config.properties file in the root directory of the project and add the following line:
+Once you have the API key, create a `config.properties` file in the root directory of the project and add the following line:
 
 ```bash
 api.key=<your-netlas-api-key>
