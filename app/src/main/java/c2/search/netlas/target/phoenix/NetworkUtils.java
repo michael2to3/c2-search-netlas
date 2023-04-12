@@ -11,8 +11,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class NetworkUtils {
-  private static final TrustManager[] trustAllCerts = {
+final class NetworkUtils {
+  private NetworkUtils() {}
+
+  private static final TrustManager[] TRUST_ALL_CERT = {
     new X509TrustManager() {
       public java.security.cert.X509Certificate[] getAcceptedIssuers() {
         return new java.security.cert.X509Certificate[] {};
@@ -31,9 +33,9 @@ public class NetworkUtils {
   private static OkHttpClient getUnsafeOkHttpClient()
       throws NoSuchAlgorithmException, KeyManagementException {
     final SSLContext sslContext = SSLContext.getInstance("SSL");
-    sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+    sslContext.init(null, TRUST_ALL_CERT, new java.security.SecureRandom());
     final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    builder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
+    builder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) TRUST_ALL_CERT[0]);
     builder.hostnameVerifier((hostname, session) -> true);
     return builder.build();
   }
