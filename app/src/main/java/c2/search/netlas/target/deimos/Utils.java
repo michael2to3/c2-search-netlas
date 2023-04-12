@@ -1,89 +1,79 @@
 package c2.search.netlas.target.deimos;
 
 import c2.search.netlas.scheme.Host;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class Utils {
   private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
-  private static int TIMEOUT = 5000;
+  private static final int TIMEOUT = 5000;
 
   private Utils() {}
 
   public static String[] makeHttpRequest(final Host host, final String path) throws IOException {
-    URL url;
-    HttpURLConnection connection = null;
-    BufferedReader reader = null;
+    final OkHttpClient client =
+        new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+            .build();
+
+    HttpUrl url =
+        new HttpUrl.Builder()
+            .scheme("https")
+            .host(host.getTarget())
+            .port(host.getPort())
+            .addPathSegments(path)
+            .build();
+
+    Request request = new Request.Builder().url(url).get().build();
+
+    Response response = null;
     boolean useHttps = true;
     final List<String> results = new ArrayList<>();
 
     try {
-      url = new URL("https://" + host.getTarget() + ":" + host.getPort() + path);
-      connection = (HttpURLConnection) url.openConnection();
-      connection.setRequestMethod("GET");
-      connection.setConnectTimeout(TIMEOUT);
-      connection.setReadTimeout(TIMEOUT);
-      connection.connect();
-
-      final int statusCode = connection.getResponseCode();
-      results.add(String.valueOf(statusCode));
-      reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-      String line;
-      while (true) {
-        line = reader.readLine();
-        if (line == null) {
-          break;
-        }
-        results.add(line);
+      response = client.newCall(request).execute();
+      results.add(String.valueOf(response.code()));
+      final ResponseBody responseBody = response.body();
+      if (responseBody != null) {
+        final String responseString = responseBody.string();
+        results.addAll(Arrays.asList(responseString.split("\\r?\\n")));
       }
     } catch (final IOException e) {
       useHttps = false;
     } finally {
-      if (reader != null) {
-        reader.close();
-      }
-      if (connection != null) {
-        connection.disconnect();
+      if (response != null) {
+        response.close();
       }
     }
 
     if (!useHttps) {
-      try {
-        url = new URL("http://" + host.getTarget() + ":" + host.getPort() + path);
-        connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        connection.connect();
+      url = url.newBuilder().scheme("http").build();
+      request = new Request.Builder().url(url).get().build();
 
-        final int statusCode = connection.getResponseCode();
-        results.add(String.valueOf(statusCode));
-        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String line;
-        while (true) {
-          line = reader.readLine();
-          if (line == null) {
-            break;
-          }
-          results.add(line);
+      try {
+        response = client.newCall(request).execute();
+        results.add(String.valueOf(response.code()));
+        final ResponseBody responseBody = response.body();
+        if (responseBody != null) {
+          final String responseString = responseBody.string();
+          results.addAll(Arrays.asList(responseString.split("\\r?\\n")));
         }
       } catch (final IOException e) {
-        if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn("Could not connect to " + host.getTarget() + ":" + host.getPort() + path, e);
-        }
+        LOGGER.warn("Could not connect to " + host.getTarget() + ":" + host.getPort() + path, e);
       } finally {
-        if (reader != null) {
-          reader.close();
-        }
-        if (connection != null) {
-          connection.disconnect();
+        if (response != null) {
+          response.close();
         }
       }
     }
