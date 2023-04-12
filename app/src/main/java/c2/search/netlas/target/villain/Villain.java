@@ -61,7 +61,7 @@ public class Villain {
   @Test
   public boolean checkHandlerTcp() throws IOException {
     final String base = "whoami";
-    final String resp = Utils.getSocketResponse(host);
+    final String resp = SocketUtils.getSocketResponse(host);
     return resp.contains(base);
   }
 
