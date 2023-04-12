@@ -40,8 +40,8 @@ public class Villain {
     final String[] subject = {subCoutry, subState, subOrg};
     final String[] issuer = {issCountry, issState, issOrg};
 
-    return Utils.verifyCertFieldsSubject(netlasWrapper, subject)
-        && Utils.verifyCertFieldsIssuer(netlasWrapper, issuer);
+    return CertificateUtils.verifyCertFieldsSubject(netlasWrapper, subject)
+        && CertificateUtils.verifyCertFieldsIssuer(netlasWrapper, issuer);
   }
 
   @Test
