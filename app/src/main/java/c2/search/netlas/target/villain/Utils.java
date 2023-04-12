@@ -59,19 +59,22 @@ final class Utils {
   }
 
   private static boolean allFieldsEqual(final List<List<String>> fields, final String[] values) {
+    boolean result = true;
     for (int i = 0; i < values.length; i++) {
       final String value = values[i];
       if (!value.isEmpty() && !fields.get(i).contains(value)) {
-        return false;
+        result = false;
+        break;
       }
     }
-    return true;
+    return result;
   }
 
   public static String getSocketResponse(final Host host) throws IOException {
-    try (Socket socket = new Socket(host.getTarget(), host.getPort())) {
-      final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      final StringBuilder response = new StringBuilder();
+    try (Socket socket = new Socket(host.getTarget(), host.getPort());
+        InputStreamReader input = new InputStreamReader(socket.getInputStream());
+        BufferedReader in = new BufferedReader(input); ) {
+      StringBuilder response = new StringBuilder();
       String line;
       while (true) {
         line = in.readLine();
@@ -128,7 +131,7 @@ final class Utils {
               public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return new java.security.cert.X509Certificate[] {};
               }
-            }
+            },
           };
 
       final SSLContext sslContext = SSLContext.getInstance("SSL");
