@@ -74,7 +74,7 @@ final class Utils {
         BufferedReader in = new BufferedReader(input)) {
       final StringBuilder response = new StringBuilder();
       String line;
-      while(true) {
+      while (true) {
         line = in.readLine();
         if (line == null) {
           break;
