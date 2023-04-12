@@ -49,10 +49,10 @@ public class Phoenix {
   @Test
   public boolean checkListenerResponse()
       throws KeyManagementException, NoSuchAlgorithmException, IOException {
-    String[] paths = {"download/history.csv", "download/users.csv", "static/dump.sql"};
+    final String[] paths = {"download/history.csv", "download/users.csv", "static/dump.sql"};
     final int accessDenied = 405;
     boolean result = true;
-    for (String path : paths) {
+    for (final String path : paths) {
       result = NetworkUtils.getStatus(host, path) == accessDenied;
       if (result == false) {
         break;
