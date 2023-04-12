@@ -53,6 +53,7 @@ This will display a list of C2 servers found in the given IP address or domain.
 | Cobalt Strike           | :white_check_mark: |
 | bruteratel              | :white_check_mark: |
 | BishopFox/sliver        | :white_check_mark: |
+| DeimosC2/DeimosC2       | :white_check_mark: |
 | Empire                  | :x:                |
 | Ne0nd0g/merlin          | :x:                |
 | cobbr/Covenant          | :x:                |
