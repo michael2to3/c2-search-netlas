@@ -18,10 +18,12 @@ public class NetworkUtils {
         return new java.security.cert.X509Certificate[] {};
       }
 
-      public void checkClientTrusted(final java.security.cert.X509Certificate[] chain, final String authType)
+      public void checkClientTrusted(
+          final java.security.cert.X509Certificate[] chain, final String authType)
           throws java.security.cert.CertificateException {}
 
-      public void checkServerTrusted(final java.security.cert.X509Certificate[] chain, final String authType)
+      public void checkServerTrusted(
+          final java.security.cert.X509Certificate[] chain, final String authType)
           throws java.security.cert.CertificateException {}
     },
   };
