@@ -12,8 +12,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 final class NetworkUtils {
-  private NetworkUtils() {}
-
   private static final TrustManager[] TRUST_ALL_CERT = {
     new X509TrustManager() {
       public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -29,6 +27,8 @@ final class NetworkUtils {
           throws java.security.cert.CertificateException {}
     },
   };
+
+  private NetworkUtils() {}
 
   private static OkHttpClient getUnsafeOkHttpClient()
       throws NoSuchAlgorithmException, KeyManagementException {
