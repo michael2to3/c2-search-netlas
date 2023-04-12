@@ -70,7 +70,9 @@ final class Utils {
           results.addAll(Arrays.asList(responseString.split("\\r?\\n")));
         }
       } catch (final IOException e) {
-        LOGGER.warn("Could not connect to " + host.getTarget() + ":" + host.getPort() + path, e);
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn("Could not connect to " + host.getTarget() + ":" + host.getPort() + path, e);
+        }
       } finally {
         if (response != null) {
           response.close();
