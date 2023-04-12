@@ -1,0 +1,7 @@
+version: '3'
+services:
+  c2detect:
+    build: .
+    command: ["./gradlew", "build", "&&", "java", "-jar", "app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar"]
+    volumes:
+      - .:/app
