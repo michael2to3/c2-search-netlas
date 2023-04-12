@@ -13,9 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -73,10 +71,10 @@ final class Utils {
   public static String getSocketResponse(final Host host) throws IOException {
     try (Socket socket = new Socket(host.getTarget(), host.getPort());
         InputStreamReader input = new InputStreamReader(socket.getInputStream());
-        BufferedReader in = new BufferedReader(input); ) {
-      StringBuilder response = new StringBuilder();
+        BufferedReader in = new BufferedReader(input)) {
+      final StringBuilder response = new StringBuilder();
       String line;
-      while (true) {
+      while(true) {
         line = in.readLine();
         if (line == null) {
           break;
@@ -96,13 +94,13 @@ final class Utils {
       final Request request = new Request.Builder().url(url).build();
       final Response response = client.newCall(request).execute();
       responseString = response.body().string();
-    } catch (final IOException e) {
+    } catch (IOException e) {
       url = "http://" + host.getTarget() + ":" + host.getPort() + path;
       try {
         final Request request = new Request.Builder().url(url).build();
         final Response response = client.newCall(request).execute();
         responseString = response.body().string();
-      } catch (final IOException ex) {
+      } catch (IOException ex) {
         if (LOGGER.isWarnEnabled()) {
           LOGGER.warn("Failed to connect to " + url, ex);
         }
@@ -133,21 +131,12 @@ final class Utils {
               }
             },
           };
-
       final SSLContext sslContext = SSLContext.getInstance("SSL");
       sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
       final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
       final OkHttpClient.Builder builder = new OkHttpClient.Builder();
       builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
-      builder.hostnameVerifier(
-          new HostnameVerifier() {
-            @Override
-            public boolean verify(final String hostname, final SSLSession session) {
-              return true;
-            }
-          });
-
+      builder.hostnameVerifier((hostname, session) -> true);
       okHttpClient = builder.build();
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
       if (LOGGER.isWarnEnabled()) {
