@@ -56,10 +56,10 @@ This will display a list of C2 servers found in the given IP address or domain.
 | DeimosC2                | :white_check_mark: |
 | PhoenixC2               | :white_check_mark: |
 | Empire                  | :x:                |
-| merlin                  | :x:                |
+| Merlin                  | :x:                |
 | Covenant                | :x:                |
 | Villain                 | :x:                |
-| shad0w                  | :x:                |
+| Shad0w                  | :x:                |
 | PoshC2                  | :x:                |
 
 Legend:
