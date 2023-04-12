@@ -56,7 +56,7 @@ final class NetworkUtils {
       try (Response response = client.newCall(request).execute()) {
         statusCode = response.code();
       } catch (IOException e) {
-        throw e;
+        statusCode = -1;
       }
     }
 
