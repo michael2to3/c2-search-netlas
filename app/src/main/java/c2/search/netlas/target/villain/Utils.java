@@ -47,25 +47,24 @@ final class Utils {
   private static OkHttpClient getUnsafeOkHttpClient() {
     OkHttpClient okHttpClient = null;
     try {
-      final TrustManager[] trustAllCerts =
-          new TrustManager[] {
-            new X509TrustManager() {
-              @Override
-              public void checkClientTrusted(
-                  final java.security.cert.X509Certificate[] chain, final String authType)
-                  throws CertificateException {}
+      final TrustManager[] trustAllCerts = {
+        new X509TrustManager() {
+          @Override
+          public void checkClientTrusted(
+              final java.security.cert.X509Certificate[] chain, final String authType)
+              throws CertificateException {}
 
-              @Override
-              public void checkServerTrusted(
-                  final java.security.cert.X509Certificate[] chain, final String authType)
-                  throws CertificateException {}
+          @Override
+          public void checkServerTrusted(
+              final java.security.cert.X509Certificate[] chain, final String authType)
+              throws CertificateException {}
 
-              @Override
-              public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[] {};
-              }
-            },
-          };
+          @Override
+          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return new java.security.cert.X509Certificate[] {};
+          }
+        },
+      };
       final SSLContext sslContext = SSLContext.getInstance("SSL");
       sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
       final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
