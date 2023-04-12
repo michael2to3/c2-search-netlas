@@ -7,154 +7,136 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.HttpURLConnection;
 import java.net.Socket;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 final class Utils {
+
   private Utils() {}
 
   public static boolean verifyCertFieldsSubject(
       final NetlasWrapper netlasWrapper, final String[] subjectFields)
       throws JsonMappingException, JsonProcessingException {
-    final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
-    final List<String> subState = netlasWrapper.getCertSubjectProvince();
-    final List<String> subCity = netlasWrapper.getCertSubjectLocality();
-    final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
-    final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-    final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
-
     final List<List<String>> subject =
-        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-
-    boolean result = true;
-    for (int i = 0; i < subjectFields.length; i++) {
-      if (!subjectFields[i].isEmpty() && !allEqual(subject.get(i), subjectFields[i])) {
-        result = false;
-        break;
-      }
-    }
-
-    return result;
+        Arrays.asList(
+            netlasWrapper.getCertSubjectCountry(),
+            netlasWrapper.getCertSubjectProvince(),
+            netlasWrapper.getCertSubjectLocality(),
+            netlasWrapper.getCertSubjectOrganization(),
+            netlasWrapper.getCertSubjectOrganizationUnit(),
+            netlasWrapper.getCertSubjectCommonName());
+    return allFieldsEqual(subject, subjectFields);
   }
 
   public static boolean verifyCertFieldsIssuer(
       final NetlasWrapper netlasWrapper, final String[] issuerFields)
       throws JsonMappingException, JsonProcessingException {
-    final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
-    final List<String> issState = netlasWrapper.getCertIssuerProvince();
-    final List<String> issCity = netlasWrapper.getCertIssuerLocality();
-    final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
-    final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-    final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
-
     final List<List<String>> issuer =
-        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
-
-    boolean result = true;
-    for (int i = 0; i < issuerFields.length; i++) {
-      if (!issuerFields[i].isEmpty() && !allEqual(issuer.get(i), issuerFields[i])) {
-        result = false;
-        break;
-      }
-    }
-
-    return result;
+        Arrays.asList(
+            netlasWrapper.getCertIssuerCountry(),
+            netlasWrapper.getCertIssuerProvince(),
+            netlasWrapper.getCertIssuerLocality(),
+            netlasWrapper.getCertIssuerOrganization(),
+            netlasWrapper.getCertIssuerOrganizationUnit(),
+            netlasWrapper.getCertIssuerCommonName());
+    return allFieldsEqual(issuer, issuerFields);
   }
 
-  public static boolean allEqual(final List<String> list, final String value) {
-    return list.stream().allMatch(s -> s.equals(value));
+  private static boolean allFieldsEqual(final List<List<String>> fields, final String[] values) {
+    for (int i = 0; i < values.length; i++) {
+      final String value = values[i];
+      if (!value.isEmpty() && !fields.get(i).contains(value)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public static String getSocketResponse(final Host host) throws IOException {
-    final String target = host.getTarget();
-    final int port = host.getPort();
-
-    try (Socket socket = new Socket(target, port)) {
+    try (Socket socket = new Socket(host.getTarget(), host.getPort())) {
       final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       final StringBuilder response = new StringBuilder();
       String line;
-      while (true) {
-        line = in.readLine();
-        if (line == null) {
-          break;
-        }
+      while ((line = in.readLine()) != null) {
         response.append(line);
       }
-
       return response.toString();
     }
   }
 
   public static String sendPostRequest(final Host host, final String path)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    final String urlStr = "https://" + host.getTarget() + ":" + host.getPort() + path;
-    URL url = new URL(urlStr);
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    String url = "https://" + host.getTarget() + ":" + host.getPort() + path;
+    final OkHttpClient client = getUnsafeOkHttpClient();
+    try {
+      final Request request = new Request.Builder().url(url).build();
+      final Response response = client.newCall(request).execute();
+      return response.body().string();
+    } catch (final IOException e) {
+      url = "http://" + host.getTarget() + ":" + host.getPort() + path;
+      try {
+        final Request request = new Request.Builder().url(url).build();
+        final Response response = client.newCall(request).execute();
+        return response.body().string();
+      } catch (final IOException e1) {
+        return null;
+      }
+    }
+  }
 
-    if (conn instanceof HttpsURLConnection) {
-      final HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
-
+  private static OkHttpClient getUnsafeOkHttpClient() {
+    try {
       final TrustManager[] trustAllCerts =
           new TrustManager[] {
             new X509TrustManager() {
-              public void checkClientTrusted(final X509Certificate[] chain, final String authType)
+              @Override
+              public void checkClientTrusted(
+                  final java.security.cert.X509Certificate[] chain, final String authType)
                   throws CertificateException {}
 
-              public void checkServerTrusted(final X509Certificate[] chain, final String authType)
+              @Override
+              public void checkServerTrusted(
+                  final java.security.cert.X509Certificate[] chain, final String authType)
                   throws CertificateException {}
 
-              public X509Certificate[] getAcceptedIssuers() {
-                return null;
+              @Override
+              public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return new java.security.cert.X509Certificate[] {};
               }
             }
           };
 
-      final SSLContext sslContext = SSLContext.getInstance("TLS");
-      sslContext.init(null, trustAllCerts, null);
-      httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
-      httpsConn.setHostnameVerifier(
+      final SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+      final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+      final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+      builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+      builder.hostnameVerifier(
           new HostnameVerifier() {
+            @Override
             public boolean verify(final String hostname, final SSLSession session) {
               return true;
             }
           });
-    } else {
-      url = new URL("http://" + host.getTarget() + ":" + host.getPort() + path);
-      conn = (HttpURLConnection) url.openConnection();
+
+      final OkHttpClient okHttpClient = builder.build();
+      return okHttpClient;
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
     }
-
-    conn.setRequestMethod("POST");
-    conn.setDoOutput(true);
-
-    try (Writer writer = new OutputStreamWriter(conn.getOutputStream(), "UTF-8")) {
-      writer.write(path);
-      writer.flush();
-    }
-
-    final StringBuilder response = new StringBuilder();
-    try (BufferedReader reader =
-        new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        response.append(line);
-      }
-    }
-
-    return response.toString();
   }
 }
