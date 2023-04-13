@@ -1,16 +1,15 @@
 package c2.search.netlas.execute;
 
-import c2.search.netlas.classscanner.FieldValues;
 import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class Factory {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
-  private final FieldValues fields;
+  private final DependencyInjector dependency;
 
   public Factory(final FieldValues fields) {
-    this.fields = fields;
+    this.dependency = new DependencyInjector(fields);
   }
 
   public Object createInstance(final Class<?> clazz) {
@@ -20,6 +19,7 @@ class Factory {
     Object instant = null;
     try {
       instant = clazz.getDeclaredConstructor().newInstance();
+      dependency.inject(instant);
     } catch (InstantiationException
         | IllegalAccessException
         | InvocationTargetException
