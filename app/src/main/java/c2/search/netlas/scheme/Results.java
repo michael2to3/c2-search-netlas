@@ -21,6 +21,12 @@ public class Results {
     this.responses = sortBySuccessPercentage(responses);
   }
 
+  public void merge(final Results results) {
+    for (final Map.Entry<String, List<Response>> entry : results.responses.entrySet()) {
+      addResponse(entry.getKey(), entry.getValue());
+    }
+  }
+
   protected static Map<String, List<Response>> sortBySuccessPercentage(
       final Map<String, List<Response>> responses) {
     final Map<String, Integer> successCount = new ConcurrentHashMap<>();
@@ -48,14 +54,8 @@ public class Results {
     return sortedResponses;
   }
 
-  private static int getSuccessCount(final List<Response> toolResponses) {
-    int numSuccess = 0;
-    for (final Response response : toolResponses) {
-      if (response.isSuccess()) {
-        numSuccess++;
-      }
-    }
-    return numSuccess;
+  private static long getSuccessCount(final List<Response> toolResponses) {
+    return toolResponses.stream().filter(Response::isSuccess).count();
   }
 
   private static int getSuccessPercentage(final List<Response> toolResponses) {
