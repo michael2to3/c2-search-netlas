@@ -9,6 +9,8 @@
 
 C2 Search Netlas is a Java utility to detect C2 servers using Netlas API. This utility provides a simple and easy-to-use CLI interface for searching C2 servers. It uses the Netlas API to fetch data and process it locally.
 
+[![asciicast](https://asciinema.org/a/J0NLL69CVKG1PUlw9Mkyf8lZw.svg)](https://asciinema.org/a/J0NLL69CVKG1PUlw9Mkyf8lZw)
+
 ## Installation
 
 Clone this repository to your local machine:
