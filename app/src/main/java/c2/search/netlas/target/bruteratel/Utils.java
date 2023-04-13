@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Utils {
   private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
-  private static final OkHttpClient client = getUnsafeOkHttpClient();
+  private static final OkHttpClient CLIENT = getUnsafeOkHttpClient();
 
   private Utils() {}
 
@@ -74,8 +74,8 @@ public final class Utils {
     int responseCode = -1;
     String responseBody = "";
     try {
-      Request request = new Request.Builder().url(path).build();
-      Response response = client.newCall(request).execute();
+      final Request request = new Request.Builder().url(path).build();
+      final Response response = CLIENT.newCall(request).execute();
       responseCode = response.code();
       responseBody = response.body().string();
     } catch (IOException e) {

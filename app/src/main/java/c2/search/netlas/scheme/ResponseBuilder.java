@@ -2,10 +2,17 @@ package c2.search.netlas.scheme;
 
 public final class ResponseBuilder {
   // FIXME not correct builder, each instance of Response
-  private boolean success = false;
-  private Version version = new Version("", "");
-  private String description = "";
-  private String error = "";
+  private boolean success;
+  private Version version;
+  private String description;
+  private String error;
+
+  public ResponseBuilder() {
+    this.success = false;
+    this.version = new Version("", "");
+    this.description = "";
+    this.error = "";
+  }
 
   public ResponseBuilder setSuccess(final boolean success) {
     this.success = success;

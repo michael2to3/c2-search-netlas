@@ -6,7 +6,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodFinder {
+public final class MethodFinder {
+  private MethodFinder() {}
+
   public static List<Method> getBeforeAllMethods(final Class<?> clazz) {
     final List<Method> beforeAllMethods = new ArrayList<>();
     for (final Method method : clazz.getMethods()) {

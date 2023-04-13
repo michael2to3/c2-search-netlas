@@ -8,8 +8,10 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MethodInvoker {
+public final class MethodInvoker {
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodInvoker.class);
+
+  private MethodInvoker() {}
 
   public static Response invokeTestMethod(final Method method, final Object instance)
       throws IllegalAccessException, InvocationTargetException {
