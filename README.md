@@ -21,7 +21,7 @@ git clone https://github.com/michael2to3/c2-search-netlas.git
 
 ## Usage
 
-To use the terminal utility, you need to have a Netlas API key. You can get the key from the [Netlas|https://netlas.io] website.
+To use the terminal utility, you need to have a Netlas API key. You can get the key from the [Netlas](https://netlas.io) website.
 
 Once you have the API key, you can use the following command to search for C2 servers:
 
