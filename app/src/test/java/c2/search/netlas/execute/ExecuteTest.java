@@ -8,7 +8,6 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.classscanner.ClassScanner;
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Results;

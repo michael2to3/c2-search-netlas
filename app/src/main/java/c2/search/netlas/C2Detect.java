@@ -1,8 +1,8 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.execute.Execute;
+import c2.search.netlas.execute.FieldValues;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;

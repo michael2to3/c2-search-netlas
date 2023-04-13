@@ -1,8 +1,8 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
+import c2.search.netlas.execute.FieldValues;
 import c2.search.netlas.scheme.Host;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
