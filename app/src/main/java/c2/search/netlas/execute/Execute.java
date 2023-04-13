@@ -37,15 +37,16 @@ public class Execute {
     ExecutorService executor = Executors.newFixedThreadPool(1);
     List<Future<Results>> futures = new ArrayList<>();
     for (Class<?> clazz : classScanner.getClassesWithAnnotation(Detect.class)) {
-      Future<Results> future = executor.submit(
-          () -> {
-            Object instance = factory.createInstance(clazz);
-            invokeBeforeAllMethods(instance);
-            List<Response> responses = invokeTestMethods(instance);
-            Results results = new Results();
-            results.addResponse(getNameOfClass(clazz), responses);
-            return results;
-          });
+      Future<Results> future =
+          executor.submit(
+              () -> {
+                Object instance = factory.createInstance(clazz);
+                invokeBeforeAllMethods(instance);
+                List<Response> responses = invokeTestMethods(instance);
+                Results results = new Results();
+                results.addResponse(getNameOfClass(clazz), responses);
+                return results;
+              });
       futures.add(future);
     }
     Results results = new Results();

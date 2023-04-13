@@ -1,10 +1,9 @@
 package c2.search.netlas.execute;
-import java.lang.reflect.InvocationTargetException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import c2.search.netlas.classscanner.FieldValues;
+import java.lang.reflect.InvocationTargetException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class Factory {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
