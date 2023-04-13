@@ -1,29 +1,32 @@
-package c2.search.netlas.classscanner;
+package c2.search.netlas.execute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+
 import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
+import c2.search.netlas.classscanner.ClassScanner;
+import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Results;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 
-public class CheckerTest {
+public class ExecuteTest {
 
-  private Checker checker;
+  private Execute checker;
   private ClassScanner classScanner;
 
   @BeforeEach
   public void setup() {
     classScanner = mock(ClassScanner.class);
     FieldValues fields = mock(FieldValues.class);
-    checker = new Checker(fields);
-    checker.setClassScanner(classScanner);
+    checker = new Execute(fields);
   }
 
   @Test
