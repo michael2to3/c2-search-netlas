@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
-  private final Map<Host, JsonNode> response;
+  private final Map<Host, JsonNode> response = new HashMap<>();
   private final Host host;
   private final Netlas netlas;
 
@@ -35,7 +35,7 @@ public class NetlasWrapper {
       throws JsonMappingException, JsonProcessingException {
     this.netlas = new Netlas(api);
     this.host = host;
-    response = new HashMap<>();
+    get();
   }
 
   /**
@@ -63,8 +63,15 @@ public class NetlasWrapper {
    */
   public void set(final JsonNode json) {
     if (response.containsKey(host)) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("replace: {}", json);
+      }
+
       response.replace(host, json);
     } else {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("put: {}", json);
+      }
       response.put(host, json);
     }
   }
@@ -182,12 +189,18 @@ public class NetlasWrapper {
    * @throws JsonMappingException if there is an issue with mapping json to objects
    * @throws JsonProcessingException if there is an issue with processing json
    */
-  public JsonNode get() throws JsonMappingException, JsonProcessingException {
+  JsonNode get() throws JsonMappingException, JsonProcessingException {
     JsonNode result;
 
     if (response.containsKey(host)) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("cache: {}", host);
+      }
       result = response.get(host);
     } else {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("query: {}", host);
+      }
       final var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
       final var datatype = "responses";
       final var page = 0;
