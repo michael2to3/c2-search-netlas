@@ -82,12 +82,17 @@ public class Execute {
   }
 
   private List<Response> invokeTestMethods(final Object instance) {
+
+    final ExecutorService executor = Executors.newCachedThreadPool();
+
     final List<Response> responses = new ArrayList<>();
     for (final Method method : MethodFinder.getTestMethods(instance.getClass())) {
       try {
-        responses.add(MethodInvoker.invokeTestMethod(method, instance));
+        final Future<Response> feature = executor.submit(() -> MethodInvoker.invokeTestMethod(method, instance));
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         MethodInvoker.handleInvocationError(method, instance, e);
+      } finally {
+        executor.shutdown();
       }
     }
 
