@@ -4,7 +4,6 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.classscanner.ClassScanner;
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Results;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class Execute {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
-  private static final int TIMEOUT_SECOND = 10;
+  private static final int TIMEOUT_SECOND = 5;
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private ClassScanner classScanner;
   private final Factory factory;
@@ -34,32 +33,40 @@ public class Execute {
   }
 
   public Results run() {
-    ExecutorService executor = Executors.newFixedThreadPool(1);
+    ExecutorService executor = Executors.newCachedThreadPool();
+    List<Future<Results>> futures = submitTests(executor);
+    Results results = collectResults(futures);
+    executor.shutdown();
+    return results;
+  }
+
+  private List<Future<Results>> submitTests(ExecutorService executor) {
     List<Future<Results>> futures = new ArrayList<>();
     for (Class<?> clazz : classScanner.getClassesWithAnnotation(Detect.class)) {
-      Future<Results> future =
-          executor.submit(
-              () -> {
-                Object instance = factory.createInstance(clazz);
-                invokeBeforeAllMethods(instance);
-                List<Response> responses = invokeTestMethods(instance);
-                Results results = new Results();
-                results.addResponse(getNameOfClass(clazz), responses);
-                return results;
-              });
+      Future<Results> future = executor.submit(() -> runTestsForClass(clazz));
       futures.add(future);
     }
+    return futures;
+  }
+
+  private Results runTestsForClass(Class<?> clazz) {
+    Object instance = factory.createInstance(clazz);
+    invokeBeforeAllMethods(instance);
+    List<Response> responses = invokeTestMethods(instance);
+    Results results = new Results();
+    results.addResponse(getNameOfClass(clazz), responses);
+    return results;
+  }
+
+  private Results collectResults(List<Future<Results>> futures) {
     Results results = new Results();
     for (var future : futures) {
       try {
         results.merge(future.get(TIMEOUT_SECOND, TimeUnit.SECONDS));
-      } catch (InterruptedException | ExecutionException e) {
+      } catch (InterruptedException | ExecutionException | TimeoutException e) {
         LOGGER.error("Error while running tests", e);
-      } catch (TimeoutException e) {
-        LOGGER.error("Timeout while running tests", e);
       }
     }
-    executor.shutdown();
     return results;
   }
 
