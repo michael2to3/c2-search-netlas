@@ -3,21 +3,27 @@ package c2.search.netlas.target.bruteratel;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class Utils {
+public final class Utils {
   private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+  private static final OkHttpClient client = getUnsafeOkHttpClient();
 
   private Utils() {}
 
@@ -68,12 +74,10 @@ final class Utils {
     int responseCode = -1;
     String responseBody = "";
     try {
-      final URL url = new URL(path);
-      final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      connection.setRequestMethod("GET");
-      responseCode = connection.getResponseCode();
-      responseBody = readResponseBody(connection);
-      connection.disconnect();
+      Request request = new Request.Builder().url(path).build();
+      Response response = client.newCall(request).execute();
+      responseCode = response.code();
+      responseBody = response.body().string();
     } catch (IOException e) {
       if (LOGGER.isWarnEnabled()) {
         LOGGER.warn("Failed to get response from {}", path, e);
@@ -81,22 +85,6 @@ final class Utils {
     }
 
     return new String[] {String.valueOf(responseCode), responseBody};
-  }
-
-  private static String readResponseBody(final HttpURLConnection connection) throws IOException {
-    try (InputStreamReader input = new InputStreamReader(connection.getInputStream());
-        BufferedReader in = new BufferedReader(input)) {
-      final StringBuilder response = new StringBuilder();
-      String inputLine;
-      while (true) {
-        inputLine = in.readLine();
-        if (inputLine == null) {
-          break;
-        }
-        response.append(inputLine);
-      }
-      return response.toString();
-    }
   }
 
   public static String getSHA256Hash(final String input) throws NoSuchAlgorithmException {
@@ -127,5 +115,41 @@ final class Utils {
     final boolean eqBody = rbody.equals(expectedHash) || rbody2.equals(expectedHash);
     final boolean eqStatus = rcode == expectedStatus && rcode2 == expectedStatus;
     return eqBody && eqStatus;
+  }
+
+  private static OkHttpClient getUnsafeOkHttpClient() {
+    OkHttpClient okHttpClient = null;
+    try {
+      final TrustManager[] trustAllCerts = {
+        new X509TrustManager() {
+          @Override
+          public void checkClientTrusted(
+              final java.security.cert.X509Certificate[] chain, final String authType)
+              throws CertificateException {}
+
+          @Override
+          public void checkServerTrusted(
+              final java.security.cert.X509Certificate[] chain, final String authType)
+              throws CertificateException {}
+
+          @Override
+          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return new java.security.cert.X509Certificate[] {};
+          }
+        },
+      };
+      final SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+      final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+      final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+      builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+      builder.hostnameVerifier((hostname, session) -> true);
+      okHttpClient = builder.build();
+    } catch (NoSuchAlgorithmException | KeyManagementException e) {
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("Failed to create OkHttpClient", e);
+      }
+    }
+    return okHttpClient;
   }
 }
