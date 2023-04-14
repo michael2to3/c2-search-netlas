@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
-  private static final String API = new Config("config.properties").get("api.key");
+  private static final String API = System.getenv("API_KEY");
   private static final Host HOST = new Host("ya.ru", 443);
   private static NetlasWrapper netlas;
 
