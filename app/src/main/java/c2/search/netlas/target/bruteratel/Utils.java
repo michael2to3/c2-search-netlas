@@ -55,13 +55,13 @@ public final class Utils {
 
     boolean result = true;
     for (int i = 0; i < subjectFields.length; i++) {
-      if (!subjectFields[i].isEmpty() && !allEqual(subject.get(i), subjectFields[i])) {
+      if (!allEqual(subject.get(i), subjectFields[i])) {
         result = false;
         break;
       }
     }
     for (int i = 0; i < issuerFields.length; i++) {
-      if (!issuerFields[i].isEmpty() && !allEqual(issuer.get(i), issuerFields[i])) {
+      if (!allEqual(issuer.get(i), issuerFields[i])) {
         result = false;
         break;
       }

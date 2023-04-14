@@ -38,12 +38,28 @@ class AppTest {
   }
 
   @Test
+  void testC2DetectRunInvocationSelfSignCert() throws Exception {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(outputStream);
+    System.setOut(printStream);
+
+    String[] args = new String[] {"-t", "217.74.250.61", "-p", "443"};
+    CLArgumentsManager pargs = App.getParseCmdArgs(args);
+    C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
+
+    App.setC2detect(c2Detect);
+    App.main(args);
+
+    verify(c2Detect).run(args);
+  }
+
+  @Test
   void testC2DetectRunInvocation() throws Exception {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
 
-    String[] args = new String[] {"-t", "example.com", "-p", "80"};
+    String[] args = new String[] {"-t", "google.com", "-p", "80"};
     CLArgumentsManager pargs = App.getParseCmdArgs(args);
     C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
 

@@ -29,7 +29,6 @@ public class ExecuteTest {
   public void testRun() throws Exception {
     Class<?> targetClass = DummyTarget.class;
     when(classScanner.getClassesWithAnnotation(Detect.class)).thenReturn(List.of(targetClass));
-    when(classScanner.getClassesWithAnnotation(Detect.class)).thenReturn(List.of(targetClass));
 
     Results results = checker.run();
 
@@ -46,7 +45,17 @@ public class ExecuteTest {
       return Response.newBuilder().setSuccess(true).build();
     }
 
+    @Test
     public boolean testMethod2() {
+      return true;
+    }
+
+    @Test
+    public String testMethod3() {
+      return "not valid test";
+    }
+
+    public boolean notTestMethod() {
       return true;
     }
   }
