@@ -76,15 +76,13 @@ final class Utils {
 
     boolean result = true;
     for (int i = 0; i < fields.length; i++) {
-      if (!fields[i].isEmpty()) {
-        if (!allEqual(subject.get(i), fields[i])) {
-          result = false;
-          break;
-        }
-        if (!allEqual(issuer.get(i), fields[i])) {
-          result = false;
-          break;
-        }
+      if (!allEqual(subject.get(i), fields[i])) {
+        result = false;
+        break;
+      }
+      if (!allEqual(issuer.get(i), fields[i])) {
+        result = false;
+        break;
       }
     }
 
