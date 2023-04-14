@@ -2,7 +2,6 @@ package c2.search.netlas.execute;
 
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.scheme.Response;
-import c2.search.netlas.scheme.ResponseBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
@@ -22,7 +21,7 @@ public final class MethodInvoker {
     try {
       if (method.getReturnType() == boolean.class) {
         final boolean success = (boolean) method.invoke(instance);
-        response = new ResponseBuilder().setSuccess(success).setDescription(desc).build();
+        response = Response.newBuilder().setSuccess(success).setDescription(desc).build();
       } else if (method.getReturnType() == Response.class) {
         response = (Response) method.invoke(instance);
         response.setDescription(desc);

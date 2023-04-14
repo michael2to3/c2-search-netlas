@@ -6,6 +6,13 @@ public class Response {
   private String description;
   private String error;
 
+  private Response() {
+    this.success = false;
+    this.version = new Version("", "");
+    this.description = "";
+    this.error = "";
+  }
+
   public Response(
       final boolean success, final Version version, final String description, final String error) {
     this.success = success;
@@ -44,5 +51,38 @@ public class Response {
 
   public void setError(final String error) {
     this.error = error;
+  }
+
+  public static Builder newBuilder() {
+    return new Response().new Builder();
+  }
+
+  public class Builder {
+
+    private Builder() {}
+
+    public Builder setVersion(final Version version) {
+      Response.this.version = version;
+      return this;
+    }
+
+    public Builder setSuccess(final boolean success) {
+      Response.this.success = success;
+      return this;
+    }
+
+    public Builder setDescription(final String description) {
+      Response.this.description = description;
+      return this;
+    }
+
+    public Builder setError(final String error) {
+      Response.this.error = error;
+      return this;
+    }
+
+    public Response build() {
+      return new Response(success, version, description, error);
+    }
   }
 }

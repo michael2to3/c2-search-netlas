@@ -5,7 +5,6 @@ import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
-import c2.search.netlas.scheme.ResponseBuilder;
 import c2.search.netlas.scheme.Version;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -82,7 +81,7 @@ public class Metasploit {
       minVersion = "6.x.x";
       detect = true;
     }
-    return new ResponseBuilder().setSuccess(detect).setVersion(new Version("", minVersion)).build();
+    return Response.newBuilder().setSuccess(detect).setVersion(new Version("", minVersion)).build();
   }
 
   @Test
