@@ -13,22 +13,27 @@ public final class MethodInvoker {
 
   private MethodInvoker() {}
 
-  public static Response invokeTestMethod(final Method method, final Object instance)
-      throws IllegalAccessException, InvocationTargetException {
+  public static Response invokeTestMethod(final Method method, final Object instance) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Invoking test methods of {}", instance.getClass().getName());
     }
     Response response = null;
     final String desc = getDescriptionOfTestMethod(method);
-    if (method.getReturnType() == boolean.class) {
-      final boolean success = (boolean) method.invoke(instance);
-      response = new ResponseBuilder().setSuccess(success).setDescription(desc).build();
-    } else if (method.getReturnType() == Response.class) {
-      response = (Response) method.invoke(instance);
-      response.setDescription(desc);
-    } else {
+    try {
+      if (method.getReturnType() == boolean.class) {
+        final boolean success = (boolean) method.invoke(instance);
+        response = new ResponseBuilder().setSuccess(success).setDescription(desc).build();
+      } else if (method.getReturnType() == Response.class) {
+        response = (Response) method.invoke(instance);
+        response.setDescription(desc);
+      } else {
+        if (LOGGER.isErrorEnabled()) {
+          LOGGER.error("Unsupported return type of test method {}", method.getName());
+        }
+      }
+    } catch (IllegalAccessException | InvocationTargetException e) {
       if (LOGGER.isErrorEnabled()) {
-        LOGGER.error("Unsupported return type of test method {}", method.getName());
+        LOGGER.error("Error invoking test method {}", method.getName(), e);
       }
     }
     return response;

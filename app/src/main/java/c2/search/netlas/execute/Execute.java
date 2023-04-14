@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,10 +50,25 @@ public class Execute {
   private Results runTestsForClass(final Class<?> clazz) {
     final Object instance = factory.createInstance(clazz);
     invokeBeforeAllMethods(instance);
-    final List<Response> responses = invokeTestMethods(instance);
+    final List<CompletableFuture<Response>> futures = invokeTestMethods(instance);
     final Results results = new Results();
-    results.addResponse(getNameOfClass(clazz), responses);
+    results.addResponse(getNameOfClass(clazz), getResponses(futures));
     return results;
+  }
+
+  private List<Response> getResponses(final List<CompletableFuture<Response>> futures) {
+    final List<Response> responses = new ArrayList<>();
+    for (final CompletableFuture<Response> future : futures) {
+      try {
+        final Response response = future.get(TIMEOUT_SECOND, TimeUnit.SECONDS);
+        if (response != null) {
+          responses.add(response);
+        }
+      } catch (InterruptedException | ExecutionException | TimeoutException e) {
+        LOGGER.error("Error while running tests", e);
+      }
+    }
+    return responses;
   }
 
   private Results collectResults(final List<Future<Results>> futures) {
@@ -81,22 +97,17 @@ public class Execute {
     }
   }
 
-  private List<Response> invokeTestMethods(final Object instance) {
-
-    final ExecutorService executor = Executors.newCachedThreadPool();
-
-    final List<Response> responses = new ArrayList<>();
+  private List<CompletableFuture<Response>> invokeTestMethods(final Object instance) {
+    final List<CompletableFuture<Response>> futures = new ArrayList<>();
     for (final Method method : MethodFinder.getTestMethods(instance.getClass())) {
-      try {
-        final Future<Response> feature = executor.submit(() -> MethodInvoker.invokeTestMethod(method, instance));
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        MethodInvoker.handleInvocationError(method, instance, e);
-      } finally {
-        executor.shutdown();
-      }
+      final CompletableFuture<Response> future =
+          CompletableFuture.supplyAsync(
+              () -> {
+                return MethodInvoker.invokeTestMethod(method, instance);
+              });
+      futures.add(future);
     }
-
-    return responses;
+    return futures;
   }
 
   private String getNameOfClass(final Class<?> clazz) {
