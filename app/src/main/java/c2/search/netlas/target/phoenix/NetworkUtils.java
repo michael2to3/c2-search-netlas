@@ -19,11 +19,11 @@ final class NetworkUtils {
   private static final TrustManager[] TRUST_ALL_CERT = {
     new X509TrustManager() {
       @Override
-      public void checkClientTrusted(X509Certificate[] chain, String authType)
+      public void checkClientTrusted(final X509Certificate[] chain, final String authType)
           throws CertificateException {}
 
       @Override
-      public void checkServerTrusted(X509Certificate[] chain, String authType)
+      public void checkServerTrusted(final X509Certificate[] chain, final String authType)
           throws CertificateException {}
 
       @Override
@@ -40,14 +40,14 @@ final class NetworkUtils {
     SSLContext sslContext;
     sslContext = SSLContext.getInstance("SSL");
     sslContext.init(null, TRUST_ALL_CERT, new java.security.SecureRandom());
-    HostnameVerifier hostnameVerifier =
+    final HostnameVerifier hostnameVerifier =
         new HostnameVerifier() {
           @Override
-          public boolean verify(String hostname, SSLSession session) {
+          public boolean verify(final String hostname, final SSLSession session) {
             return true;
           }
         };
-    OkHttpClient.Builder builder =
+    final OkHttpClient.Builder builder =
         new OkHttpClient.Builder()
             .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) TRUST_ALL_CERT[0])
             .hostnameVerifier(hostnameVerifier);
@@ -70,7 +70,7 @@ final class NetworkUtils {
       request = new Request.Builder().url(url).build();
       try (Response response = client.newCall(request).execute()) {
         statusCode = response.code();
-      } catch (IOException e) {
+      } catch (final IOException e) {
         statusCode = -1;
       }
     }
