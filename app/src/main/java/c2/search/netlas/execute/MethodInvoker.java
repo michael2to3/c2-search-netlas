@@ -32,9 +32,7 @@ public final class MethodInvoker {
         }
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
-      if (LOGGER.isErrorEnabled()) {
-        LOGGER.error("Error invoking test method {}", method.getName(), e);
-      }
+      MethodInvoker.handleInvocationError(method, instance, e);
     }
     return response;
   }
@@ -47,6 +45,12 @@ public final class MethodInvoker {
           method.getName(),
           instance.getClass().getName(),
           exception.getMessage());
+    }
+  }
+
+  public static void handleInvocationError(final Exception exception) {
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.info("Error invoking test methods - {}", exception.getMessage());
     }
   }
 
