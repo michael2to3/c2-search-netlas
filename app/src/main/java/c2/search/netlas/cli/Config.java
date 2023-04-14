@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
   private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-  final Path parentDir = Paths.get(System.getProperty("user.home"), ".c2detect");
+  private final String nameRootDir = ".c2detect";
+  private final Path parentDir = Paths.get(System.getProperty("user.home"), nameRootDir);
   private final Path filePath;
   private final Properties properties;
 
@@ -73,5 +74,9 @@ public class Config {
 
   protected Properties createProperties() {
     return new Properties();
+  }
+
+  public String getNameRootDir() {
+    return nameRootDir;
   }
 }
