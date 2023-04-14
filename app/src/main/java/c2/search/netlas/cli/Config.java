@@ -45,10 +45,7 @@ public class Config {
   }
 
   private void loadProperties() {
-    if (!Files.exists(filePath)) {
-      LOGGER.warn("Config file not found: {}", filePath);
-      createFile();
-    }
+    createFileIfNotExists();
     try (InputStream input = Files.newInputStream(filePath)) {
       properties.load(input);
     } catch (final IOException e) {
@@ -56,24 +53,22 @@ public class Config {
     }
   }
 
-  private void createFile() {
-    LOGGER.error("Config file not found: {}", filePath);
-    if (!Files.exists(parentDir)) {
-      LOGGER.debug("Creating config directory: {}", parentDir);
-      try {
-        Files.createDirectories(parentDir);
-      } catch (final IOException e) {
-        LOGGER.error("Error creating config directory: {}", parentDir, e);
-        return;
-      }
-    }
-
-    LOGGER.debug("Creating config file: {}", filePath);
+  private void createFileIfNotExists() {
     try {
-      Files.createFile(filePath);
+      createFile();
     } catch (final IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }
+  }
+
+  private void createFile() throws IOException {
+    if (!Files.exists(parentDir)) {
+      LOGGER.debug("Creating config directory: {}", parentDir);
+      Files.createDirectories(parentDir);
+    }
+
+    LOGGER.debug("Creating config file: {}", filePath);
+    Files.createFile(filePath);
   }
 
   public String getNameRootDir() {
