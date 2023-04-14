@@ -19,7 +19,7 @@ public class Config {
 
   public Config(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
-    this.properties = new Properties();
+    this.properties = createProperties();
     loadProperties();
   }
 
@@ -44,7 +44,7 @@ public class Config {
     }
   }
 
-  public void loadProperties() {
+  private void loadProperties() {
     if (!Files.exists(filePath)) {
       LOGGER.warn("Config file not found: {}", filePath);
       createFile();
@@ -78,5 +78,9 @@ public class Config {
 
   public String getNameRootDir() {
     return NAME_ROOT_DIR;
+  }
+
+  protected final Properties createProperties() {
+    return new Properties();
   }
 }

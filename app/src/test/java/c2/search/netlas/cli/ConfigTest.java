@@ -28,7 +28,6 @@ public class ConfigTest {
 
     config = new Config("test.properties");
     config.setProperties(properties);
-    config.loadProperties();
   }
 
   @Test
