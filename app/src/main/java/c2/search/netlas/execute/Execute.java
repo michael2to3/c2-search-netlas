@@ -31,11 +31,17 @@ public class Execute {
   }
 
   public Results run() {
-    final ExecutorService executor = Executors.newCachedThreadPool();
+    final ExecutorService executor = Executors.newFixedThreadPool(getNumberOfThreads());
     final List<Future<Results>> futures = submitTests(executor);
     final Results results = collectResults(futures);
     executor.shutdown();
     return results;
+  }
+
+  private int getNumberOfThreads() {
+    int availableProcessors = Runtime.getRuntime().availableProcessors();
+    int numberOfThreads = Math.max(2, availableProcessors - 1);
+    return numberOfThreads;
   }
 
   private List<Future<Results>> submitTests(final ExecutorService executor) {
