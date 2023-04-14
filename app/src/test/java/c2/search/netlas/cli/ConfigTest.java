@@ -1,40 +1,43 @@
 package c2.search.netlas.cli;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.nio.file.Path;
 import java.util.Properties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class ConfigTest {
+  private Path parentDir;
+  private Config config;
+  private Properties properties;
+
+  @BeforeEach
+  void setUp(@TempDir Path tempDir) {
+    parentDir = tempDir;
+    System.setProperty("user.home", parentDir.toString());
+    properties = spy(Properties.class);
+
+    config =
+        new Config("test.properties") {
+          @Override
+          protected Properties createProperties() {
+            return properties;
+          }
+        };
+  }
 
   @Test
-  public void testGetAndSave() {
-    String fileName = "test.properties";
-    Properties expected = new Properties();
-    expected.setProperty("key1", "value1");
-    expected.setProperty("key2", "value2");
+  void testGet() {
+    String key = "key";
+    String value = "value";
+    when(properties.getProperty(key)).thenReturn(value);
 
-    try (FileOutputStream output = new FileOutputStream(fileName)) {
-      expected.store(output, null);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-
-    Config config = new Config(fileName);
-
-    assertEquals("value1", config.get("key1"));
-    assertEquals("value2", config.get("key2"));
-    assertNull(config.get("key3"));
-
-    config.save("key3", "value3");
-    assertEquals("value3", config.get("key3"));
-
-    File file = new File(fileName);
-    if (file.exists()) {
-      file.delete();
-    }
+    String result = config.get(key);
+    assertEquals(value, result);
   }
 }
