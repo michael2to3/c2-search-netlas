@@ -1,10 +1,14 @@
 package c2.search.netlas.cli;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,5 +43,22 @@ public class ConfigTest {
 
     String result = config.get(key);
     assertEquals(value, result);
+  }
+
+  @Test
+  void testGetFilePath() {
+    Path expectedPath = parentDir.resolve(config.getNameRootDir()).resolve("test.properties");
+    assertEquals(expectedPath, config.getFilePath());
+  }
+
+  @Test
+  void testSave() throws IOException {
+    String key = "key";
+    String value = "value";
+
+    config.save(key, value);
+
+    verify(properties).setProperty(key, value);
+    verify(properties).store(any(OutputStream.class), isNull());
   }
 }
