@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class Factory {
+public class Factory {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
   private final DependencyInjector dependency;
 

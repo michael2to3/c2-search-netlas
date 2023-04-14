@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 public class Execute {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
-  private static final int TIMEOUT_SINGLE_SECOND = 5;
-  private static final int TIMEOUT_COMPLEX_SECOND = 120;
+  private static final int TIMEOUT_SINGLE = 5;
+  private static final int TIMEOUT_COMPLEX = 120;
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private final ClassScanner classScanner;
   private final Factory factory;
@@ -40,9 +40,8 @@ public class Execute {
   }
 
   private int getNumberOfThreads() {
-    int availableProcessors = Runtime.getRuntime().availableProcessors();
-    int numberOfThreads = Math.max(2, availableProcessors - 1);
-    return numberOfThreads;
+    final int processors = Runtime.getRuntime().availableProcessors();
+    return Math.max(2, processors - 1);
   }
 
   private List<Future<Results>> submitTests(final ExecutorService executor) {
@@ -67,7 +66,7 @@ public class Execute {
     final List<Response> responses = new ArrayList<>();
     for (final CompletableFuture<Response> future : futures) {
       try {
-        final Response response = future.get(TIMEOUT_SINGLE_SECOND, TimeUnit.SECONDS);
+        final Response response = future.get(TIMEOUT_SINGLE, TimeUnit.SECONDS);
         if (response != null) {
           responses.add(response);
         }
@@ -82,7 +81,7 @@ public class Execute {
     final Results results = new Results();
     for (final var future : futures) {
       try {
-        results.merge(future.get(TIMEOUT_COMPLEX_SECOND, TimeUnit.SECONDS));
+        results.merge(future.get(TIMEOUT_COMPLEX, TimeUnit.SECONDS));
       } catch (InterruptedException | ExecutionException | TimeoutException e) {
         LOGGER.error("Error while running tests", e);
       }
