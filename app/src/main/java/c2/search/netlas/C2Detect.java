@@ -1,8 +1,8 @@
 package c2.search.netlas;
 
-import c2.search.netlas.classscanner.Checker;
-import c2.search.netlas.classscanner.FieldValues;
 import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.execute.Execute;
+import c2.search.netlas.execute.FieldValues;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
@@ -17,7 +17,7 @@ public class C2Detect {
   private FieldValues fields;
   private NetlasWrapper netlas;
   private PrintStream stream;
-  private Checker checker;
+  private Execute checker;
   private CLArgumentsManager cmd;
 
   public C2Detect(final CLArgumentsManager cmd, final PrintStream stream) {
@@ -44,7 +44,7 @@ public class C2Detect {
     if (cmd.getHost() != null) {
       this.netlas = getNetlasWrapper();
       this.fields = createFields(cmd.getHost(), netlas);
-      this.checker = createChecker(fields);
+      this.checker = new Execute(fields);
     }
   }
 
@@ -69,10 +69,6 @@ public class C2Detect {
     stream.flush();
     stream.println("Target: " + cmd.getHost());
     stream.flush();
-  }
-
-  protected Checker createChecker(final FieldValues fields) {
-    return new Checker(fields);
   }
 
   private void runChecker() {
