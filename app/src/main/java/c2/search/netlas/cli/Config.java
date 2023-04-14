@@ -19,10 +19,6 @@ public class Config {
 
   public Config(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
-    initialize();
-  }
-
-  public void initialize() {
     this.properties = new Properties();
     loadProperties();
   }
