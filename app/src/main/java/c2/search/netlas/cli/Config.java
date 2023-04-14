@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +18,16 @@ public class Config {
 
   public Config(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
-    this.properties = new Properties();
+    this.properties = createProperties();
     loadProperties();
   }
 
   public String get(final String key) {
-    String value = properties.getProperty(key);
-    if (value == null) {
-      value = System.getenv(key);
-    }
-    if (value == null) {
-      final String upperKey = key.toUpperCase(Locale.getDefault()).replace('.', '_');
-      value = System.getenv(upperKey);
-    }
-    return value;
+    return properties.getProperty(key);
+  }
+
+  public Path getFilePath() {
+    return filePath;
   }
 
   public void save(final String key, final String value) {
@@ -74,5 +69,9 @@ public class Config {
     } catch (final IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }
+  }
+
+  protected Properties createProperties() {
+    return new Properties();
   }
 }
