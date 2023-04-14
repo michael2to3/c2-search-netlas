@@ -11,14 +11,6 @@ C2 Search Netlas is a Java utility to detect C2 servers using Netlas API. This u
 
 [![asciicast](https://asciinema.org/a/Q0g0ego8SK97elJvTHN5IXLzs.svg)](https://asciinema.org/a/Q0g0ego8SK97elJvTHN5IXLzs)
 
-## Installation
-
-Clone this repository to your local machine:
-
-```bash
-git clone https://github.com/michael2to3/c2-search-netlas.git
-```
-
 ## Usage
 
 To use the terminal utility, you need to have a Netlas API key. You can get the key from the [Netlas](https://netlas.io) website.
@@ -135,7 +127,7 @@ This will display a list of C2 servers found in the given IP address or domain.
 | Empire                  | :x:                |
 | Merlin                  | :x:                |
 | Covenant                | :x:                |
-| Villain                 | :x:                |
+| Villain                 | :white_check_mark: |
 | Shad0w                  | :x:                |
 | PoshC2                  | :x:                |
 
