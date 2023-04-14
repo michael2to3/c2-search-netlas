@@ -15,11 +15,15 @@ public class Config {
   private static final String NAME_ROOT_DIR = ".c2detect";
   private final Path parentDir = Paths.get(System.getProperty("user.home"), NAME_ROOT_DIR);
   private final Path filePath;
-  private final Properties properties;
+  private Properties properties;
 
   public Config(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
-    this.properties = createProperties();
+    initialize();
+  }
+
+  public void initialize() {
+    this.properties = new Properties();
     loadProperties();
   }
 
@@ -31,6 +35,10 @@ public class Config {
     return filePath;
   }
 
+  public void setProperties(final Properties properties) {
+    this.properties = properties;
+  }
+
   public void save(final String key, final String value) {
     properties.setProperty(key, value);
     try (OutputStream output = Files.newOutputStream(filePath)) {
@@ -40,7 +48,7 @@ public class Config {
     }
   }
 
-  private void loadProperties() {
+  public void loadProperties() {
     if (!Files.exists(filePath)) {
       LOGGER.warn("Config file not found: {}", filePath);
       createFile();
@@ -70,10 +78,6 @@ public class Config {
     } catch (final IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }
-  }
-
-  protected Properties createProperties() {
-    return new Properties();
   }
 
   public String getNameRootDir() {

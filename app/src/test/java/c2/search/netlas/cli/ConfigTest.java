@@ -26,13 +26,9 @@ public class ConfigTest {
     System.setProperty("user.home", parentDir.toString());
     properties = spy(Properties.class);
 
-    config =
-        new Config("test.properties") {
-          @Override
-          protected Properties createProperties() {
-            return properties;
-          }
-        };
+    config = new Config("test.properties");
+    config.setProperties(properties);
+    config.loadProperties();
   }
 
   @Test
