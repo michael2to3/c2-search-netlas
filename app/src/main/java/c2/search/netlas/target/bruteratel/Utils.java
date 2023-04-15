@@ -27,8 +27,15 @@ public final class Utils {
 
   private Utils() {}
 
-  public static boolean allEqual(final List<String> list, final String value) {
-    return list.stream().allMatch(s -> s.equals(value));
+  public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
+    boolean result = true;
+    for (int i = 0; i < lhs.size(); i++) {
+      if (!lhs.get(i).contains(rhs[i])) {
+        result = false;
+        break;
+      }
+    }
+    return result;
   }
 
   public static boolean verifyCertFields(
@@ -53,21 +60,7 @@ public final class Utils {
     final List<List<String>> issuer =
         Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
-    boolean result = true;
-    for (int i = 0; i < subjectFields.length; i++) {
-      if (!subjectFields[i].isEmpty() && !allEqual(subject.get(i), subjectFields[i])) {
-        result = false;
-        break;
-      }
-    }
-    for (int i = 0; i < issuerFields.length; i++) {
-      if (!issuerFields[i].isEmpty() && !allEqual(issuer.get(i), issuerFields[i])) {
-        result = false;
-        break;
-      }
-    }
-
-    return result;
+    return compareList(subject, subjectFields) && compareList(issuer, issuerFields);
   }
 
   public static String[] getHttpResponse(final String path) {

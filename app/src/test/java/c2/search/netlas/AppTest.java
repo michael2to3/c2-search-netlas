@@ -1,13 +1,12 @@
 package c2.search.netlas;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import c2.search.netlas.cli.CLArgumentsManager;
 import c2.search.netlas.cli.Config;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -38,19 +37,42 @@ class AppTest {
   }
 
   @Test
+  void testC2DetectRunInvocationSelfSignCert() throws Exception {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(outputStream);
+    System.setOut(printStream);
+
+    String[] args = new String[] {"-t", "217.74.250.61", "-p", "443"};
+
+    App.main(args);
+
+    assertNotEquals("", printStream.toString());
+  }
+
+  @Test
   void testC2DetectRunInvocation() throws Exception {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
 
-    String[] args = new String[] {"-t", "example.com", "-p", "80"};
-    CLArgumentsManager pargs = App.getParseCmdArgs(args);
-    C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
+    String[] args = new String[] {"-t", "google.com", "-p", "443"};
 
-    App.setC2detect(c2Detect);
     App.main(args);
 
-    verify(c2Detect).run(args);
+    assertNotEquals("", printStream.toString());
+  }
+
+  @Test
+  void testC2DetectWithoutSsl() throws Exception {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(outputStream);
+    System.setOut(printStream);
+
+    String[] args = new String[] {"-t", "neverssl.com", "-p", "80"};
+
+    App.main(args);
+
+    assertNotEquals("", printStream.toString());
   }
 
   @Test

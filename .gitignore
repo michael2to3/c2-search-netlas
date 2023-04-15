@@ -622,4 +622,5 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse,vim,visualstudio,visualstudiocode,intellij+all
 config.properties
 test.prop
+test.properties
 log4j.properties

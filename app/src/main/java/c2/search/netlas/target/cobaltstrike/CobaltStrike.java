@@ -30,7 +30,7 @@ public class CobaltStrike {
   }
 
   @Test
-  public boolean defaultCertFieldTeamServer() throws JsonMappingException, JsonProcessingException {
+  public boolean defaultCertFieldTeamServer() {
     final String[] fields = {
       "US",
       "Washington",
@@ -43,7 +43,7 @@ public class CobaltStrike {
   }
 
   @Test
-  public boolean defaultCertFieldListener() throws JsonMappingException, JsonProcessingException {
+  public boolean defaultCertFieldListener() {
     final String[] fields = {"", "", "", "", "", ""};
     return Utils.verifyDefaultCertFields(netlasWrapper, fields);
   }

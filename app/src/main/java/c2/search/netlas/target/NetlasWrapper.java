@@ -76,20 +76,6 @@ public class NetlasWrapper {
   }
 
   /**
-   * Gets a list of DNS names from the Netlas response.
-   *
-   * @return a list of DNS names
-   * @throws JsonMappingException if there is an error mapping JSON to Java objects
-   * @throws JsonProcessingException if there is an error processing JSON
-   */
-  public List<String> getDnsName() throws JsonMappingException, JsonProcessingException {
-    final var commonName = getLast(".data.certificate.subject.common_name", 0);
-    final List<String> dnsNames = new ArrayList<>();
-    commonName.forEach(item -> dnsNames.add(item.asText()));
-    return dnsNames;
-  }
-
-  /**
    * Gets the JARM fingerprint from the Netlas response.
    *
    * @return the JARM fingerprint
@@ -200,7 +186,10 @@ public class NetlasWrapper {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("query: {}", host);
       }
-      final var query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
+      final var query =
+          String.format(
+              "host:%s AND port:%s AND path:\"%s\"",
+              host.getTarget(), host.getPort(), host.getPath());
       final var datatype = "responses";
       final var page = 0;
       final var indices = "";
@@ -267,7 +256,7 @@ public class NetlasWrapper {
 
   public List<String> getCertSubjectOrganizationUnit()
       throws JsonMappingException, JsonProcessingException {
-    return toArrayString(getLast(".data.certificate.subject.organization_unit", 0));
+    return toArrayString(getLast(".data.certificate.subject.organizational_unit", 0));
   }
 
   public List<String> getCertSubjectOrganization()
@@ -300,7 +289,7 @@ public class NetlasWrapper {
 
   public List<String> getCertIssuerOrganizationUnit()
       throws JsonMappingException, JsonProcessingException {
-    return toArrayString(getLast(".data.certificate.issuer.organization_unit", 0));
+    return toArrayString(getLast(".data.certificate.issuer.organizational_unit", 0));
   }
 
   public List<String> getCertIssuerCountry() throws JsonMappingException, JsonProcessingException {

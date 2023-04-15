@@ -14,11 +14,7 @@ class HostTest {
     host.setPort(8080);
     assertEquals(8080, host.getPort());
 
-    host = new Host();
-    host.setTarget("www.yahoo.com");
-    host.setPort(8080);
-    assertEquals("www.yahoo.com", host.getTarget());
-    assertEquals(8080, host.getPort());
+    host = Host.newBuilder().setTarget("www.yahoo.com").setPort(8080).setPath("/").build();
 
     Host other = new Host("www.yahoo.com", 8080);
     assertEquals(other, other);

@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
@@ -32,59 +30,19 @@ final class Utils {
     final List<List<String>> subject =
         Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
 
+    final List<String> list = Arrays.asList(subjectFields);
+    return compareList(subject, list);
+  }
+
+  public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
     boolean result = true;
-    for (int i = 0; i < subjectFields.length; i++) {
-      if (!subjectFields[i].isEmpty() && !allEqual(subject.get(i), subjectFields[i])) {
+    for (int i = 0; i < lhs.size(); i++) {
+      if (!lhs.get(i).contains(rhs.get(i))) {
         result = false;
         break;
       }
     }
-
     return result;
-  }
-
-  public static boolean verifyCertFieldsIssuer(
-      final NetlasWrapper netlasWrapper, final String[] issuerFields)
-      throws JsonMappingException, JsonProcessingException {
-    final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
-    final List<String> issState = netlasWrapper.getCertIssuerProvince();
-    final List<String> issCity = netlasWrapper.getCertIssuerLocality();
-    final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
-    final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-    final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
-
-    final List<List<String>> issuer =
-        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
-
-    boolean result = true;
-    for (int i = 0; i < issuerFields.length; i++) {
-      if (!issuerFields[i].isEmpty() && !allEqual(issuer.get(i), issuerFields[i])) {
-        result = false;
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  public static boolean allEqual(final List<String> list, final String value) {
-    return list.stream().allMatch(s -> s.equals(value));
-  }
-
-  public static String getSHA256Hash(final String input) throws NoSuchAlgorithmException {
-    final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-    final byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-    final StringBuilder hexString = new StringBuilder();
-    final int length = 1;
-    final int base = 0xff;
-    for (final byte b : hash) {
-      final String hex = Integer.toHexString(base & b);
-      if (hex.length() == length) {
-        hexString.append('0');
-      }
-      hexString.append(hex);
-    }
-    return hexString.toString();
   }
 
   public static int[] getHttpResponse(final String path) {

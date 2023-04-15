@@ -23,17 +23,15 @@ public class Phoenix {
   @Test
   public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
     final String jarm = "2ad2ad0002ad2ad22c42d42d000000faabb8fd156aa8b4d8a37853e1063261";
-    final String tjarm = netlasWrapper.getJarm();
-    return jarm.equals(tjarm);
+    return jarm.equals(netlasWrapper.getJarm());
   }
 
   @Test
   public boolean checkFieldCert() throws JsonMappingException, JsonProcessingException {
-    final String subCountry = "US";
-    final String issCountry = "US";
+    final String subIssCountry = "US";
     final List<String> rsubCountry = netlasWrapper.getCertSubjectCountry();
     final List<String> rissCountry = netlasWrapper.getCertIssuerCountry();
-    return rsubCountry.contains(subCountry) && rissCountry.contains(issCountry);
+    return rsubCountry.contains(subIssCountry) && rissCountry.contains(subIssCountry);
   }
 
   @Test
@@ -42,14 +40,13 @@ public class Phoenix {
         Arrays.asList(
             "bdd3acd38b235f3e79f97834c1bada34fe87489f5cc3c530dab5bc47404e0a87",
             "e9639e3c4681ce85f852fbac48e2eeee5ba51296dbfec57c200d59b76237ab80");
-    final String rbody = netlasWrapper.getBodyAsSha256();
-    return body.contains(rbody);
+    return body.contains(netlasWrapper.getBodyAsSha256());
   }
 
   @Test
   public boolean checkListenerResponse()
       throws KeyManagementException, NoSuchAlgorithmException, IOException {
-    final String[] paths = {"download/history.csv", "download/users.csv", "static/dump.sql"};
+    final String[] paths = {"/download/history.csv", "/download/users.csv", "/static/dump.sql"};
     final int accessDenied = 405;
     boolean result = true;
     for (final String path : paths) {

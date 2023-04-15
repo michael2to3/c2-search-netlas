@@ -5,12 +5,16 @@ import java.util.Objects;
 public class Host {
   private String target;
   private int port;
+  private String path;
 
-  public Host() {}
+  private Host() {
+    this.path = "/";
+  }
 
   public Host(final String target, final int port) {
     this.target = target;
     this.port = port;
+    this.path = "/";
   }
 
   @Override
@@ -51,5 +55,40 @@ public class Host {
 
   public void setPort(final int port) {
     this.port = port;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(final String path) {
+    this.path = path;
+  }
+
+  public static Builder newBuilder() {
+    return new Host().new Builder();
+  }
+
+  public final class Builder {
+    private Builder() {}
+
+    public Builder setTarget(final String target) {
+      Host.this.target = target;
+      return this;
+    }
+
+    public Builder setPort(final int port) {
+      Host.this.port = port;
+      return this;
+    }
+
+    public Builder setPath(final String path) {
+      Host.this.path = path;
+      return this;
+    }
+
+    public Host build() {
+      return Host.this;
+    }
   }
 }
