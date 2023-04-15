@@ -9,8 +9,6 @@ import static org.mockito.Mockito.when;
 
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.target.NetlasWrapper;
-import java.util.Arrays;
-import java.util.Collections;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
