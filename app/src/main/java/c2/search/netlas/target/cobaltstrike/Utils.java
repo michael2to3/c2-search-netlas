@@ -59,7 +59,7 @@ final class Utils {
 
   public static boolean verifyDefaultCertFields(
       final NetlasWrapper netlasWrapper, final String[] fields) {
-    boolean result = true;
+    boolean result;
     try {
       final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
       final List<String> subState = netlasWrapper.getCertSubjectProvince();
