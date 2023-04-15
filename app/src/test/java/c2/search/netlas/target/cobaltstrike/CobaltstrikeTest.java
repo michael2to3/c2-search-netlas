@@ -13,9 +13,7 @@ import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +51,6 @@ class CobaltStrikeTest {
     when(Utils.verifyDefaultCertFields(any(), any())).thenReturn(true);
     assertTrue(cobaltStrike.defaultCertFieldTeamServer());
   }
-
 
   @Test
   void defaultHeaders() throws Exception {
