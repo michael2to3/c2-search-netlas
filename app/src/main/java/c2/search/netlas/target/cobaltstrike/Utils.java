@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,22 +15,26 @@ final class Utils {
 
   private Utils() {}
 
-  public static int getDataLength(final Host host) throws IOException {
-    final int chunk = 1024;
+  public static int getDataLength(final Host host) throws UnknownHostException, IOException {
     try (Socket socket = new Socket(host.getTarget(), host.getPort());
         InputStream inputStream = socket.getInputStream()) {
-      final byte[] buffer = new byte[chunk];
-      int len;
-      int totalLen = 0;
-      while (true) {
-        len = inputStream.read(buffer);
-        if (len == -1) {
-          break;
-        }
-        totalLen += len;
-      }
-      return totalLen;
+      return getDataLength(inputStream);
     }
+  }
+
+  public static int getDataLength(final InputStream inputStream) throws IOException {
+    final int chunk = 1024;
+    final byte[] buffer = new byte[chunk];
+    int len;
+    int totalLen = 0;
+    while (true) {
+      len = inputStream.read(buffer);
+      if (len == -1) {
+        break;
+      }
+      totalLen += len;
+    }
+    return totalLen;
   }
 
   public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
