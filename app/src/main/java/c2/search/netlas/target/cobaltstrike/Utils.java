@@ -34,16 +34,12 @@ final class Utils {
     }
   }
 
-  public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
+  public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
     boolean result = true;
-    if (lhs.size() != rhs.size()) {
-      result = false;
-    } else {
-      for (int i = 0; i < lhs.size(); i++) {
-        if (!lhs.get(i).contains(rhs.get(i))) {
-          result = false;
-          break;
-        }
+    for (int i = 0; i < lhs.size(); i++) {
+      if (!lhs.get(i).contains(rhs[i])) {
+        result = false;
+        break;
       }
     }
     return result;
@@ -85,8 +81,6 @@ final class Utils {
     final List<List<String>> issuer =
         Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
-    var list = Arrays.asList(fields);
-
-    return compareList(subject, list) && compareList(issuer, list);
+    return compareList(subject, fields) && compareList(issuer, fields);
   }
 }

@@ -36,14 +36,10 @@ final class Utils {
 
   public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
     boolean result = true;
-    if (lhs.size() != rhs.size()) {
-      result = false;
-    } else {
-      for (int i = 0; i < lhs.size(); i++) {
-        if (!lhs.get(i).contains(rhs.get(i))) {
-          result = false;
-          break;
-        }
+    for (int i = 0; i < lhs.size(); i++) {
+      if (!lhs.get(i).contains(rhs.get(i))) {
+        result = false;
+        break;
       }
     }
     return result;

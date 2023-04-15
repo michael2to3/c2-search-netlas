@@ -70,6 +70,8 @@ public class Host {
   }
 
   public class Builder {
+    private Builder() {}
+
     public Builder setTarget(final String target) {
       Host.this.target = target;
       return this;
