@@ -34,8 +34,19 @@ final class Utils {
     }
   }
 
-  public static boolean allEqual(final List<String> list, final String value) {
-    return list.stream().allMatch(s -> s.equals(value));
+  public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
+    boolean result = true;
+    if (lhs.size() != rhs.size()) {
+      result = false;
+    } else {
+      for (int i = 0; i < lhs.size(); i++) {
+        if (!lhs.get(i).contains(rhs.get(i))) {
+          result = false;
+          break;
+        }
+      }
+    }
+    return result;
   }
 
   public static int sendHttpRequest(final Host host, final String ua, final String path)
@@ -74,18 +85,8 @@ final class Utils {
     final List<List<String>> issuer =
         Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
-    boolean result = true;
-    for (int i = 0; i < fields.length; i++) {
-      if (!allEqual(subject.get(i), fields[i])) {
-        result = false;
-        break;
-      }
-      if (!allEqual(issuer.get(i), fields[i])) {
-        result = false;
-        break;
-      }
-    }
+    var list = Arrays.asList(fields);
 
-    return result;
+    return compareList(subject, list) && compareList(issuer, list);
   }
 }

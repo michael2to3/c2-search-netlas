@@ -55,7 +55,9 @@ public class Config {
 
   private void createFileIfNotExists() {
     try {
-      createFile();
+      if (!Files.exists(parentDir) || !Files.exists(filePath)) {
+        createFile();
+      }
     } catch (final IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }

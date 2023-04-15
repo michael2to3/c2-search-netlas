@@ -30,19 +30,23 @@ final class Utils {
     final List<List<String>> subject =
         Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
 
-    boolean result = true;
-    for (int i = 0; i < subjectFields.length; i++) {
-      if (!subjectFields[i].isEmpty() && !allEqual(subject.get(i), subjectFields[i])) {
-        result = false;
-        break;
-      }
-    }
-
-    return result;
+    final List<String> list = Arrays.asList(subjectFields);
+    return compareList(subject, list);
   }
 
-  public static boolean allEqual(final List<String> list, final String value) {
-    return list.stream().allMatch(s -> s.equals(value));
+  public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
+    boolean result = true;
+    if (lhs.size() != rhs.size()) {
+      result = false;
+    } else {
+      for (int i = 0; i < lhs.size(); i++) {
+        if (!lhs.get(i).contains(rhs.get(i))) {
+          result = false;
+          break;
+        }
+      }
+    }
+    return result;
   }
 
   public static int[] getHttpResponse(final String path) {

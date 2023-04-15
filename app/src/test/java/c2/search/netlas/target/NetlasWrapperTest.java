@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import c2.search.netlas.scheme.Host;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +18,7 @@ import org.slf4j.LoggerFactory;
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
   private static final String API = System.getenv("API_KEY");
-  private static final Host HOST = new Host("ya.ru", 443);
+  private static final Host HOST = new Host("vk.com", 443);
   private static NetlasWrapper netlas;
 
   @BeforeAll
@@ -33,14 +30,6 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetDnsName() throws JsonMappingException, JsonProcessingException {
-    List<String> dnss = netlas.getDnsName();
-    assertTrue(dnss.size() > 0);
-    assertNotNull(dnss.get(0));
-    assertNotEquals("", dnss.get(0));
-  }
-
-  @Test
   void testGetJarm() throws JsonMappingException, JsonProcessingException {
     String jarm = netlas.getJarm();
     assertNotNull(jarm);
@@ -48,36 +37,174 @@ class NetlasWrapperTest {
     assertTrue(jarm.length() == 62);
   }
 
-  public static String sha256(String input) {
-    try {
-      MessageDigest md = MessageDigest.getInstance("SHA-256");
-      byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
-      StringBuilder hexString = new StringBuilder();
-
-      for (byte b : hash) {
-        String hex = Integer.toHexString(0xff & b);
-        if (hex.length() == 1) {
-          hexString.append('0');
-        }
-        hexString.append(hex);
-      }
-
-      return hexString.toString();
-
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @Test
-  void testGetBody() throws JsonMappingException, JsonProcessingException {
+  void testGets() throws JsonMappingException, JsonProcessingException {
     String responseBody = netlas.getBody();
     assertNotNull(responseBody);
     assertNotEquals("", responseBody);
     assertTrue(responseBody.length() > 0);
-    String hash = sha256(responseBody);
-    String rhash = netlas.getBodyAsSha256();
-    assertEquals(hash, rhash);
+
+    var item = netlas.getItem(0);
+    assertNotNull(item);
+
+    var last = netlas.getLast(".data.http.body", 0);
+    assertNotNull(last);
+
+    var headers = netlas.getHeaders();
+    assertNotNull(headers);
+
+    var servers = netlas.getServers();
+    assertNotNull(servers);
+    assertNotEquals(0, servers.size());
+    assertNotNull(servers.get(0));
+    assertNotEquals("", servers.get(0));
+
+    var statusCode = netlas.getStatusCode();
+    assertEquals(200, statusCode);
+
+    var contentType = netlas.getContentType();
+    assertNotNull(contentType);
+    assertTrue(contentType.size() > 0);
+    assertNotNull(contentType.get(0));
+    assertNotEquals("", contentType.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectCountry() throws JsonMappingException, JsonProcessingException {
+    List<String> subjectCountry = netlas.getCertSubjectCountry();
+    assertNotNull(subjectCountry);
+    assertNotEquals(0, subjectCountry.size());
+    assertNotNull(subjectCountry.get(0));
+    assertNotEquals("", subjectCountry.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectOrganizationUnit() throws JsonMappingException, JsonProcessingException {
+    Host host = Host.newBuilder().setTarget("fadich.com").setPort(443).build();
+    NetlasWrapper netlas = new NetlasWrapper(API, host);
+    List<String> subjectOrganizationUnit = netlas.getCertSubjectOrganizationUnit();
+    assertNotNull(subjectOrganizationUnit);
+    assertNotEquals(0, subjectOrganizationUnit.size());
+    assertNotNull(subjectOrganizationUnit.get(0));
+    assertNotEquals("", subjectOrganizationUnit.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectOrganization() throws JsonMappingException, JsonProcessingException {
+    List<String> subjectOrganization = netlas.getCertSubjectOrganization();
+    assertNotNull(subjectOrganization);
+    assertNotEquals(0, subjectOrganization.size());
+    assertNotNull(subjectOrganization.get(0));
+    assertNotEquals("", subjectOrganization.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectLocality() throws JsonMappingException, JsonProcessingException {
+    List<String> subjectLocality = netlas.getCertSubjectLocality();
+    assertNotNull(subjectLocality);
+    assertNotEquals(0, subjectLocality.size());
+    assertNotNull(subjectLocality.get(0));
+    assertNotEquals("", subjectLocality.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectProvince() throws JsonMappingException, JsonProcessingException {
+    List<String> subjectProvince = netlas.getCertSubjectProvince();
+    assertNotNull(subjectProvince);
+    assertNotEquals(0, subjectProvince.size());
+    assertNotNull(subjectProvince.get(0));
+    assertNotEquals("", subjectProvince.get(0));
+  }
+
+  @Test
+  void testGetCertStartDate() throws JsonMappingException, JsonProcessingException {
+    String certStartDate = netlas.getCertStartDate();
+    assertNotNull(certStartDate);
+    assertNotEquals("", certStartDate);
+  }
+
+  @Test
+  void testGetCertEndDate() throws JsonMappingException, JsonProcessingException {
+    String certEndDate = netlas.getCertEndDate();
+    assertNotNull(certEndDate);
+    assertNotEquals("", certEndDate);
+  }
+
+  @Test
+  void testGetCertIssuerCommonName() throws JsonMappingException, JsonProcessingException {
+    List<String> issuerCommonName = netlas.getCertIssuerCommonName();
+    assertNotNull(issuerCommonName);
+    assertNotEquals(0, issuerCommonName.size());
+    assertNotNull(issuerCommonName.get(0));
+    assertNotEquals("", issuerCommonName.get(0));
+  }
+
+  @Test
+  void testGetCertIssuerOrganizationUnit() throws JsonMappingException, JsonProcessingException {
+    Host host = Host.newBuilder().setTarget("infrapros.com").setPort(443).build();
+    NetlasWrapper netlas = new NetlasWrapper(API, host);
+    List<String> issuerOrganizationUnit = netlas.getCertIssuerOrganizationUnit();
+    assertNotNull(issuerOrganizationUnit);
+    assertNotEquals(0, issuerOrganizationUnit.size());
+    assertNotNull(issuerOrganizationUnit.get(0));
+    assertNotEquals("", issuerOrganizationUnit.get(0));
+  }
+
+  @Test
+  void testGetCertIssuerCountry() throws JsonMappingException, JsonProcessingException {
+    List<String> issuerCountry = netlas.getCertIssuerCountry();
+    assertNotNull(issuerCountry);
+    assertNotEquals(0, issuerCountry.size());
+    assertNotNull(issuerCountry.get(0));
+    assertNotEquals("", issuerCountry.get(0));
+  }
+
+  @Test
+  void testGetCertIssuerOrganization() throws JsonMappingException, JsonProcessingException {
+    List<String> issuerOrganization = netlas.getCertIssuerOrganization();
+    assertNotNull(issuerOrganization);
+    assertNotEquals(0, issuerOrganization.size());
+    assertNotNull(issuerOrganization.get(0));
+    assertNotEquals("", issuerOrganization.get(0));
+  }
+
+  @Test
+  void testGetCertIssuerLocality() throws JsonMappingException, JsonProcessingException {
+    Host host = Host.newBuilder().setTarget("fadich.com").setPort(443).build();
+    NetlasWrapper netlas = new NetlasWrapper(API, host);
+    List<String> issuerLocality = netlas.getCertIssuerLocality();
+    assertNotNull(issuerLocality);
+    assertNotEquals(0, issuerLocality.size());
+    assertNotNull(issuerLocality.get(0));
+    assertNotEquals("", issuerLocality.get(0));
+  }
+
+  void testGetCertIssuerProvince() throws JsonMappingException, JsonProcessingException {
+    List<String> issuerProvince = netlas.getCertIssuerProvince();
+    assertNotNull(issuerProvince);
+    assertNotEquals(0, issuerProvince.size());
+    assertNotNull(issuerProvince.get(0));
+    assertNotEquals("", issuerProvince.get(0));
+  }
+
+  @Test
+  void testGetContentLength() throws JsonMappingException, JsonProcessingException {
+    Host host = new Host("google.com", 443);
+    var netlas = new NetlasWrapper(API, host);
+    List<Integer> contentLength = netlas.getContentLength();
+    assertNotNull(contentLength);
+    assertNotEquals(0, contentLength.size());
+    assertNotNull(contentLength.get(0));
+    assertNotEquals("", contentLength.get(0));
+  }
+
+  @Test
+  void testGetCertSubjectCommonName() throws JsonMappingException, JsonProcessingException {
+    List<String> subjectCommonName = netlas.getCertSubjectCommonName();
+    assertNotNull(subjectCommonName);
+    assertNotEquals(0, subjectCommonName.size());
+    assertNotNull(subjectCommonName.get(0));
+    assertNotEquals("", subjectCommonName.get(0));
   }
 
   @Test

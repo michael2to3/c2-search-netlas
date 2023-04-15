@@ -60,13 +60,10 @@ class AppTest {
     System.setOut(printStream);
 
     String[] args = new String[] {"-t", "google.com", "-p", "80"};
-    CLArgumentsManager pargs = App.getParseCmdArgs(args);
-    C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
 
-    App.setC2detect(c2Detect);
     App.main(args);
 
-    verify(c2Detect).run(args);
+    assertTrue(outputStream.toString().isEmpty());
   }
 
   @Test
