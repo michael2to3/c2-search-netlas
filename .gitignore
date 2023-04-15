@@ -624,3 +624,4 @@ config.properties
 test.prop
 test.properties
 log4j.properties
+.env
