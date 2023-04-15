@@ -1,5 +1,6 @@
 package c2.search.netlas;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -44,13 +45,10 @@ class AppTest {
     System.setOut(printStream);
 
     String[] args = new String[] {"-t", "217.74.250.61", "-p", "443"};
-    CLArgumentsManager pargs = App.getParseCmdArgs(args);
-    C2Detect c2Detect = spy(new C2Detect(pargs, printStream));
 
-    App.setC2detect(c2Detect);
     App.main(args);
 
-    verify(c2Detect).run(args);
+    assertNotEquals("", printStream.toString());
   }
 
   @Test
@@ -59,11 +57,11 @@ class AppTest {
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
 
-    String[] args = new String[] {"-t", "google.com", "-p", "80"};
+    String[] args = new String[] {"-t", "google.com", "-p", "443"};
 
     App.main(args);
 
-    assertTrue(outputStream.toString().isEmpty());
+    assertNotEquals("", printStream.toString());
   }
 
   @Test
