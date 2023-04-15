@@ -69,7 +69,7 @@ public class Host {
     return new Host().new Builder();
   }
 
-  public class Builder {
+  public final class Builder {
     private Builder() {}
 
     public Builder setTarget(final String target) {
