@@ -63,6 +63,19 @@ class AppTest {
   }
 
   @Test
+  void testC2DetectWithoutSsl() throws Exception {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(outputStream);
+    System.setOut(printStream);
+
+    String[] args = new String[] {"-t", "neverssl.com", "-p", "80"};
+
+    App.main(args);
+
+    assertNotEquals("", printStream.toString());
+  }
+
+  @Test
   void testNotExistsArgs() {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(outputStream);
