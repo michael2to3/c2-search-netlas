@@ -6,11 +6,9 @@ import c2.search.netlas.execute.FieldValues;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import c2.search.netlas.target.NetlasWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.PrintStream;
 import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +51,7 @@ public class C2Detect {
   private NetlasWrapper getNetlasWrapper() {
     NetlasWrapper netlas = null;
     try {
-     netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
+      netlas = new NetlasWrapper(cmd.getApiKey(), cmd.getHost());
     } catch (NetlasRequestException e) {
       LOGGER.error("Failed to create NetlasWrapper", e);
     }

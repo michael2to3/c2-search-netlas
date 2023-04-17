@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
   private static final String API = System.getenv("API_KEY");
-  private static final Host HOST = Host.newBuilder().setTarget("vk.com").setPort(443).setPath("/").build();
+  private static final Host HOST =
+      Host.newBuilder().setTarget("vk.com").setPort(443).setPath("/").build();
   private static NetlasWrapper netlas;
 
   @BeforeAll

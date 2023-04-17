@@ -13,8 +13,7 @@ import java.util.List;
 
 final class Utils {
 
-  private Utils() {
-  }
+  private Utils() {}
 
   public static int getDataLength(final Host host) throws UnknownHostException, IOException {
     try (Socket socket = new Socket(host.getTarget(), host.getPort());
@@ -80,8 +79,10 @@ final class Utils {
     final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
     final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
 
-    final List<List<String>> subject = Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-    final List<List<String>> issuer = Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
+    final List<List<String>> subject =
+        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
+    final List<List<String>> issuer =
+        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
     result = compareList(subject, fields) && compareList(issuer, fields);
     return result;
