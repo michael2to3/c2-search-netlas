@@ -65,30 +65,26 @@ final class Utils {
   public static boolean verifyDefaultCertFields(
       final NetlasWrapper netlasWrapper, final String[] fields) {
     boolean result;
-    try {
-      final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
-      final List<String> subState = netlasWrapper.getCertSubjectProvince();
-      final List<String> subCity = netlasWrapper.getCertSubjectLocality();
-      final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
-      final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-      final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
+    final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
+    final List<String> subState = netlasWrapper.getCertSubjectProvince();
+    final List<String> subCity = netlasWrapper.getCertSubjectLocality();
+    final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
+    final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
+    final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
 
-      final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
-      final List<String> issState = netlasWrapper.getCertIssuerProvince();
-      final List<String> issCity = netlasWrapper.getCertIssuerLocality();
-      final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
-      final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-      final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
+    final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
+    final List<String> issState = netlasWrapper.getCertIssuerProvince();
+    final List<String> issCity = netlasWrapper.getCertIssuerLocality();
+    final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
+    final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
+    final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
 
-      final List<List<String>> subject =
-          Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-      final List<List<String>> issuer =
-          Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
+    final List<List<String>> subject =
+        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
+    final List<List<String>> issuer =
+        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
 
-      result = compareList(subject, fields) && compareList(issuer, fields);
-    } catch (IOException e) {
-      result = false;
-    }
+    result = compareList(subject, fields) && compareList(issuer, fields);
     return result;
   }
 }
