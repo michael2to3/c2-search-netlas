@@ -41,7 +41,7 @@ public class C2DetectImpl implements C2Detect {
     NetlasWrapper netlas = null;
     try {
       netlas = new NetlasWrapper(this.netlas, this.targetHost);
-    } catch (final NetlasRequestException e) {
+    } catch (NetlasRequestException e) {
       LOGGER.error("Failed to create NetlasWrapper", e);
     }
     return netlas;
