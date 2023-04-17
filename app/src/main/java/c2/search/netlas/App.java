@@ -46,11 +46,8 @@ public final class App {
 
     if (clArgumentsManager.isHelp() || clArgumentsManager.isInvalid()) {
       printHelp();
-    } else if (clArgumentsManager.getHost() == null) {
-      LOGGER.error("No target domain specified");
-    } else if (clArgumentsManager.isChangeApiKey() && clArgumentsManager.getHost() != null) {
-      startC2Detect(clArgumentsManager, outputHandler);
-    } else if (clArgumentsManager.getHost() != null) {
+    } else if (clArgumentsManager.isChangeApiKey() && clArgumentsManager.isChangeTarget()
+        || clArgumentsManager.isChangeTarget()) {
       startC2Detect(clArgumentsManager, outputHandler);
     } else if (clArgumentsManager.isChangeApiKey()) {
       changeApiKey(clArgumentsManager);
@@ -77,7 +74,7 @@ public final class App {
   private static void startC2Detect(
       final CLArgumentsManager clArgumentsManager, final PrintStream outputHandler) {
     final String apikey = clArgumentsManager.getApiKey();
-    Host host = clArgumentsManager.getHost();
+    Host host = clArgumentsManager.getTarget();
     Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
     C2Detect c2Detect = new C2DetectImpl(host, netlas);
 
