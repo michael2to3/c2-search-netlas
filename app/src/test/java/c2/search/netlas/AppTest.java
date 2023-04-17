@@ -69,9 +69,20 @@ class AppTest {
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
 
-    String[] args = new String[] {"-t", "google.com", "-p", "443"};
+    String ip = "google.com";
+    int port = 443;
 
-    App.main(args);
+    CLArgumentsManager cmd = mock(CLArgumentsManager.class);
+    when(cmd.getApiKey()).thenReturn(System.getenv("API_KEY"));
+    when(cmd.getHost()).thenReturn(Host.newBuilder().setTarget(ip).setPort(port).build());
+
+    C2Detect c2detect = new C2Detect(cmd, printStream);
+    c2detect.setCommandLineArgumentsManager(cmd);
+    App.setC2detect(c2detect);
+
+    String[] args = new String[] {"-t", ip, "-p", String.valueOf(port)};
+
+    App.startScan(args);
 
     assertNotEquals("", printStream.toString());
   }
@@ -82,9 +93,20 @@ class AppTest {
     PrintStream printStream = new PrintStream(outputStream);
     System.setOut(printStream);
 
-    String[] args = new String[] {"-t", "neverssl.com", "-p", "80"};
+    String ip = "neverssl.com";
+    int port = 80;
 
-    App.main(args);
+    CLArgumentsManager cmd = mock(CLArgumentsManager.class);
+    when(cmd.getApiKey()).thenReturn(System.getenv("API_KEY"));
+    when(cmd.getHost()).thenReturn(Host.newBuilder().setTarget(ip).setPort(port).build());
+
+    C2Detect c2detect = new C2Detect(cmd, printStream);
+    c2detect.setCommandLineArgumentsManager(cmd);
+    App.setC2detect(c2detect);
+
+    String[] args = new String[] {"-t", ip, "-p", String.valueOf(port)};
+
+    App.startScan(args);
 
     assertNotEquals("", printStream.toString());
   }
