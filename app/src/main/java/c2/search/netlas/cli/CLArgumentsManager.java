@@ -13,19 +13,17 @@ public class CLArgumentsManager {
   private static final int DEFAULT_PORT = 443;
   private final ConfigManager config;
   private final CommandLine cmd;
-  private final boolean invalid;
 
   public CLArgumentsManager(final CommandLine cmd, final ConfigManager config) {
     this.cmd = cmd;
     this.config = config;
-    this.invalid = cmd == null;
   }
 
   public boolean isInvalid() {
-    return invalid;
+    return cmd == null;
   }
 
-  public Host getHost() {
+  public Host getTarget() {
     final String domain = cmd.getOptionValue("t");
     final int port = getTargetPort();
     return new Host(domain, port);
@@ -54,14 +52,22 @@ public class CLArgumentsManager {
     return cmd.hasOption("s");
   }
 
+  public boolean isChangeTarget() {
+    return cmd.hasOption("t");
+  }
+
+  public boolean isChangePort() {
+    return cmd.hasOption("p");
+  }
+
   public void setApiKey(final String apiKey) {
     config.save(PATH_API_KEY, apiKey);
   }
 
   public String getApiKey() {
-    String apiKey = config.get(PATH_API_KEY);
-    if (cmd.hasOption("s")) {
-      apiKey = cmd.getOptionValue("s");
+    String apiKey = cmd.getOptionValue("s");
+    if (!cmd.hasOption("s") && !cmd.hasOption("t")) {
+      apiKey = config.get(PATH_API_KEY);
     }
     return apiKey;
   }
