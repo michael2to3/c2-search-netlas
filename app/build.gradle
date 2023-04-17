@@ -6,14 +6,7 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven {
-        name = "github-public"
-        url = "https://maven.pkg.github.com/michael2to3/netlas-java"
-        credentials {
-            username = System.getenv("GITHUB_ACTOR")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -30,7 +23,7 @@ dependencies {
     implementation 'io.github.classgraph:classgraph:4.8.157'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
-    implementation 'netlas-java:lib:0.0.31-SNAPSHOT'
+    implementation 'com.github.michael2to3:netlas-java:0.0.401b7'
 }
 shadowJar {
     mergeServiceFiles()
@@ -62,4 +55,9 @@ jacocoTestReport {
 
 javadoc {
     source = sourceSets.main.allJava
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
