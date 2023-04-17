@@ -3,13 +3,11 @@ package c2.search.netlas.target;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import c2.search.netlas.scheme.Host;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.List;
+import netlas.java.exception.NetlasRequestException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,11 +16,11 @@ import org.slf4j.LoggerFactory;
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
   private static final String API = System.getenv("API_KEY");
-  private static final Host HOST = new Host("vk.com", 443);
+  private static final Host HOST = Host.newBuilder().setTarget("vk.com").setPort(443).setPath("/").build();
   private static NetlasWrapper netlas;
 
   @BeforeAll
-  static void setup() throws JsonMappingException, JsonProcessingException {
+  static void setup() throws NetlasRequestException {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Use API key: {}", API);
     }
@@ -30,7 +28,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetJarm() throws JsonMappingException, JsonProcessingException {
+  void testGetJarm() {
     String jarm = netlas.getJarm();
     assertNotNull(jarm);
     assertNotEquals("", jarm);
@@ -38,17 +36,11 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGets() throws JsonMappingException, JsonProcessingException {
+  void testGets() {
     String responseBody = netlas.getBody();
     assertNotNull(responseBody);
     assertNotEquals("", responseBody);
     assertTrue(responseBody.length() > 0);
-
-    var item = netlas.getItem(0);
-    assertNotNull(item);
-
-    var last = netlas.getLast(".data.http.body", 0);
-    assertNotNull(last);
 
     var headers = netlas.getHeaders();
     assertNotNull(headers);
@@ -70,7 +62,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectCountry() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectCountry() {
     List<String> subjectCountry = netlas.getCertSubjectCountry();
     assertNotNull(subjectCountry);
     assertNotEquals(0, subjectCountry.size());
@@ -79,7 +71,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectOrganizationUnit() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectOrganizationUnit() throws NetlasRequestException {
     Host host = Host.newBuilder().setTarget("fadich.com").setPort(443).build();
     NetlasWrapper netlas = new NetlasWrapper(API, host);
     List<String> subjectOrganizationUnit = netlas.getCertSubjectOrganizationUnit();
@@ -90,7 +82,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectOrganization() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectOrganization() {
     List<String> subjectOrganization = netlas.getCertSubjectOrganization();
     assertNotNull(subjectOrganization);
     assertNotEquals(0, subjectOrganization.size());
@@ -99,7 +91,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectLocality() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectLocality() {
     List<String> subjectLocality = netlas.getCertSubjectLocality();
     assertNotNull(subjectLocality);
     assertNotEquals(0, subjectLocality.size());
@@ -108,7 +100,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectProvince() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectProvince() {
     List<String> subjectProvince = netlas.getCertSubjectProvince();
     assertNotNull(subjectProvince);
     assertNotEquals(0, subjectProvince.size());
@@ -117,21 +109,21 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertStartDate() throws JsonMappingException, JsonProcessingException {
+  void testGetCertStartDate() {
     String certStartDate = netlas.getCertStartDate();
     assertNotNull(certStartDate);
     assertNotEquals("", certStartDate);
   }
 
   @Test
-  void testGetCertEndDate() throws JsonMappingException, JsonProcessingException {
+  void testGetCertEndDate() {
     String certEndDate = netlas.getCertEndDate();
     assertNotNull(certEndDate);
     assertNotEquals("", certEndDate);
   }
 
   @Test
-  void testGetCertIssuerCommonName() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerCommonName() {
     List<String> issuerCommonName = netlas.getCertIssuerCommonName();
     assertNotNull(issuerCommonName);
     assertNotEquals(0, issuerCommonName.size());
@@ -140,7 +132,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertIssuerOrganizationUnit() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerOrganizationUnit() throws NetlasRequestException {
     Host host = Host.newBuilder().setTarget("infrapros.com").setPort(443).build();
     NetlasWrapper netlas = new NetlasWrapper(API, host);
     List<String> issuerOrganizationUnit = netlas.getCertIssuerOrganizationUnit();
@@ -151,7 +143,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertIssuerCountry() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerCountry() {
     List<String> issuerCountry = netlas.getCertIssuerCountry();
     assertNotNull(issuerCountry);
     assertNotEquals(0, issuerCountry.size());
@@ -160,7 +152,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertIssuerOrganization() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerOrganization() {
     List<String> issuerOrganization = netlas.getCertIssuerOrganization();
     assertNotNull(issuerOrganization);
     assertNotEquals(0, issuerOrganization.size());
@@ -169,7 +161,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertIssuerLocality() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerLocality() throws NetlasRequestException {
     Host host = Host.newBuilder().setTarget("fadich.com").setPort(443).build();
     NetlasWrapper netlas = new NetlasWrapper(API, host);
     List<String> issuerLocality = netlas.getCertIssuerLocality();
@@ -179,7 +171,7 @@ class NetlasWrapperTest {
     assertNotEquals("", issuerLocality.get(0));
   }
 
-  void testGetCertIssuerProvince() throws JsonMappingException, JsonProcessingException {
+  void testGetCertIssuerProvince() {
     List<String> issuerProvince = netlas.getCertIssuerProvince();
     assertNotNull(issuerProvince);
     assertNotEquals(0, issuerProvince.size());
@@ -188,7 +180,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetContentLength() throws JsonMappingException, JsonProcessingException {
+  void testGetContentLength() throws NetlasRequestException {
     Host host = new Host("google.com", 443);
     var netlas = new NetlasWrapper(API, host);
     List<Integer> contentLength = netlas.getContentLength();
@@ -199,7 +191,7 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetCertSubjectCommonName() throws JsonMappingException, JsonProcessingException {
+  void testGetCertSubjectCommonName() {
     List<String> subjectCommonName = netlas.getCertSubjectCommonName();
     assertNotNull(subjectCommonName);
     assertNotEquals(0, subjectCommonName.size());
@@ -208,14 +200,14 @@ class NetlasWrapperTest {
   }
 
   @Test
-  void testGetterAndSetter() throws JsonMappingException, JsonProcessingException {
+  void testGetterAndSetter() throws NetlasRequestException {
     var netlas = new NetlasWrapper(API, HOST);
     assertNotNull(netlas.getHost());
     assertNotNull(netlas.getNetlas());
   }
 
   @Test
-  void testHeaders() throws JsonMappingException, JsonProcessingException {
+  void testHeaders() throws NetlasRequestException {
     var nn = new NetlasWrapper(API, new Host("vk.com", 443));
     var headers = nn.getHeaders();
     assertNotNull(headers);
@@ -225,14 +217,5 @@ class NetlasWrapperTest {
 
     var status = nn.getStatusCode();
     assertTrue(status >= 200 && status < 600);
-  }
-
-  @Test
-  void testNotExistKey() throws JsonMappingException, JsonProcessingException {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> {
-          netlas.getLast("notExistKey", 0);
-        });
   }
 }
