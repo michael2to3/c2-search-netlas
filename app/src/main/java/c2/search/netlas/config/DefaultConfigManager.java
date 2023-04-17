@@ -23,11 +23,11 @@ public class DefaultConfigManager implements ConfigManager {
   public DefaultConfigManager(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
     this.properties = createProperties();
-    loadProperties();
   }
 
   @Override
   public String get(final String key) {
+    loadProperties();
     return properties.getProperty(key);
   }
 
@@ -41,10 +41,11 @@ public class DefaultConfigManager implements ConfigManager {
 
   @Override
   public void save(final String key, final String value) {
+    loadProperties();
     properties.setProperty(key, value);
     try (OutputStream output = Files.newOutputStream(filePath)) {
       properties.store(new OutputStreamWriter(output, StandardCharsets.UTF_8), null);
-    } catch (final IOException e) {
+    } catch (IOException e) {
       LOGGER.error("Error writing config file: {}", filePath, e);
     }
   }
@@ -53,7 +54,7 @@ public class DefaultConfigManager implements ConfigManager {
     createFileIfNotExists();
     try (InputStream input = Files.newInputStream(filePath)) {
       properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
-    } catch (final IOException e) {
+    } catch (IOException e) {
       LOGGER.error("Error reading config file: {}", filePath, e);
     }
   }
@@ -63,7 +64,7 @@ public class DefaultConfigManager implements ConfigManager {
       if (!Files.exists(parentDir) || !Files.exists(filePath)) {
         createFile();
       }
-    } catch (final IOException e) {
+    } catch (IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }
   }
