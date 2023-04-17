@@ -56,3 +56,8 @@ jacocoTestReport {
 javadoc {
     source = sourceSets.main.allJava
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}
