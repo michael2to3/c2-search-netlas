@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper class for Netlas API that provides convenience methods for retrieving data from Netlas
  * responses.
- * @deprecated This class is deprecated and will be removed in a future release. Use {@link Netlas} instead.
+ *
+ * @deprecated This class is deprecated and will be removed in a future release. Use {@link Netlas}
+ *     instead.
  */
 @Deprecated
 public class NetlasWrapper {
@@ -103,15 +105,17 @@ public class NetlasWrapper {
    */
   public Headers getHeaders() {
     final List<Item> items = response.getItems();
+    Headers headers = null;
     for (final Item item : items) {
       if (item != null
           && item.getData() != null
           && item.getData().getHttp() != null
           && item.getData().getHttp().getHeaders() != null) {
-        return item.getData().getHttp().getHeaders();
+        headers = item.getData().getHttp().getHeaders();
+        break;
       }
     }
-    return null;
+    return headers;
   }
 
   /**
