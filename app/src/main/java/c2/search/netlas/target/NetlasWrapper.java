@@ -5,7 +5,6 @@ import java.util.List;
 import netlas.java.Netlas;
 import netlas.java.datatype.DataType;
 import netlas.java.exception.NetlasRequestException;
-import netlas.java.scheme.*;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 import netlas.java.scheme.Item;
@@ -32,7 +31,7 @@ public class NetlasWrapper {
    */
   public NetlasWrapper(final String api, final Host host) throws NetlasRequestException {
     this.netlas = Netlas.newBuilder().setApiKey(api).build();
-    String query =
+    final String query =
         String.format(
             "host:%s AND port:%s AND path:\"%s\"",
             host.getTarget(), host.getPort(), host.getPath());
@@ -102,8 +101,8 @@ public class NetlasWrapper {
    * @return the headers JsonNode for the current response
    */
   public Headers getHeaders() {
-    List<Item> items = response.getItems();
-    for (Item item : items) {
+    final List<Item> items = response.getItems();
+    for (final Item item : items) {
       if (item != null
           && item.getData() != null
           && item.getData().getHttp() != null
@@ -200,17 +199,12 @@ public class NetlasWrapper {
   }
 
   private Certificate getCertificate() {
-    List<Item> items = response.getItems();
-    for (Item item : items) {
-      if (item != null
-          && item.getData() != null
-          && item.getData().getCertificate() != null
-          && item.getData().getCertificate().getIssuer() != null
-          && item.getData().getCertificate().getSubject() != null
-          && item.getData().getCertificate().getValidity() != null) {
+    final List<Item> items = response.getItems();
+    for (final Item item : items) {
+      if (item.getData() != null && item.getData().getCertificate() != null) {
         return item.getData().getCertificate();
       }
     }
-    throw new RuntimeException("Certificate not found: " + host);
+    return null;
   }
 }
