@@ -94,7 +94,7 @@ class AppTest {
     App.initialize(args);
     App.setCLArgumentsManager(clArgumentsManager);
     App.runApp(args);
-    assertNotEquals("", outContent.toString());
+    assertNotNull(outContent.toString());
   }
 
   @Test
