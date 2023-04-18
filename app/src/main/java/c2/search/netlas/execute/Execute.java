@@ -92,7 +92,9 @@ public class Execute {
   }
 
   private void invokeBeforeAllMethods(final Object instance) {
-    LOGGER.debug("Invoking beforeAll methods of {}", instance.getClass().getName());
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Invoking beforeAll methods of {}", instance.getClass().getName());
+    }
     final List<Method> beforeAllMethods = MethodFinder.getBeforeAllMethods(instance.getClass());
     for (final Method method : beforeAllMethods) {
       try {

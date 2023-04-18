@@ -32,12 +32,13 @@ public class CLArgumentsManager {
   private int getTargetPort() {
     final String portStr = cmd.getOptionValue("p");
 
+    int port = DEFAULT_PORT;
     try {
-      return Integer.parseInt(portStr);
+      port = Integer.parseInt(portStr);
     } catch (NumberFormatException e) {
       LOGGER.warn("Invalid port number: {}", portStr);
-      return DEFAULT_PORT;
     }
+    return port;
   }
 
   public boolean isHelp() {

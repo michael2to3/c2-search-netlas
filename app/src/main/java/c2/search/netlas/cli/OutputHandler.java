@@ -8,7 +8,7 @@ public class OutputHandler extends PrintStream {
     super(System.out);
   }
 
-  public OutputHandler(OutputStream out) {
+  public OutputHandler(final OutputStream out) {
     super(out);
   }
 }

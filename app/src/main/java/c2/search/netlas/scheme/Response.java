@@ -57,7 +57,7 @@ public class Response {
     return new Response().new Builder();
   }
 
-  public class Builder {
+  public final class Builder {
 
     private Builder() {}
 

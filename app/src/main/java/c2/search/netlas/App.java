@@ -28,7 +28,7 @@ public final class App {
   private static PrintStream outputHandler;
   private static ConfigManager configManager;
   private static CommandLine commandLine;
-  private static CLArgumentsManager clArgumentsManager;
+  private static CLArgumentsManager clArgManager;
 
   private App() {}
 
@@ -45,18 +45,18 @@ public final class App {
     configManager = new DefaultConfigManager(CONFIG_FILENAME);
     final CommandLineParser commandLineParser = new DefaultParser();
     commandLine = commandLineParser.parse(getOptions(), args);
-    clArgumentsManager = new CLArgumentsManager(commandLine, configManager);
+    clArgManager = new CLArgumentsManager(commandLine, configManager);
     outputHandler = new OutputHandler();
   }
 
   public static void runApp(final String[] args) {
-    if (clArgumentsManager.isHelp() || clArgumentsManager.isInvalid()) {
+    if (clArgManager.isHelp() || clArgManager.isInvalid()) {
       printHelp();
-    } else if (clArgumentsManager.isChangeApiKey() && clArgumentsManager.isChangeTarget()
-        || clArgumentsManager.isChangeTarget()) {
-      startC2Detect(clArgumentsManager, outputHandler);
-    } else if (clArgumentsManager.isChangeApiKey()) {
-      changeApiKey(clArgumentsManager);
+    } else if (clArgManager.isChangeApiKey() && clArgManager.isChangeTarget()
+        || clArgManager.isChangeTarget()) {
+      startC2Detect(clArgManager, outputHandler);
+    } else if (clArgManager.isChangeApiKey()) {
+      changeApiKey(clArgManager);
     } else {
       outputHandler.println("No target domain specified");
       printHelp();
@@ -67,8 +67,8 @@ public final class App {
     App.outputHandler = stream;
   }
 
-  public static void setCLArgumentsManager(final CLArgumentsManager clArgumentsManager) {
-    App.clArgumentsManager = clArgumentsManager;
+  public static void setCLArgumentsManager(final CLArgumentsManager clArgManager) {
+    App.clArgManager = clArgManager;
   }
 
   public static String getConfigFileName() {
@@ -80,22 +80,22 @@ public final class App {
     formatter.printHelp("c2detect", getOptions());
   }
 
-  private static void changeApiKey(final CLArgumentsManager clArgumentsManager) {
-    final String apikey = clArgumentsManager.getApiKey();
-    clArgumentsManager.setApiKey(apikey);
+  private static void changeApiKey(final CLArgumentsManager clArgManager) {
+    final String apikey = clArgManager.getApiKey();
+    clArgManager.setApiKey(apikey);
   }
 
   private static void startC2Detect(
-      final CLArgumentsManager clArgumentsManager, final PrintStream outputHandler) {
-    final String apikey = clArgumentsManager.getApiKey();
-    final Host host = clArgumentsManager.getTarget();
+      final CLArgumentsManager clArgManager, final PrintStream outputHandler) {
+    final String apikey = clArgManager.getApiKey();
+    final Host host = clArgManager.getTarget();
     final Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
     final C2Detect c2Detect = new C2DetectImpl(host, netlas);
 
     final Results results = c2Detect.run();
 
     final ResultsPrinter printer = new ResultsPrinter(results);
-    printer.print(outputHandler, clArgumentsManager.isVerbose());
+    printer.print(outputHandler, clArgManager.isVerbose());
   }
 
   private static Options getOptions() {

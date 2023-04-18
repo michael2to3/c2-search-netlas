@@ -25,8 +25,7 @@ public class C2DetectImpl implements C2Detect {
     final FieldValues fieldValues = createFieldValues();
 
     final Execute executor = new Execute(fieldValues);
-    final Results results = executor.run();
-    return results;
+    return executor.run();
   }
 
   private FieldValues createFieldValues() {
