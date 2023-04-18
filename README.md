@@ -15,17 +15,17 @@ C2 Search Netlas is a Java utility designed to detect Command and Control (C2) s
 
 To utilize this terminal utility, you'll need a Netlas API key. Obtain your key from the [Netlas](https://netlas.io) website.
 
-After acquiring your API key, execute the following command to search for C2 servers:
+After acquiring your API key, execute the following command to search servers:
 
 ```bash
 c2detect -t <TARGET_DOMAIN> -p <TARGET_PORT> -s <API_KEY> [-v]
 ```
 
-Replace `<TARGET_DOMAIN>` with the desired IP address or domain for C2 server searching, `<TARGET_PORT>` with the port you wish to scan, and `<API_KEY>` with your Netlas API key.
+Replace `<TARGET_DOMAIN>` with the desired IP address or domain, `<TARGET_PORT>` with the port you wish to scan, and `<API_KEY>` with your Netlas API key.
 
 Use the optional `-v` flag for verbose output.
 
-For example, to search for C2 servers at the `google.com` IP address on port `443` using the Netlas API key `1234567890abcdef`, enter:
+For example, to search at the `google.com` IP address on port `443` using the Netlas API key `1234567890abcdef`, enter:
 
 ```bash
 c2detect -t google.com -p 443 -s 1234567890abcdef
