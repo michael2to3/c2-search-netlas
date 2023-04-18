@@ -3,7 +3,6 @@ package c2.search.netlas;
 import c2.search.netlas.c2detect.C2Detect;
 import c2.search.netlas.c2detect.C2DetectImpl;
 import c2.search.netlas.cli.CLArgumentsManager;
-import c2.search.netlas.cli.OutputHandler;
 import c2.search.netlas.config.ConfigManager;
 import c2.search.netlas.config.DefaultConfigManager;
 import c2.search.netlas.scheme.Host;
@@ -24,26 +23,31 @@ import org.slf4j.LoggerFactory;
 
 public final class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-  private static String CONFIG_FILENAME = "config.properties";
-  private static PrintStream outputHandler = new OutputHandler();
+  private static final String CONFIG_FILENAME = "config.properties";
+  private static PrintStream outputHandler;
+  private static ConfigManager configManager;
+  private static CommandLine commandLine;
+  private static CLArgumentsManager clArgumentsManager;
 
   private App() {}
 
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     try {
+      initialize(args);
       runApp(args);
     } catch (ParseException e) {
       LOGGER.error("Invalid arguments", e);
     }
   }
 
-  private static void runApp(String[] args) throws ParseException {
-    ConfigManager configManager = new DefaultConfigManager(CONFIG_FILENAME);
-    CommandLineParser commandLineParser = new DefaultParser();
-    CommandLine commandLine = commandLineParser.parse(getOptions(), args);
+  public static void initialize(final String[] args) throws ParseException {
+    configManager = new DefaultConfigManager(CONFIG_FILENAME);
+    final CommandLineParser commandLineParser = new DefaultParser();
+    commandLine = commandLineParser.parse(getOptions(), args);
+    clArgumentsManager = new CLArgumentsManager(commandLine, configManager);
+  }
 
-    CLArgumentsManager clArgumentsManager = new CLArgumentsManager(commandLine, configManager);
-
+  public static void runApp(final String[] args) {
     if (clArgumentsManager.isHelp() || clArgumentsManager.isInvalid()) {
       printHelp();
     } else if (clArgumentsManager.isChangeApiKey() && clArgumentsManager.isChangeTarget()
@@ -61,6 +65,14 @@ public final class App {
     App.outputHandler = stream;
   }
 
+  public static void setCLArgumentsManager(final CLArgumentsManager clArgumentsManager) {
+    App.clArgumentsManager = clArgumentsManager;
+  }
+
+  public static String getConfigFileName() {
+    return CONFIG_FILENAME;
+  }
+
   private static void printHelp() {
     final HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp("c2detect", getOptions());
@@ -74,11 +86,11 @@ public final class App {
   private static void startC2Detect(
       final CLArgumentsManager clArgumentsManager, final PrintStream outputHandler) {
     final String apikey = clArgumentsManager.getApiKey();
-    Host host = clArgumentsManager.getTarget();
-    Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
-    C2Detect c2Detect = new C2DetectImpl(host, netlas);
+    final Host host = clArgumentsManager.getTarget();
+    final Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
+    final C2Detect c2Detect = new C2DetectImpl(host, netlas);
 
-    Results results = c2Detect.run();
+    final Results results = c2Detect.run();
 
     final ResultsPrinter printer = new ResultsPrinter(results);
     printer.print(outputHandler, clArgumentsManager.isVerbose());
