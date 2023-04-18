@@ -24,7 +24,7 @@ public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
   private final Netlas netlas;
   private final Host host;
-  private Response response;
+  private final Response response;
 
   public NetlasWrapper(final Netlas netlas, final Host host) throws NetlasRequestException {
     this.netlas = netlas;
@@ -54,7 +54,7 @@ public class NetlasWrapper {
         LOGGER.debug("Response successfully retrieved: {}", response);
       }
       return this.netlas.search(query, DataType.RESPONSES, 0, null, null, false);
-    } catch (NetlasRequestException e) {
+    } catch (final NetlasRequestException e) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Failed to retrieve response: {}", e.getMessage());
       }

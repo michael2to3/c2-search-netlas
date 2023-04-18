@@ -2,10 +2,11 @@ package c2.search.netlas.config;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
-public class AppConfigDirectory {
+public final class AppConfigDirectory {
   public static Path getUserConfigDir(final String appName) {
-    final String os = System.getProperty("os.name").toLowerCase();
+    final String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
     final String userHome = System.getProperty("user.home");
     String configDir;
 
