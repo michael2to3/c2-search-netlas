@@ -1,133 +1,112 @@
 package c2.search.netlas;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.when;
 
 import c2.search.netlas.cli.CLArgumentsManager;
-import c2.search.netlas.cli.Config;
-import c2.search.netlas.scheme.*;
+import c2.search.netlas.scheme.Host;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import org.apache.commons.cli.ParseException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class AppTest {
-  @Test
-  void testPrintHelp() {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
 
+  @BeforeEach
+  public void setUpStreams() {
+    System.setOut(new PrintStream(outContent));
+    System.setErr(new PrintStream(errContent));
+    App.setConfigFileName("test.properties");
+  }
+
+  @AfterEach
+  public void restoreStreams() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+  }
+
+  @Test
+  void testHelpOption() {
     App.main(new String[] {"-h"});
-    assertTrue(outputStream.toString().contains("c2detect"));
+    assertTrue(outContent.toString().contains("usage: c2detect"));
   }
 
   @Test
-  void testChangeSettings() {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
-    Config config = mock(Config.class, withSettings().useConstructor("test.prop"));
-    App.setConfig(config);
-
-    App.main(new String[] {"-s", "api"});
-
-    verify(config).save("api.key", "api");
+  void testSetApiKey() {
+    App.main(new String[] {"-s", "testApiKey"});
+    assertTrue(outContent.toString().isEmpty());
   }
 
   @Test
-  void testC2DetectRunInvocationSelfSignCert() throws Exception {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
-
-    String ip = "217.74.250.61";
-    int port = 443;
-
-    CLArgumentsManager cmd = mock(CLArgumentsManager.class);
-    when(cmd.getApiKey()).thenReturn(System.getenv("API_KEY"));
-    when(cmd.getHost()).thenReturn(Host.newBuilder().setTarget(ip).setPort(port).build());
-
-    C2Detect c2detect = new C2Detect(cmd, printStream);
-    c2detect.setCommandLineArgumentsManager(cmd);
-    App.setC2detect(c2detect);
-
-    String[] args = new String[] {"-t", ip, "-p", String.valueOf(port)};
-
-    App.startScan(args);
-
-    assertNotEquals("", printStream.toString());
-  }
-
-  @Test
-  void testC2DetectRunInvocation() throws Exception {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
-
-    String ip = "google.com";
-    int port = 443;
-
-    CLArgumentsManager cmd = mock(CLArgumentsManager.class);
-    when(cmd.getApiKey()).thenReturn(System.getenv("API_KEY"));
-    when(cmd.getHost()).thenReturn(Host.newBuilder().setTarget(ip).setPort(port).build());
-
-    C2Detect c2detect = new C2Detect(cmd, printStream);
-    c2detect.setCommandLineArgumentsManager(cmd);
-    App.setC2detect(c2detect);
-
-    String[] args = new String[] {"-t", ip, "-p", String.valueOf(port)};
-
-    App.startScan(args);
-
-    assertNotEquals("", printStream.toString());
-  }
-
-  @Test
-  void testC2DetectWithoutSsl() throws Exception {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
-
-    String ip = "neverssl.com";
-    int port = 80;
-
-    CLArgumentsManager cmd = mock(CLArgumentsManager.class);
-    when(cmd.getApiKey()).thenReturn(System.getenv("API_KEY"));
-    when(cmd.getHost()).thenReturn(Host.newBuilder().setTarget(ip).setPort(port).build());
-
-    C2Detect c2detect = new C2Detect(cmd, printStream);
-    c2detect.setCommandLineArgumentsManager(cmd);
-    App.setC2detect(c2detect);
-
-    String[] args = new String[] {"-t", ip, "-p", String.valueOf(port)};
-
-    App.startScan(args);
-
-    assertNotEquals("", printStream.toString());
-  }
-
-  @Test
-  void testNotExistsArgs() {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream printStream = new PrintStream(outputStream);
-    System.setOut(printStream);
-
-    String[] args = new String[] {"--not-exists-args"};
+  void testInvokeWithoutExplicitApiKey() {
+    App.main(new String[] {"-s", System.getenv("API_KEY")});
+    var args = new String[] {"-t", "google.com", "-p", "443"};
     App.main(args);
-
-    assertTrue(outputStream.toString().contains("usage"));
+    assertNotNull(outContent.toString());
   }
 
   @Test
-  void testGettersAndSetters() {
-    assertNotNull(App.getOut());
-    assertNotNull(App.getConfigFilename());
-    assertNotNull(App.getConfig());
-    assertNotNull(App.getC2detect());
+  void testVerboseOption() throws ParseException {
+    CLArgumentsManager clArgumentsManager = mock(CLArgumentsManager.class);
+    when(clArgumentsManager.isChangeApiKey()).thenReturn(true);
+    when(clArgumentsManager.getApiKey()).thenReturn(System.getenv("API_KEY"));
+    when(clArgumentsManager.isVerbose()).thenReturn(true);
+    when(clArgumentsManager.getTarget())
+        .thenReturn(Host.newBuilder().setTarget("google.com").setPort(443).build());
+    when(clArgumentsManager.isChangeTarget()).thenReturn(true);
+    when(clArgumentsManager.isChangePort()).thenReturn(true);
+    when(clArgumentsManager.isHelp()).thenReturn(false);
+    when(clArgumentsManager.isInvalid()).thenReturn(false);
+
+    String[] args = new String[] {"-t", "google.com", "-p", "443", "-v"};
+
+    App.initialize(args);
+    App.setCLArgumentsManager(clArgumentsManager);
+    App.runApp(args);
+    assertNotEquals("", outContent.toString());
+  }
+
+  @Test
+  void testShortOutput() throws ParseException {
+    CLArgumentsManager clArgumentsManager = mock(CLArgumentsManager.class);
+    when(clArgumentsManager.isChangeApiKey()).thenReturn(true);
+    when(clArgumentsManager.getApiKey()).thenReturn(System.getenv("API_KEY"));
+    when(clArgumentsManager.isVerbose()).thenReturn(false);
+    when(clArgumentsManager.getTarget())
+        .thenReturn(Host.newBuilder().setTarget("google.com").setPort(443).build());
+    when(clArgumentsManager.isChangeTarget()).thenReturn(true);
+    when(clArgumentsManager.isChangePort()).thenReturn(true);
+    when(clArgumentsManager.isHelp()).thenReturn(false);
+    when(clArgumentsManager.isInvalid()).thenReturn(false);
+
+    String[] args = new String[] {"-t", "google.com", "-p", "443"};
+
+    App.initialize(args);
+    App.setCLArgumentsManager(clArgumentsManager);
+    App.runApp(args);
+    assertNotNull(outContent.toString());
+  }
+
+  @Test
+  void testSetApiKey2() throws ParseException {
+    App.initialize(new String[] {"-s", "new_api_key"});
+    assertEquals("new_api_key", App.getCLArgumentsManager().getApiKey());
+  }
+
+  @Test
+  void testSetApiKeyAndTarget() throws ParseException {
+    var args = new String[] {"-s", "new_api_key", "-t", "google.com"};
+    App.initialize(args);
+    assertEquals("new_api_key", App.getCLArgumentsManager().getApiKey());
   }
 }

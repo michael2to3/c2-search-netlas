@@ -30,7 +30,7 @@ final class NetworkUtils {
       public X509Certificate[] getAcceptedIssuers() {
         return new X509Certificate[0];
       }
-    }
+    },
   };
 
   private NetworkUtils() {}
