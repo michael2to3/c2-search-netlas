@@ -1,14 +1,17 @@
-/**
- * The App class is the entry point of the c2detect application. It provides methods for parsing
- * command line arguments, setting and getting the configuration properties, and starting the scan
- * process.
- */
 package c2.search.netlas;
 
+import c2.search.netlas.c2detect.C2Detect;
+import c2.search.netlas.c2detect.C2DetectImpl;
 import c2.search.netlas.cli.CLArgumentsManager;
-import c2.search.netlas.cli.Config;
+import c2.search.netlas.cli.OutputHandler;
+import c2.search.netlas.config.ConfigManager;
+import c2.search.netlas.config.DefaultConfigManager;
+import c2.search.netlas.scheme.Host;
+import c2.search.netlas.scheme.Results;
+import c2.search.netlas.scheme.ResultsPrinter;
 import java.io.PrintStream;
 import java.util.List;
+import netlas.java.Netlas;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -21,134 +24,89 @@ import org.slf4j.LoggerFactory;
 
 public final class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-  private static final String CONFIG_FILENAME = "config.properties";
-  private static Config config;
-  private static PrintStream out;
-  private static C2Detect c2detect;
-
-  static {
-    config = new Config(CONFIG_FILENAME);
-    out = System.out;
-    c2detect = new C2Detect(null, out);
-  }
+  private static String configFilename = "config.properties";
+  private static PrintStream outputHandler;
+  private static ConfigManager configManager;
+  private static CommandLine commandLine;
+  private static CLArgumentsManager clArgManager;
 
   private App() {}
 
-  /**
-   * Get the output print stream for the application.
-   *
-   * @return The output print stream.
-   */
-  public static PrintStream getOut() {
-    return out;
-  }
-
-  /**
-   * Set the output print stream for the application.
-   *
-   * @param out The output print stream.
-   */
-  public static void setOut(final PrintStream out) {
-    App.out = out;
-  }
-
-  /**
-   * Get the filename of the configuration file.
-   *
-   * @return The filename of the configuration file.
-   */
-  public static String getConfigFilename() {
-    return CONFIG_FILENAME;
-  }
-
-  /**
-   * Get the configuration properties.
-   *
-   * @return The configuration properties.
-   */
-  public static Config getConfig() {
-    return config;
-  }
-
-  /**
-   * Set the configuration properties.
-   *
-   * @param config The configuration properties.
-   */
-  public static void setConfig(final Config config) {
-    App.config = config;
-  }
-
-  /**
-   * Parse the command line arguments and return a CLArgumentsManager object.
-   *
-   * @param args The command line arguments.
-   * @return A CLArgumentsManager object.
-   */
-  public static CLArgumentsManager getParseCmdArgs(final String[] args) {
-    CommandLine cmd = null;
-    final CommandLineParser parser = new DefaultParser();
-    try {
-      cmd = parser.parse(setupOptions(), args);
-    } catch (final ParseException e) {
-      LOGGER.info("Error parsing command line arguments", e);
-    }
-
-    return new CLArgumentsManager(cmd, config);
-  }
-
-  /**
-   * Get the C2Detect object.
-   *
-   * @return The C2Detect object.
-   */
-  public static C2Detect getC2detect() {
-    return c2detect;
-  }
-
-  /**
-   * Set the C2Detect object.
-   *
-   * @param c2Detect The C2Detect object.
-   */
-  public static void setC2detect(final C2Detect c2Detect) {
-    App.c2detect = c2Detect;
-  }
-
-  /**
-   * The main method of the application.
-   *
-   * @param args The command line arguments.
-   */
   public static void main(final String[] args) {
-    final CLArgumentsManager parseCmdArgs = getParseCmdArgs(args);
-    c2detect.setCommandLineArgumentsManager(parseCmdArgs);
-
-    if (parseCmdArgs.isInvalid() || parseCmdArgs.isHelp()) {
-      final HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("c2detect", setupOptions());
-    } else if (parseCmdArgs.isChangeApiKey()) {
-      parseCmdArgs.setApiKey(parseCmdArgs.getApiKey());
-    } else {
-      startScan(args);
+    try {
+      initialize(args);
+      runApp(args);
+    } catch (ParseException e) {
+      LOGGER.error("Invalid arguments", e);
     }
   }
 
-  /**
-   * Start the scan process with the given command line arguments.
-   *
-   * @param args The command line arguments.
-   */
-  public static void startScan(final String[] args) {
-    c2detect.run(args);
+  public static void initialize(final String[] args) throws ParseException {
+    configManager = new DefaultConfigManager(configFilename);
+    final CommandLineParser commandLineParser = new DefaultParser();
+    commandLine = commandLineParser.parse(getOptions(), args);
+    clArgManager = new CLArgumentsManager(commandLine, configManager);
+    outputHandler = new OutputHandler();
   }
 
-  /**
-   * Set up the command line options for the application.
-   *
-   * @return The options for the command line.
-   */
-  private static Options setupOptions() {
+  public static void runApp(final String[] args) {
+    if (clArgManager.isHelp() || clArgManager.isInvalid()) {
+      printHelp();
+    } else if (clArgManager.isChangeApiKey() && clArgManager.isChangeTarget()
+        || clArgManager.isChangeTarget()) {
+      startC2Detect(clArgManager, outputHandler);
+    } else if (clArgManager.isChangeApiKey()) {
+      changeApiKey(clArgManager);
+    } else {
+      outputHandler.println("No target domain specified");
+      printHelp();
+    }
+  }
+
+  public static void setOutputHandler(final PrintStream stream) {
+    App.outputHandler = stream;
+  }
+
+  public static void setCLArgumentsManager(final CLArgumentsManager clArgManager) {
+    App.clArgManager = clArgManager;
+  }
+
+  public static CLArgumentsManager getCLArgumentsManager() {
+    return clArgManager;
+  }
+
+  public static String getConfigFileName() {
+    return configFilename;
+  }
+
+  public static void setConfigFileName(final String configFilename) {
+    App.configFilename = configFilename;
+  }
+
+  private static void printHelp() {
+    final HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp("c2detect", getOptions());
+  }
+
+  private static void changeApiKey(final CLArgumentsManager clArgManager) {
+    final String apikey = clArgManager.getApiKey();
+    clArgManager.setApiKey(apikey);
+  }
+
+  private static void startC2Detect(
+      final CLArgumentsManager clArgManager, final PrintStream outputHandler) {
+    final String apikey = clArgManager.getApiKey();
+    final Host host = clArgManager.getTarget();
+    final Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
+    final C2Detect c2Detect = new C2DetectImpl(host, netlas);
+
+    final Results results = c2Detect.run();
+
+    final ResultsPrinter printer = new ResultsPrinter(results);
+    printer.print(outputHandler, clArgManager.isVerbose());
+  }
+
+  private static Options getOptions() {
     final Options options = new Options();
     final Option setOption =
         Option.builder("s")

@@ -22,9 +22,15 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class NetlasWrapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapper.class);
-  private final Response response;
-  private final Host host;
   private final Netlas netlas;
+  private final Host host;
+  private final Response response;
+
+  public NetlasWrapper(final Netlas netlas, final Host host) throws NetlasRequestException {
+    this.netlas = netlas;
+    this.host = host;
+    this.response = createResponse();
+  }
 
   /**
    * Creates a new NetlasWrapper instance.
@@ -34,23 +40,26 @@ public class NetlasWrapper {
    */
   public NetlasWrapper(final String api, final Host host) throws NetlasRequestException {
     this.netlas = Netlas.newBuilder().setApiKey(api).build();
+    this.host = host;
+    this.response = createResponse();
+  }
+
+  private Response createResponse() throws NetlasRequestException {
     final String query =
         String.format(
             "host:%s AND port:%s AND path:\"%s\"",
             host.getTarget(), host.getPort(), host.getPath());
     try {
-      this.response = this.netlas.search(query, DataType.RESPONSES, 0, null, null, false);
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Response successfully retrieved: {}", response);
       }
-    } catch (NetlasRequestException e) {
+      return this.netlas.search(query, DataType.RESPONSES, 0, null, null, false);
+    } catch (final NetlasRequestException e) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Failed to retrieve response: {}", e.getMessage());
       }
       throw e;
     }
-
-    this.host = host;
   }
 
   /**

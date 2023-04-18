@@ -32,16 +32,17 @@ public class Execute {
   }
 
   public Results run() {
-    final ExecutorService executor = Executors.newFixedThreadPool(getNumberOfThreads());
+    final ExecutorService executor = createExecutorService();
     final List<Future<Results>> futures = submitTests(executor);
     final Results results = collectResults(futures);
     executor.shutdown();
     return results;
   }
 
-  private int getNumberOfThreads() {
+  private ExecutorService createExecutorService() {
     final int processors = Runtime.getRuntime().availableProcessors();
-    return Math.max(2, processors - 1);
+    final int numberOfThreads = Math.max(2, processors - 1);
+    return Executors.newFixedThreadPool(numberOfThreads);
   }
 
   private List<Future<Results>> submitTests(final ExecutorService executor) {
@@ -57,12 +58,11 @@ public class Execute {
     final Object instance = factory.createInstance(clazz);
     invokeBeforeAllMethods(instance);
     final List<CompletableFuture<Response>> futures = invokeTestMethods(instance);
-    final Results results = new Results();
-    results.addResponse(getNameOfClass(clazz), getResponses(futures));
-    return results;
+    return createResultsFromFutures(clazz, futures);
   }
 
-  private List<Response> getResponses(final List<CompletableFuture<Response>> futures) {
+  private Results createResultsFromFutures(
+      final Class<?> clazz, final List<CompletableFuture<Response>> futures) {
     final List<Response> responses = new ArrayList<>();
     for (final CompletableFuture<Response> future : futures) {
       try {
@@ -74,7 +74,9 @@ public class Execute {
         MethodInvoker.handleInvocationError(e);
       }
     }
-    return responses;
+    final Results results = new Results();
+    results.addResponse(getNameOfClass(clazz), responses);
+    return results;
   }
 
   private Results collectResults(final List<Future<Results>> futures) {
@@ -107,10 +109,7 @@ public class Execute {
     final List<CompletableFuture<Response>> futures = new ArrayList<>();
     for (final Method method : MethodFinder.getTestMethods(instance.getClass())) {
       final CompletableFuture<Response> future =
-          CompletableFuture.supplyAsync(
-              () -> {
-                return MethodInvoker.invokeTestMethod(method, instance);
-              });
+          CompletableFuture.supplyAsync(() -> MethodInvoker.invokeTestMethod(method, instance));
       futures.add(future);
     }
     return futures;

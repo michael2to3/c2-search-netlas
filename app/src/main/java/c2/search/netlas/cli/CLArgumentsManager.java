@@ -1,6 +1,7 @@
 package c2.search.netlas.cli;
 
-import c2.search.netlas.C2Detect;
+import c2.search.netlas.c2detect.C2Detect;
+import c2.search.netlas.config.ConfigManager;
 import c2.search.netlas.scheme.Host;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -9,68 +10,65 @@ import org.slf4j.LoggerFactory;
 public class CLArgumentsManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(C2Detect.class);
   private static final String PATH_API_KEY = "api.key";
-  private final Config config;
+  private static final int DEFAULT_PORT = 443;
+  private final ConfigManager config;
   private final CommandLine cmd;
-  private final boolean invalid;
 
-  public CLArgumentsManager(final CommandLine cmd, final Config config) {
-    LOGGER.info("Parsing command line arguments");
+  public CLArgumentsManager(final CommandLine cmd, final ConfigManager config) {
     this.cmd = cmd;
     this.config = config;
-    this.invalid = cmd == null;
   }
 
   public boolean isInvalid() {
-    return invalid;
+    return cmd == null;
   }
 
-  public Host getHost() {
-    LOGGER.info("Getting host from command line arguments");
+  public Host getTarget() {
     final String domain = cmd.getOptionValue("t");
     final int port = getTargetPort();
     return new Host(domain, port);
   }
 
-  public int getTargetPort() {
-    LOGGER.info("Getting target port from command line arguments");
+  private int getTargetPort() {
     final String portStr = cmd.getOptionValue("p");
 
-    int port = -1;
+    int port = DEFAULT_PORT;
     try {
       port = Integer.parseInt(portStr);
-    } catch (final NumberFormatException e) {
-      if (LOGGER.isWarnEnabled()) {
-        LOGGER.warn("Invalid port number: " + portStr);
-      }
+    } catch (NumberFormatException e) {
+      LOGGER.warn("Invalid port number: {}", portStr);
     }
     return port;
   }
 
   public boolean isHelp() {
-    LOGGER.info("Checking if help was requested");
     return cmd.hasOption("h");
   }
 
   public boolean isVerbose() {
-    LOGGER.info("Checking if verbose was requested");
     return cmd.hasOption("v");
   }
 
   public boolean isChangeApiKey() {
-    LOGGER.info("Checking if change api key was requested");
     return cmd.hasOption("s");
   }
 
+  public boolean isChangeTarget() {
+    return cmd.hasOption("t");
+  }
+
+  public boolean isChangePort() {
+    return cmd.hasOption("p");
+  }
+
   public void setApiKey(final String apiKey) {
-    LOGGER.info("Setting API key");
     config.save(PATH_API_KEY, apiKey);
   }
 
   public String getApiKey() {
-    LOGGER.info("Getting API key");
-    String apiKey = config.get(PATH_API_KEY);
-    if (cmd.hasOption("s")) {
-      apiKey = cmd.getOptionValue("s");
+    String apiKey = cmd.getOptionValue("s");
+    if (!(cmd.hasOption("t") && cmd.hasOption("s")) && !cmd.hasOption("s")) {
+      apiKey = config.get(PATH_API_KEY);
     }
     return apiKey;
   }

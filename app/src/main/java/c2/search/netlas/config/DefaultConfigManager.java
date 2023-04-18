@@ -1,8 +1,11 @@
-package c2.search.netlas.cli;
+package c2.search.netlas.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,20 +13,21 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Config {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+public class DefaultConfigManager implements ConfigManager {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConfigManager.class);
   private static final String NAME_ROOT_DIR = ".c2detect";
   private final Path parentDir = Paths.get(System.getProperty("user.home"), NAME_ROOT_DIR);
   private final Path filePath;
   private Properties properties;
 
-  public Config(final String filePath) {
+  public DefaultConfigManager(final String filePath) {
     this.filePath = parentDir.resolve(Paths.get(filePath));
     this.properties = createProperties();
-    loadProperties();
   }
 
+  @Override
   public String get(final String key) {
+    loadProperties();
     return properties.getProperty(key);
   }
 
@@ -35,11 +39,13 @@ public class Config {
     this.properties = properties;
   }
 
+  @Override
   public void save(final String key, final String value) {
+    loadProperties();
     properties.setProperty(key, value);
     try (OutputStream output = Files.newOutputStream(filePath)) {
-      properties.store(output, null);
-    } catch (final IOException e) {
+      properties.store(new OutputStreamWriter(output, StandardCharsets.UTF_8), null);
+    } catch (IOException e) {
       LOGGER.error("Error writing config file: {}", filePath, e);
     }
   }
@@ -47,8 +53,8 @@ public class Config {
   private void loadProperties() {
     createFileIfNotExists();
     try (InputStream input = Files.newInputStream(filePath)) {
-      properties.load(input);
-    } catch (final IOException e) {
+      properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
+    } catch (IOException e) {
       LOGGER.error("Error reading config file: {}", filePath, e);
     }
   }
@@ -58,7 +64,7 @@ public class Config {
       if (!Files.exists(parentDir) || !Files.exists(filePath)) {
         createFile();
       }
-    } catch (final IOException e) {
+    } catch (IOException e) {
       LOGGER.error("Error creating config file: {}", filePath, e);
     }
   }
