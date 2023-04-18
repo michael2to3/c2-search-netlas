@@ -3,6 +3,7 @@ package c2.search.netlas;
 import c2.search.netlas.c2detect.C2Detect;
 import c2.search.netlas.c2detect.C2DetectImpl;
 import c2.search.netlas.cli.CLArgumentsManager;
+import c2.search.netlas.cli.OutputHandler;
 import c2.search.netlas.config.ConfigManager;
 import c2.search.netlas.config.DefaultConfigManager;
 import c2.search.netlas.scheme.Host;
@@ -45,6 +46,7 @@ public final class App {
     final CommandLineParser commandLineParser = new DefaultParser();
     commandLine = commandLineParser.parse(getOptions(), args);
     clArgumentsManager = new CLArgumentsManager(commandLine, configManager);
+    outputHandler = new OutputHandler();
   }
 
   public static void runApp(final String[] args) {
