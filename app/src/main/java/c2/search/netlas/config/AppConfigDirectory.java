@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 public final class AppConfigDirectory {
+  private AppConfigDirectory() {}
+
   public static Path getUserConfigDir(final String appName) {
     final String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
     final String userHome = System.getProperty("user.home");
