@@ -1,5 +1,4 @@
-FROM openjdk:11-jre-slim-buster
+FROM adoptopenjdk/openjdk16:alpine-jre
 WORKDIR /app
-COPY . /app
-RUN ./gradlew build
-CMD ["java", "-jar", "app/build/libs/c2-search-netlas-1.0-SNAPSHOT.jar"]
+COPY ./app/build/libs/app-all.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
