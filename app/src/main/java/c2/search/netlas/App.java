@@ -71,6 +71,10 @@ public final class App {
     App.clArgManager = clArgManager;
   }
 
+  public static CLArgumentsManager getCLArgumentsManager() {
+    return clArgManager;
+  }
+
   public static String getConfigFileName() {
     return CONFIG_FILENAME;
   }

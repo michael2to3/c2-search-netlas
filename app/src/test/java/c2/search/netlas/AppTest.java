@@ -1,7 +1,9 @@
 package c2.search.netlas;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,5 +65,39 @@ class AppTest {
     App.setCLArgumentsManager(clArgumentsManager);
     App.runApp(args);
     assertNotEquals("", outContent.toString());
+  }
+
+  @Test
+  void testShortOutput() throws ParseException {
+    CLArgumentsManager clArgumentsManager = mock(CLArgumentsManager.class);
+    when(clArgumentsManager.isChangeApiKey()).thenReturn(true);
+    when(clArgumentsManager.getApiKey()).thenReturn(System.getenv("API_KEY"));
+    when(clArgumentsManager.isVerbose()).thenReturn(false);
+    when(clArgumentsManager.getTarget())
+        .thenReturn(Host.newBuilder().setTarget("google.com").setPort(443).build());
+    when(clArgumentsManager.isChangeTarget()).thenReturn(true);
+    when(clArgumentsManager.isChangePort()).thenReturn(true);
+    when(clArgumentsManager.isHelp()).thenReturn(false);
+    when(clArgumentsManager.isInvalid()).thenReturn(false);
+
+    String[] args = new String[] {"-t", "google.com", "-p", "443"};
+
+    App.initialize(args);
+    App.setCLArgumentsManager(clArgumentsManager);
+    App.runApp(args);
+    assertNotEquals("", outContent.toString());
+  }
+
+  @Test
+  void testSetApiKey2() throws ParseException {
+    App.initialize(new String[] {"-s", "new_api_key"});
+    assertEquals("new_api_key", App.getCLArgumentsManager().getApiKey());
+  }
+
+  @Test
+  void testSetApiKeyAndTarget() throws ParseException {
+    var args = new String[] {"-s", "new_api_key", "-t", "google.com"};
+    App.initialize(args);
+    assertEquals("new_api_key", App.getCLArgumentsManager().getApiKey());
   }
 }
