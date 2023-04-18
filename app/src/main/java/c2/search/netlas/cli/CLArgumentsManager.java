@@ -67,7 +67,7 @@ public class CLArgumentsManager {
 
   public String getApiKey() {
     String apiKey = cmd.getOptionValue("s");
-    if (!cmd.hasOption("s") && !cmd.hasOption("t")) {
+    if (!(cmd.hasOption("t") && cmd.hasOption("s")) && !cmd.hasOption("s")) {
       apiKey = config.get(PATH_API_KEY);
     }
     return apiKey;

@@ -26,6 +26,7 @@ class AppTest {
   public void setUpStreams() {
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
+    App.setConfigFileName("test.properties");
   }
 
   @AfterEach
@@ -44,6 +45,14 @@ class AppTest {
   void testSetApiKey() {
     App.main(new String[] {"-s", "testApiKey"});
     assertTrue(outContent.toString().isEmpty());
+  }
+
+  @Test
+  void testInvokeWithoutExplicitApiKey() {
+    App.main(new String[] {"-s", System.getenv("API_KEY")});
+    var args = new String[] {"-t", "google.com", "-p", "443"};
+    App.main(args);
+    assertNotNull(outContent.toString());
   }
 
   @Test

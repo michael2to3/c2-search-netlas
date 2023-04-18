@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public final class App {
   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-  private static final String CONFIG_FILENAME = "config.properties";
+  private static String configFilename = "config.properties";
   private static PrintStream outputHandler;
   private static ConfigManager configManager;
   private static CommandLine commandLine;
@@ -42,7 +42,7 @@ public final class App {
   }
 
   public static void initialize(final String[] args) throws ParseException {
-    configManager = new DefaultConfigManager(CONFIG_FILENAME);
+    configManager = new DefaultConfigManager(configFilename);
     final CommandLineParser commandLineParser = new DefaultParser();
     commandLine = commandLineParser.parse(getOptions(), args);
     clArgManager = new CLArgumentsManager(commandLine, configManager);
@@ -76,7 +76,11 @@ public final class App {
   }
 
   public static String getConfigFileName() {
-    return CONFIG_FILENAME;
+    return configFilename;
+  }
+
+  public static void setConfigFileName(final String configFilename) {
+    App.configFilename = configFilename;
   }
 
   private static void printHelp() {
