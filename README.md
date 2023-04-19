@@ -6,6 +6,7 @@
 [![Gradle](https://img.shields.io/badge/Gradle-blue?style=flat-square)](https://gradle.org/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6d3c2810e4f844fa989a987f84565b7d)](https://app.codacy.com/gh/michael2to3/c2-search-netlas/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/6d3c2810e4f844fa989a987f84565b7d)](https://app.codacy.com/gh/michael2to3/c2-search-netlas/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Docker Image Size](https://img.shields.io/docker/image-size/dockeronfullpc/c2detect?style=flat-square)](https://hub.docker.com/r/dockeronfullpc/c2detect)
 
 C2 Search Netlas is a Java utility designed to detect Command and Control (C2) servers using the Netlas API. It provides a straightforward and user-friendly CLI interface for searching C2 servers, leveraging the Netlas API to gather data and process it locally.
 
