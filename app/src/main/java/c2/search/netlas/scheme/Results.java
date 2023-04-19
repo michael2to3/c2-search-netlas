@@ -22,8 +22,13 @@ public class Results {
     }
   }
 
-  public void addResponse(final String name, final List<Response> responses) {
-    this.responses.put(name, responses);
+  public void addResponse(final String name, final List<Response> newResponses) {
+    List<Response> existingResponses = this.responses.get(name);
+    if (existingResponses == null) {
+      this.responses.put(name, newResponses);
+    } else {
+      existingResponses.addAll(newResponses);
+    }
   }
 
   public void addResponse(final String name, final Response response) {
