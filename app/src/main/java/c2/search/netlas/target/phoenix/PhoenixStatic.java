@@ -42,8 +42,8 @@ public class PhoenixStatic implements Static {
   @Override
   public List<Headers> getHeader() {
     Headers headers = new Headers();
-    headers.setContentType(List.of("text/html; charset=utf-8"));
-    headers.setServer(List.of("Werkzeug"));
+    headers.setHeader("content-type", List.of("text/html; charset=utf-8"));
+    headers.setHeader("server", List.of("Werkzeug"));
     return Arrays.asList(headers);
   }
 

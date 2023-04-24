@@ -47,7 +47,7 @@ public class VillainStatic implements Static {
   @Override
   public List<Headers> getHeader() {
     Headers headers = new Headers();
-    headers.setServer(List.of("BaseHTTP"));
+    headers.setHeader("server", List.of("BaseHTTP"));
     return Arrays.asList(headers);
   }
 

@@ -27,8 +27,7 @@ class DeimosStatic implements Static {
   @Override
   public List<Headers> getHeader() {
     Headers headers = new Headers();
-    // x-ishavocframework
-    // TODO headers doesn't support dynamic fields
+    headers.setHeader("x-ishavocframework", null);
     return List.of(headers);
   }
 

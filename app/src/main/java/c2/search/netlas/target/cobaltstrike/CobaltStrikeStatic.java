@@ -68,9 +68,9 @@ class CobaltStrikeStatic implements Static {
   @Override
   public List<Headers> getHeader() {
     Headers headers = new Headers();
-    headers.setServer(new ArrayList<>());
-    headers.setContentLength(List.of("0"));
-    headers.setContentType(List.of("text/plain"));
+    headers.setHeader("server", new ArrayList<>());
+    headers.setHeader("content-length", List.of("0"));
+    headers.setHeader("content-type", List.of("text/plain"));
     return List.of(headers);
   }
 

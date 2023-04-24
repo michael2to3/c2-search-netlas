@@ -40,7 +40,7 @@ class MetasploitStatic implements Static {
   @Override
   public List<Headers> getHeader() {
     Headers headers = new Headers();
-    headers.setServer(List.of("apache"));
+    headers.setHeader("server", List.of("apache"));
     return List.of(headers);
   }
 
