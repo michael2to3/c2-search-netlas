@@ -6,15 +6,10 @@ import netlas.java.scheme.Certificate;
 public class CertificateComparator implements Comparator<Certificate> {
 
   @Override
-  public int compare(Certificate lhs, Certificate rhs) {
-    return 0;
-  }
-
-  public boolean equals(Certificate lhs, Certificate rhs) {
-    return false;
-  }
-
-  public int hashCode(Certificate struct) {
-    return 0;
+  public int compare(Certificate base, Certificate target) {
+    SubjectComparator subjectComparator = new SubjectComparator();
+    IssuerComparator issuerComparator = new IssuerComparator();
+    return subjectComparator.compare(base.getSubject(), target.getSubject())
+        + issuerComparator.compare(base.getIssuer(), target.getIssuer());
   }
 }
