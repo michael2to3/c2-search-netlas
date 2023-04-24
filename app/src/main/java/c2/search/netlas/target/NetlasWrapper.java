@@ -3,7 +3,6 @@ package c2.search.netlas.target;
 import c2.search.netlas.scheme.Host;
 import java.util.List;
 import netlas.java.Netlas;
-import netlas.java.datatype.DataType;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
@@ -53,7 +52,7 @@ public class NetlasWrapper {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Response successfully retrieved: {}", response);
       }
-      return this.netlas.search(query, DataType.RESPONSES, 0, null, null, false);
+      return this.netlas.response(query, 0, null, null, false);
     } catch (final NetlasRequestException e) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Failed to retrieve response: {}", e.getMessage());
@@ -133,7 +132,7 @@ public class NetlasWrapper {
    * @return a List of servers found in the headers for the current response, or null if not found
    */
   public List<String> getServers() {
-    return response.getItems().get(0).getData().getHttp().getHeaders().getServer();
+    return response.getItems().get(0).getData().getHttp().getHeaders().getHeader("server");
   }
 
   /**
@@ -146,11 +145,18 @@ public class NetlasWrapper {
   }
 
   public List<String> getContentType() {
-    return response.getItems().get(0).getData().getHttp().getHeaders().getContentType();
+    return response.getItems().get(0).getData().getHttp().getHeaders().getHeader("content-type");
   }
 
   public List<Integer> getContentLength() {
-    return response.getItems().get(0).getData().getHttp().getHeaders().getContentLength().stream()
+    return response
+        .getItems()
+        .get(0)
+        .getData()
+        .getHttp()
+        .getHeaders()
+        .getHeader("content-length")
+        .stream()
         .mapToInt(Integer::parseInt)
         .boxed()
         .toList();
