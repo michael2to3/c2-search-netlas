@@ -20,11 +20,11 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   @Override
-  public Results analyze(final List<Static> data) {
+  public Results analyze(final List<StaticData> data) {
     return null;
   }
 
-  private boolean passJarm(final Static data) {
+  private boolean passJarm(final StaticData data) {
     ListComparator listComparator = new ListComparator();
     List<String> baseJarms =
         response.getItems().stream()
@@ -41,7 +41,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     return passJarm;
   }
 
-  private boolean passCert(final Static data) {
+  private boolean passCert(final StaticData data) {
     List<Certificate> targetCertificates = data.getCertificate();
     List<Certificate> baseCertificates =
         response.getItems().stream()
@@ -60,7 +60,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     return false;
   }
 
-  private boolean passPort(final Static data) {
+  private boolean passPort(final StaticData data) {
     List<Integer> targetPorts = data.getPort();
     List<Integer> basePorts =
         response.getItems().stream()
@@ -77,7 +77,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     return false;
   }
 
-  private boolean passHeader(final Static data) {
+  private boolean passHeader(final StaticData data) {
     List<Headers> targetHeaders = data.getHeader();
     List<Headers> baseHeaders =
         response.getItems().stream()
@@ -95,7 +95,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     return false;
   }
 
-  private boolean passBody(final Static data) {
+  private boolean passBody(final StaticData data) {
     List<String> targetBody = data.getBodyAsSha256();
     List<String> baseBody =
         response.getItems().stream()
@@ -111,7 +111,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   @Override
-  public Results analyze(final Static data) {
+  public Results analyze(final StaticData data) {
     Results results = new Results();
 
     var jarmResp = c2.search.netlas.scheme.Response.newBuilder().setSuccess(passJarm(data)).build();
