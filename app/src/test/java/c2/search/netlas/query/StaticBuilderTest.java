@@ -3,7 +3,7 @@ package c2.search.netlas.query;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class StaticBuilderTest {
   @Test
   public void testBuild() {
-    Static data = new Data();
+    StaticData data = new Data();
     StaticBuilder builder = new StaticBuilder(data);
 
     String query = builder.build();
@@ -68,7 +68,7 @@ public class StaticBuilderTest {
     return cert;
   }
 
-  public class Data implements Static {
+  public class Data implements StaticData {
     @Override
     public List<String> getJarm() {
       return List.of("jarm1", "jarm2", "jarm3");

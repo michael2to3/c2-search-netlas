@@ -1,6 +1,6 @@
 package c2.search.netlas.target.bruteratel;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.List;
 import netlas.java.scheme.Certificate;
@@ -9,7 +9,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Detect(name = "Bruteratel")
-class BruteratelStatic implements Static {
+class BruteratelStatic implements StaticData {
   @Override
   public List<String> getJarm() {
     return List.of("3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e");

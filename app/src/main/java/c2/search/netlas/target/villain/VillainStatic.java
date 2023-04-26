@@ -1,6 +1,6 @@
 package c2.search.netlas.target.villain;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +10,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Detect(name = "Villain")
-public class VillainStatic implements Static {
+public class VillainStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {

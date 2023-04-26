@@ -1,13 +1,13 @@
 package c2.search.netlas.target.havoc;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
 @Detect(name = "Deimos")
-class DeimosStatic implements Static {
+class DeimosStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {

@@ -1,6 +1,6 @@
 package c2.search.netlas.target.deimos;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.List;
 import netlas.java.scheme.Certificate;
@@ -9,7 +9,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Detect(name = "Deimos")
-class DeimosStatic implements Static {
+class DeimosData implements StaticData {
 
   @Override
   public List<String> getJarm() {

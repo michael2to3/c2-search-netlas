@@ -4,7 +4,7 @@ import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
-public interface Static {
+public interface StaticData {
   public List<String> getJarm();
 
   public List<Certificate> getCertificate();

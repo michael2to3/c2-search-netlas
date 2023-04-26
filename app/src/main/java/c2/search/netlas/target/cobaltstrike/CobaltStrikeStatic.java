@@ -1,6 +1,6 @@
 package c2.search.netlas.target.cobaltstrike;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Detect(name = "CobaltStrike")
-class CobaltStrikeStatic implements Static {
+class CobaltStrikeStatic implements StaticData {
   @Override
   public List<String> getJarm() {
     return List.of("2ad2ad16d2ad2ad00042d42d00042ddb04deffa1705e2edc44cae1ed24a4da");

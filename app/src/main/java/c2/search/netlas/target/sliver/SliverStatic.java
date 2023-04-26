@@ -1,6 +1,6 @@
 package c2.search.netlas.target.sliver;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.List;
 import netlas.java.scheme.Certificate;
@@ -9,7 +9,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Detect(name = "Sliver")
-class SliverStatic implements Static {
+class SliverStatic implements StaticData {
   @Override
   public List<String> getJarm() {
     final String jarm = "3fd21c00000000021c43d21c21c43d3795b2a696610c3ae44909dcdcb797f2";

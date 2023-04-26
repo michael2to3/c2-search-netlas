@@ -1,13 +1,13 @@
 package c2.search.netlas.target.metasploit;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Detect;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
 @Detect(name = "Metasploit")
-class MetasploitStatic implements Static {
+class MetasploitStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {

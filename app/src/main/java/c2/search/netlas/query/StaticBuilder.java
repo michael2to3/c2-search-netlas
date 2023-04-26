@@ -1,15 +1,15 @@
 package c2.search.netlas.query;
 
-import c2.search.netlas.analyze.Static;
+import c2.search.netlas.analyze.StaticData;
 import java.util.StringJoiner;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
 public class StaticBuilder implements QueryBuilder {
-  private final Static data;
+  private final StaticData data;
   private String separator;
 
-  public StaticBuilder(final Static data) {
+  public StaticBuilder(final StaticData data) {
     this.data = data;
     this.separator = " OR ";
   }
@@ -29,7 +29,7 @@ public class StaticBuilder implements QueryBuilder {
     return separator;
   }
 
-  private StringJoiner generate(final Static data) {
+  private StringJoiner generate(final StaticData data) {
     StringJoiner joiner = new StringJoiner(separator);
     if (data == null) {
       return joiner;
