@@ -1,18 +1,15 @@
 package c2.search.netlas.query;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import c2.search.netlas.analyze.Static;
+import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
+import org.junit.jupiter.api.Test;
 
 public class StaticBuilderTest {
   @Test

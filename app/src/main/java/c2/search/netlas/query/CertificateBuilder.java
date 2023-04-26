@@ -15,7 +15,7 @@ public class CertificateBuilder implements QueryBuilder {
   @Override
   public String build() {
     String query = generate(certificate).toString();
-    if(query.isEmpty()) {
+    if (query.isEmpty()) {
       return "";
     }
     return String.format("(%s)", query);
