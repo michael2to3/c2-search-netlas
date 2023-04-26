@@ -55,7 +55,7 @@ public class Merlin {
         final int statusCode = 404;
         final int nstatusCode = netlasWrapper.getStatusCode();
         final boolean isDefaultResponse = netlasWrapper.getBody().contains(bodyResponse);
-        final boolean isCorrectStatus = (statusCode == nstatusCode);
+        final boolean isCorrectStatus = statusCode == nstatusCode;
         return isDefaultResponse && isCorrectStatus;
     }
 }
