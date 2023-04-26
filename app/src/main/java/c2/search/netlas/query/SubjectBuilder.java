@@ -4,17 +4,28 @@ import java.util.List;
 import java.util.StringJoiner;
 import netlas.java.scheme.Subject;
 
-public class SubjectBuilder extends QueryBuilder {
-  private final StringJoiner joiner;
+public class SubjectBuilder implements QueryBuilder {
+  private final Subject subject;
+  private String separator;
 
   public SubjectBuilder(final Subject subject) {
-    super();
-    this.joiner = generate(subject);
+    this.subject = subject;
+    this.separator = " AND ";
   }
 
   @Override
   public String build() {
-    return joiner.toString();
+    return generate(subject).toString();
+  }
+
+  @Override
+  public void setSeparator(String separator) {
+    this.separator = separator;
+  }
+
+  @Override
+  public String getSeparator() {
+    return separator;
   }
 
   private StringJoiner generate(final Subject subject) {
@@ -33,7 +44,11 @@ public class SubjectBuilder extends QueryBuilder {
             new ListBuilder("certificate.subject.province", subject.getProvince()));
 
     for (QueryBuilder builderItem : builder) {
-      joiner.add(builderItem.build());
+      builderItem.setSeparator(" OR ");
+      String query = builderItem.build();
+      if (query != null && !query.isEmpty()) {
+        joiner.add(query);
+      }
     }
     return joiner;
   }
