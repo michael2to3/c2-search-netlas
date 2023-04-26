@@ -1,15 +1,12 @@
 package c2.search.netlas.target.cobaltstrike;
 
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
 
 final class Utils {
 
@@ -35,17 +32,6 @@ final class Utils {
       totalLen += len;
     }
     return totalLen;
-  }
-
-  public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
-    boolean result = true;
-    for (int i = 0; i < lhs.size(); ++i) {
-      if (!lhs.get(i).contains(rhs[i])) {
-        result = false;
-        break;
-      }
-    }
-    return result;
   }
 
   public static int sendHttpRequest(final Host host, final String ua, final String path)
