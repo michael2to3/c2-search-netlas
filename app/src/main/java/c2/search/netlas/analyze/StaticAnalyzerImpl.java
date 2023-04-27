@@ -3,9 +3,7 @@ package c2.search.netlas.analyze;
 import c2.search.netlas.annotation.Static;
 import c2.search.netlas.comparator.CertificateComparator;
 import c2.search.netlas.comparator.HeadersComparator;
-import c2.search.netlas.comparator.ListComparator;
 import c2.search.netlas.scheme.Results;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import netlas.java.scheme.Certificate;
@@ -19,77 +17,110 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
     this.response = response;
   }
 
-  private boolean passJarm(final StaticData data) {
-    if (data.getJarm() == null) {
-      return false;
-    }
+  private c2.search.netlas.scheme.Response passJarm(final StaticData data) {
     final String baseJarms = response.getJarm();
-    return data.getJarm().contains(baseJarms);
+    if (data.getJarm() == null || baseJarms == null) {
+      return c2.search.netlas.scheme.Response.newBuilder()
+          .setSuccess(false)
+          .setDescription("Jarm is null")
+          .build();
+    }
+    boolean pass = data.getJarm().contains(baseJarms);
+    return c2.search.netlas.scheme.Response.newBuilder()
+        .setSuccess(pass)
+        .setDescription("Jarm matched")
+        .build();
   }
 
-  private boolean passCert(final StaticData data) {
-    if (data.getCertificate() == null) {
-      return false;
+  private c2.search.netlas.scheme.Response passCert(final StaticData data) {
+    List<Certificate> targetCertificates = data.getCertificate();
+    if (data.getCertificate() == null || targetCertificates == null) {
+      return c2.search.netlas.scheme.Response.newBuilder()
+          .setSuccess(false)
+          .setDescription("Certificate is null")
+          .build();
     }
 
-    List<Certificate> targetCertificates = data.getCertificate();
     Certificate baseCertificates = response.getCertificate();
     var comp = new CertificateComparator();
     for (Certificate targetCertificate : targetCertificates) {
       if (comp.compare(targetCertificate, baseCertificates) == 0) {
-        return true;
+        return c2.search.netlas.scheme.Response.newBuilder()
+            .setSuccess(true)
+            .setDescription("Certificate matched")
+            .build();
       }
     }
-    return false;
+    return c2.search.netlas.scheme.Response.newBuilder()
+        .setSuccess(false)
+        .setDescription("Certificate not matched")
+        .build();
   }
 
-  private boolean passPort(final StaticData data) {
-    if (data.getPort() == null) {
-      return false;
-    }
-
+  private c2.search.netlas.scheme.Response passPort(final StaticData data) {
     List<Integer> targetPorts = data.getPort();
-    Integer basePorts = response.getPort();
-    return targetPorts.contains(basePorts);
-  }
-
-  private boolean passHeader(final StaticData data) {
-    if (data.getHeader() == null) {
-      return false;
+    if (data.getPort() == null || targetPorts == null) {
+      return c2.search.netlas.scheme.Response.newBuilder()
+          .setSuccess(false)
+          .setDescription("Port is null")
+          .build();
     }
 
+    Integer basePorts = response.getPort();
+    boolean pass = targetPorts.contains(basePorts);
+    return c2.search.netlas.scheme.Response.newBuilder()
+        .setSuccess(pass)
+        .setDescription("Port matched")
+        .build();
+  }
+
+  private c2.search.netlas.scheme.Response passHeader(final StaticData data) {
     List<Headers> targetHeaders = data.getHeader();
+    if (data.getHeader() == null || targetHeaders == null) {
+      return c2.search.netlas.scheme.Response.newBuilder()
+          .setSuccess(false)
+          .setDescription("Header is null")
+          .build();
+    }
+
     Headers baseHeaders = response.getHttp().getHeaders();
     var comp = new HeadersComparator();
     for (Headers targetHeader : targetHeaders) {
       if (comp.compare(targetHeader, baseHeaders) == 0) {
-        return true;
+        return c2.search.netlas.scheme.Response.newBuilder()
+            .setSuccess(true)
+            .setDescription("Header matched")
+            .build();
       }
     }
-    return false;
+    return c2.search.netlas.scheme.Response.newBuilder()
+        .setSuccess(false)
+        .setDescription("Header not matched")
+        .build();
   }
 
-  private boolean passBody(final StaticData data) {
-    if (data.getBodyAsSha256() == null) {
-      return false;
+  private c2.search.netlas.scheme.Response passBody(final StaticData data) {
+    List<String> targetBody = data.getBodyAsSha256();
+    String baseBody = response.getHttp().getBodySha256();
+    if (baseBody == null || targetBody == null) {
+      return c2.search.netlas.scheme.Response.newBuilder()
+          .setSuccess(false)
+          .setDescription("Body is null")
+          .build();
     }
 
-    List<String> targetBody = data.getBodyAsSha256();
-    List<String> baseBody = data.getBodyAsSha256();
-
-    ListComparator listComparator = new ListComparator();
-    return listComparator.compare(baseBody, targetBody) == 0;
+    boolean pass = targetBody.contains(baseBody);
+    return c2.search.netlas.scheme.Response.newBuilder()
+        .setSuccess(pass)
+        .setDescription("Body matched")
+        .build();
   }
 
   @Override
   public Results analyze(final StaticData data) {
     Results results = new Results();
-    List<c2.search.netlas.scheme.Response> responses = new ArrayList<>();
-    List<Boolean> passed =
-        List.of(passJarm(data), passCert(data), passPort(data), passHeader(data), passBody(data));
-    for (Boolean passedItem : passed) {
-      responses.add(c2.search.netlas.scheme.Response.newBuilder().setSuccess(passedItem).build());
-    }
+    List<c2.search.netlas.scheme.Response> responses = List.of(passJarm(data), passCert(data), passPort(data),
+        passHeader(data), passBody(data));
     results.setResponses(Map.of(getNameOfClass(data.getClass()), responses));
     return results;
   }
