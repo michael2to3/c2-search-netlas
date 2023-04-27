@@ -9,7 +9,7 @@ import netlas.java.scheme.*;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
-class StaticAnalyzerImpl implements StaticAnalyzer {
+public class StaticAnalyzerImpl implements StaticAnalyzer {
   private final Data response;
 
   public StaticAnalyzerImpl(final Data response) {
