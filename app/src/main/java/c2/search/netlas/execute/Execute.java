@@ -51,7 +51,9 @@ public class Execute {
     for (final var future : futures) {
       try {
         results.merge(future.get(TIMEOUT_COMPLEX, TimeUnit.SECONDS));
-      } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      } catch (TimeoutException e) {
+        LOGGER.warn("Skipping test due to timeout", e);
+      } catch (InterruptedException | ExecutionException e) {
         LOGGER.error("Error while running tests", e);
       }
     }
