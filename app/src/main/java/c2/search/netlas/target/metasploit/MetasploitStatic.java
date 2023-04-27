@@ -2,12 +2,13 @@ package c2.search.netlas.target.metasploit;
 
 import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Static;
+import java.util.ArrayList;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
 @Static(name = "Metasploit")
-class MetasploitStatic implements StaticData {
+public class MetasploitStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {
@@ -20,7 +21,7 @@ class MetasploitStatic implements StaticData {
             "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
             "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
-    List<String> total = List.of();
+    List<String> total = new ArrayList<>();
     total.addAll(jarmv5);
     total.addAll(jarmv6);
 

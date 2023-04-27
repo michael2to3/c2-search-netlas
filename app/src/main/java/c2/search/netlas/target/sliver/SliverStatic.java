@@ -9,7 +9,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Static(name = "Sliver")
-class SliverStatic implements StaticData {
+public class SliverStatic implements StaticData {
   @Override
   public List<String> getJarm() {
     final String jarm = "3fd21c00000000021c43d21c21c43d3795b2a696610c3ae44909dcdcb797f2";

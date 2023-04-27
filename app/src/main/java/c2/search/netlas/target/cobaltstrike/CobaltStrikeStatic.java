@@ -10,7 +10,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Static(name = "CobaltStrike")
-class CobaltStrikeStatic implements StaticData {
+public class CobaltStrikeStatic implements StaticData {
   @Override
   public List<String> getJarm() {
     return List.of("2ad2ad16d2ad2ad00042d42d00042ddb04deffa1705e2edc44cae1ed24a4da");

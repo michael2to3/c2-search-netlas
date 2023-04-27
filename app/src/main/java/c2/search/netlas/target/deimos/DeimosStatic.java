@@ -9,7 +9,7 @@ import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
 @Static(name = "Deimos")
-class DeimosData implements StaticData {
+public class DeimosStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {

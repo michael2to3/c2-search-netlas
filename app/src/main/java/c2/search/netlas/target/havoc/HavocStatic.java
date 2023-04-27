@@ -6,8 +6,8 @@ import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
-@Static(name = "Deimos")
-class DeimosStatic implements StaticData {
+@Static(name = "Havoc")
+public class HavocStatic implements StaticData {
 
   @Override
   public List<String> getJarm() {
