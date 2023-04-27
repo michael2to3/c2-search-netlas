@@ -4,15 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import c2.search.netlas.ApiKeyChangedCondition;
 import c2.search.netlas.scheme.Host;
 import java.util.List;
 import netlas.java.exception.NetlasRequestException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ExtendWith(ApiKeyChangedCondition.class)
 class NetlasWrapperTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetlasWrapperTest.class);
   private static final String API = System.getenv("API_KEY");
@@ -22,9 +26,9 @@ class NetlasWrapperTest {
 
   @BeforeAll
   static void setup() throws NetlasRequestException {
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Use API key: {}", API);
-    }
+    netlas = new NetlasWrapper(API, HOST);
+
+    assumeTrue(API == null || API.isEmpty(), "API Key is not set");
     netlas = new NetlasWrapper(API, HOST);
   }
 
