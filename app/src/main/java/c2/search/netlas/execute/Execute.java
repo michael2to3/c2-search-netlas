@@ -1,9 +1,11 @@
 package c2.search.netlas.execute;
 
 import c2.search.netlas.annotation.Detect;
+import c2.search.netlas.annotation.Static;
 import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,7 +35,9 @@ public class Execute {
 
   public Results run() {
     final ExecutorService executor = createExecutorService();
-    final List<Future<Results>> futures = submitTests(executor);
+    final List<Future<Results>> futures = new ArrayList<>();
+    futures.addAll(submitTests(executor, Detect.class));
+    futures.addAll(submitTests(executor, Static.class));
     final Results results = collectResults(futures);
     executor.shutdown();
     return results;
@@ -45,12 +49,12 @@ public class Execute {
     return Executors.newFixedThreadPool(numberOfThreads);
   }
 
-  private List<Future<Results>> submitTests(final ExecutorService executor) {
+  private List<Future<Results>> submitTests(
+      final ExecutorService executor, Class<? extends Annotation> annotation) {
     final List<Future<Results>> futures = new ArrayList<>();
-    for (final Class<?> clazz : classScanner.getClassesWithAnnotation(Detect.class)) {
-      final Future<Results> future = executor.submit(() -> runTestsForClass(clazz));
-      futures.add(future);
-    }
+    classScanner.getClassesWithAnnotation(annotation).stream()
+        .map(clazz -> executor.submit(() -> runTestsForClass(clazz)))
+        .forEach(futures::add);
     return futures;
   }
 
