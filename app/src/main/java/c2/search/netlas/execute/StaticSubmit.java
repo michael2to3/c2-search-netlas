@@ -1,6 +1,7 @@
 package c2.search.netlas.execute;
 
-import c2.search.netlas.analyze.*;
+import c2.search.netlas.analyze.StaticAnalyzer;
+import c2.search.netlas.analyze.StaticAnalyzerImpl;
 import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Static;
 import c2.search.netlas.classscanner.ClassScanner;
@@ -11,11 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import netlas.java.scheme.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StaticSubmit implements Submit {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
   private final ClassScanner classScanner;
   private final Data data;
 
