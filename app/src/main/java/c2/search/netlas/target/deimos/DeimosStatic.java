@@ -1,14 +1,14 @@
 package c2.search.netlas.target.deimos;
 
 import c2.search.netlas.analyze.StaticData;
-import c2.search.netlas.annotation.Detect;
+import c2.search.netlas.annotation.Static;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
-@Detect(name = "Deimos")
+@Static(name = "Deimos")
 class DeimosData implements StaticData {
 
   @Override

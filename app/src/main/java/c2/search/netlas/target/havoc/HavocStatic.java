@@ -1,12 +1,12 @@
 package c2.search.netlas.target.havoc;
 
 import c2.search.netlas.analyze.StaticData;
-import c2.search.netlas.annotation.Detect;
+import c2.search.netlas.annotation.Static;
 import java.util.List;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
-@Detect(name = "Deimos")
+@Static(name = "Deimos")
 class DeimosStatic implements StaticData {
 
   @Override

@@ -1,7 +1,7 @@
 package c2.search.netlas.target.phoenix;
 
 import c2.search.netlas.analyze.StaticData;
-import c2.search.netlas.annotation.Detect;
+import c2.search.netlas.annotation.Static;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import netlas.java.scheme.Headers;
 import netlas.java.scheme.Issuer;
 import netlas.java.scheme.Subject;
 
-@Detect(name = "Phoenix")
+@Static(name = "Phoenix")
 public class PhoenixStatic implements StaticData {
   @Wire private Host host;
 
