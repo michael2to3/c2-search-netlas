@@ -8,16 +8,18 @@ import netlas.java.scheme.Response;
 
 public class Broadcast {
   private final Netlas netlas;
-  private final String query;
+  private final String range;
+  private final List<StaticData> data;
 
   public Broadcast(Netlas netlas, String range, List<StaticData> data)
       throws IpRangeFormatException {
     this.netlas = netlas;
-    String nrange = new NormalizeRangeHost(range).normalize();
-    this.query = GenerateQuery.generate(nrange, data);
+    this.range = new NormalizeRangeHost(range).normalize();
+    this.data = data;
   }
 
   public Response execute() throws NetlasRequestException {
+    String query = GenerateQuery.generate(range, data);
     return netlas.response(query, 0, null, null, false);
   }
 }
