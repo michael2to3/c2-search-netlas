@@ -1,21 +1,18 @@
 package c2.search.netlas.analyze;
 
 import c2.search.netlas.comparator.CertificateComparator;
-import c2.search.netlas.comparator.CustomListComparator;
 import c2.search.netlas.comparator.HeadersComparator;
 import c2.search.netlas.comparator.ListComparator;
 import c2.search.netlas.scheme.Results;
 import java.util.List;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
+import netlas.java.scheme.*;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
-import netlas.java.scheme.Response;
 
 class StaticAnalyzerImpl implements StaticAnalyzer {
-  private final Response response;
+  private final Data response;
 
-  public StaticAnalyzerImpl(final Response response) {
+  public StaticAnalyzerImpl(final Data response) {
     this.response = response;
   }
 
@@ -25,87 +22,46 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private boolean passJarm(final StaticData data) {
-    List<String> baseJarms =
-        response.getItems().stream()
-            .map(item -> item.getData().getJarm())
-            .filter(jarm -> jarm != null && !jarm.isEmpty())
-            .collect(Collectors.toList());
-
-    if (!baseJarms.isEmpty()) {
-      List<String> targetJarms = data.getJarm();
-      return new ListComparator().compare(baseJarms, targetJarms) == 0;
-    }
-
-    return false;
+    final String baseJarms = response.getJarm();
+    return data.getJarm().contains(baseJarms);
   }
 
   private boolean passCert(final StaticData data) {
     List<Certificate> targetCertificates = data.getCertificate();
-    List<Certificate> baseCertificates =
-        response.getItems().stream()
-            .map(item -> item.getData().getCertificate())
-            .filter(certificate -> certificate != null)
-            .collect(Collectors.toList());
-
-    if (!baseCertificates.isEmpty()) {
-      BiPredicate<Certificate, Certificate> certificateComparator =
-          (c1, c2) -> new CertificateComparator().compare(c1, c2) == 0;
-      CustomListComparator<Certificate, Certificate> customListComparator =
-          new CustomListComparator<>(certificateComparator, targetCertificates);
-
-      return customListComparator.compare(baseCertificates, targetCertificates) == 0;
+    Certificate baseCertificates = response.getCertificate();
+    var comp = new CertificateComparator();
+    for (Certificate targetCertificate : targetCertificates) {
+      if (comp.compare(targetCertificate, baseCertificates) == 0) {
+        return true;
+      }
     }
     return false;
   }
 
   private boolean passPort(final StaticData data) {
     List<Integer> targetPorts = data.getPort();
-    List<Integer> basePorts =
-        response.getItems().stream()
-            .map(item -> item.getData().getPort())
-            .filter(port -> port != null)
-            .collect(Collectors.toList());
-
-    if (!basePorts.isEmpty()) {
-      BiPredicate<Integer, Integer> portComparator = (p1, p2) -> p1.equals(p2);
-      CustomListComparator<Integer, Integer> customListComparator =
-          new CustomListComparator<>(portComparator, targetPorts);
-      return customListComparator.compare(basePorts, targetPorts) == 0;
-    }
-    return false;
+    Integer basePorts = response.getPort();
+    return targetPorts.contains(basePorts);
   }
 
   private boolean passHeader(final StaticData data) {
     List<Headers> targetHeaders = data.getHeader();
-    List<Headers> baseHeaders =
-        response.getItems().stream()
-            .map(item -> item.getData().getHttp().getHeaders())
-            .filter(headers -> headers != null)
-            .collect(Collectors.toList());
-
-    if (!baseHeaders.isEmpty()) {
-      BiPredicate<Headers, Headers> headerComparator =
-          (h1, h2) -> new HeadersComparator().compare(h1, h2) == 0;
-      CustomListComparator<Headers, Headers> customListComparator =
-          new CustomListComparator<>(headerComparator, targetHeaders);
-      return customListComparator.compare(baseHeaders, targetHeaders) == 0;
+    Headers baseHeaders = response.getHttp().getHeaders();
+    var comp = new HeadersComparator();
+    for (Headers targetHeader : targetHeaders) {
+      if (comp.compare(targetHeader, baseHeaders) == 0) {
+        return true;
+      }
     }
     return false;
   }
 
   private boolean passBody(final StaticData data) {
     List<String> targetBody = data.getBodyAsSha256();
-    List<String> baseBody =
-        response.getItems().stream()
-            .map(item -> item.getData().getHttp().getBody())
-            .filter(body -> body != null)
-            .collect(Collectors.toList());
+    List<String> baseBody = data.getBodyAsSha256();
 
-    if (!baseBody.isEmpty()) {
-      ListComparator listComparator = new ListComparator();
-      return listComparator.compare(baseBody, targetBody) == 0;
-    }
-    return false;
+    ListComparator listComparator = new ListComparator();
+    return listComparator.compare(baseBody, targetBody) == 0;
   }
 
   @Override

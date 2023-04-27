@@ -1,11 +1,6 @@
 package c2.search.netlas.execute;
 
-import c2.search.netlas.annotation.Detect;
-import c2.search.netlas.classscanner.ClassScanner;
-import c2.search.netlas.scheme.Response;
-import c2.search.netlas.scheme.Results;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -15,55 +10,45 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DetectSubmit implements Submit {
+import c2.search.netlas.analyze.StaticAnalyzer;
+import c2.search.netlas.analyze.StaticData;
+import c2.search.netlas.annotation.Static;
+import c2.search.netlas.classscanner.ClassScanner;
+import c2.search.netlas.scheme.Response;
+import c2.search.netlas.scheme.Results;
+import netlas.java.scheme.Data;
+
+public class StaticSubmit implements Submit {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
   private static final int TIMEOUT_SINGLE = 5;
   private final ClassScanner classScanner;
-  private final Factory factory;
+  private final Data data;
 
-  public DetectSubmit(ClassScanner classScanner, Factory factory) {
+  public StaticSubmit(ClassScanner classScanner, final Data response) {
     this.classScanner = classScanner;
-    this.factory = factory;
+    this.data = response;
   }
 
   @Override
   public List<Future<Results>> submitTests(ExecutorService executor) {
-    return classScanner.getClassesWithAnnotation(Detect.class).stream()
+    return classScanner.getClassesWithAnnotation(Static.class).stream()
         .map(clazz -> executor.submit(() -> runTestsForClass(clazz)))
         .collect(Collectors.toList());
   }
 
   private Results runTestsForClass(final Class<?> clazz) {
-    final Object instance = factory.createInstance(clazz);
-    invokeBeforeAllMethods(instance);
+    final StaticData instance = createInstance(clazz);
     final List<CompletableFuture<Response>> futures = invokeTestMethods(instance);
     return createResultsFromFutures(clazz, futures);
   }
 
-  private void invokeBeforeAllMethods(final Object instance) {
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Invoking beforeAll methods of {}", instance.getClass().getName());
-    }
-    final List<Method> beforeAllMethods = MethodFinder.getBeforeAllMethods(instance.getClass());
-    for (final Method method : beforeAllMethods) {
-      try {
-        method.invoke(instance);
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        MethodInvoker.handleInvocationError(method, instance, e);
-      }
-    }
-  }
-
-  private List<CompletableFuture<Response>> invokeTestMethods(final Object instance) {
+  private List<CompletableFuture<Response>> invokeTestMethods(final StaticData instance) {
     final List<CompletableFuture<Response>> futures = new ArrayList<>();
-    for (final Method method : MethodFinder.getTestMethods(instance.getClass())) {
-      final CompletableFuture<Response> future =
-          CompletableFuture.supplyAsync(() -> MethodInvoker.invokeTestMethod(method, instance));
-      futures.add(future);
-    }
+    StaticAnalyzer analyzer = new StaticAnalyzerImpl(data);
     return futures;
   }
 
@@ -86,11 +71,23 @@ public class DetectSubmit implements Submit {
   }
 
   private String getNameOfClass(final Class<?> clazz) {
-    final Detect detect = clazz.getAnnotation(Detect.class);
-    String nameOfDetect = detect.name();
-    if (nameOfDetect == null || nameOfDetect.isEmpty()) {
-      nameOfDetect = clazz.getName();
+    final Static detect = clazz.getAnnotation(Static.class);
+    String nameOfStatic = detect.name();
+    if (nameOfStatic == null || nameOfStatic.isEmpty()) {
+      nameOfStatic = clazz.getName();
     }
-    return nameOfDetect;
+    return nameOfStatic;
+  }
+
+  private StaticData createInstance(final Class<?> clazz) {
+    try {
+      return (StaticData) clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException e) {
+      MethodInvoker.handleInvocationError(e);
+      return null;
+    }
   }
 }
