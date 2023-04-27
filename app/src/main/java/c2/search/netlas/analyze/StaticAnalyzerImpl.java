@@ -25,20 +25,18 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private boolean passJarm(final StaticData data) {
-    ListComparator listComparator = new ListComparator();
     List<String> baseJarms =
         response.getItems().stream()
             .map(item -> item.getData().getJarm())
             .filter(jarm -> jarm != null && !jarm.isEmpty())
             .collect(Collectors.toList());
 
-    boolean passJarm = false;
     if (!baseJarms.isEmpty()) {
       List<String> targetJarms = data.getJarm();
-      passJarm = listComparator.compare(baseJarms, targetJarms) == 0;
+      return new ListComparator().compare(baseJarms, targetJarms) == 0;
     }
 
-    return passJarm;
+    return false;
   }
 
   private boolean passCert(final StaticData data) {
@@ -69,7 +67,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
             .collect(Collectors.toList());
 
     if (!basePorts.isEmpty()) {
-      BiPredicate<Integer, Integer> portComparator = (p1, p2) -> p1 == p2;
+      BiPredicate<Integer, Integer> portComparator = (p1, p2) -> p1.equals(p2);
       CustomListComparator<Integer, Integer> customListComparator =
           new CustomListComparator<>(portComparator, targetPorts);
       return customListComparator.compare(basePorts, targetPorts) == 0;
