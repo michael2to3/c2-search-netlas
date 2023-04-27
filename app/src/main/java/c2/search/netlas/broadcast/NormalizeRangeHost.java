@@ -1,5 +1,8 @@
 package c2.search.netlas.broadcast;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +21,24 @@ public class NormalizeRangeHost {
     Matcher matcher = pattern.matcher(range);
 
     if (matcher.find()) {
-      normalizedRange = "[" + matcher.group(1) + " TO " + matcher.group(2) + "]";
+      String startIP = matcher.group(1);
+      String endIP = matcher.group(2);
+
+      try {
+        InetAddress startAddress = InetAddress.getByName(startIP);
+        InetAddress endAddress = InetAddress.getByName(endIP);
+
+        ByteBuffer startAddressBuffer = ByteBuffer.wrap(startAddress.getAddress());
+        ByteBuffer endAddressBuffer = ByteBuffer.wrap(endAddress.getAddress());
+
+        if (startAddressBuffer.compareTo(endAddressBuffer) <= 0) {
+          normalizedRange = "[" + startIP + " TO " + endIP + "]";
+        } else {
+          throw new IpRangeFormatException("Invalid IP range");
+        }
+      } catch (UnknownHostException e) {
+        throw new IpRangeFormatException("Invalid IP range format");
+      }
     } else {
       throw new IpRangeFormatException("Invalid IP range format");
     }
