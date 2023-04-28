@@ -2,7 +2,6 @@ package c2.search.netlas;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
@@ -17,11 +16,19 @@ public class NetlasCache {
     this.cache = new HashMap<>();
   }
 
+  public static NetlasCache getInstance() {
+    return instance;
+  }
+
   public static NetlasCache getInstance(String apiKey) {
     if (instance == null) {
       instance = new NetlasCache(apiKey);
     }
     return instance;
+  }
+
+  public static Netlas getNetlas() {
+    return instance.netlas;
   }
 
   public Response response(
@@ -36,7 +43,7 @@ public class NetlasCache {
     return response;
   }
 
-  public netlas.java.scheme.Response fetchResponse(
+  private Response fetchResponse(
       String query, int page, String indices, String fields, boolean excludeFields)
       throws NetlasRequestException {
     return netlas.response(query, page, indices, fields, excludeFields);
