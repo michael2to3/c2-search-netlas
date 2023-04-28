@@ -46,4 +46,23 @@ class NormalizeRangeHostTest {
 
     assertThrows(IpRangeFormatException.class, normalizeRangeHost::normalize);
   }
+
+  @Test
+  void testNormalizeValidSubnet() throws IpRangeFormatException {
+    String inputRange = "192.168.0.1/24";
+    NormalizeRangeHost normalizeRangeHost = new NormalizeRangeHost(inputRange);
+
+    String expectedNormalizedRange = "\"192.168.0.1/24\"";
+    String actualNormalizedRange = normalizeRangeHost.normalize();
+
+    assertEquals(expectedNormalizedRange, actualNormalizedRange);
+  }
+
+  @Test
+  void testNormalizeInvalidSubnet() {
+    String inputRange = "192.168.0.300/24";
+    NormalizeRangeHost normalizeRangeHost = new NormalizeRangeHost(inputRange);
+
+    assertThrows(IpRangeFormatException.class, normalizeRangeHost::normalize);
+  }
 }
