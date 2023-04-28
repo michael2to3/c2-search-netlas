@@ -11,7 +11,6 @@ import c2.search.netlas.scheme.Results;
 import c2.search.netlas.scheme.ResultsPrinter;
 import java.io.PrintStream;
 import java.util.List;
-import netlas.java.Netlas;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -97,8 +96,8 @@ public final class App {
       final CLArgumentsManager clArgManager, final PrintStream outputHandler) {
     final String apikey = clArgManager.getApiKey();
     final Host host = clArgManager.getTarget();
-    final Netlas netlas = Netlas.newBuilder().setApiKey(apikey).build();
-    final C2Detect c2Detect = new C2DetectImpl(host, netlas);
+    NetlasCache.getInstance(apikey);
+    final C2Detect c2Detect = new C2DetectImpl(host);
 
     final Results results = c2Detect.run();
 
