@@ -9,7 +9,7 @@ public class ListComparator implements Comparator<List<String>> {
 
   @Override
   public int compare(List<String> base, List<String> target) {
-    if(base == null || target == null) {
+    if (base == null || target == null) {
       return -1;
     }
     Set<String> baseSet = new HashSet<>(base);

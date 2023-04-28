@@ -15,9 +15,11 @@ public class NormalizeRangeHost {
 
   public String normalize() throws IpRangeFormatException {
     String normalizedRange = null;
-    Pattern pattern = Pattern.compile(
-        "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
-    Pattern subnetPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
+    Pattern pattern =
+        Pattern.compile(
+            "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
+    Pattern subnetPattern =
+        Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
     Matcher matcher = pattern.matcher(range);
     Matcher subnetMatcher = subnetPattern.matcher(range);
 
