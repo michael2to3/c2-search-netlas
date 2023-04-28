@@ -119,8 +119,8 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   @Override
   public Results analyze(final StaticData data) {
     Results results = new Results();
-    List<c2.search.netlas.scheme.Response> responses = List.of(passJarm(data), passCert(data), passPort(data),
-        passHeader(data), passBody(data));
+    List<c2.search.netlas.scheme.Response> responses =
+        List.of(passJarm(data), passCert(data), passPort(data), passHeader(data), passBody(data));
     results.setResponses(Map.of(getNameOfClass(data.getClass()), responses));
     return results;
   }
