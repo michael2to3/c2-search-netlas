@@ -12,13 +12,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Detect(name = "Empire")
 public class Empire {
@@ -30,7 +26,6 @@ public class Empire {
 
     public Empire() {
     }
-
 
     @Test
     public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
@@ -97,20 +92,5 @@ public class Empire {
         final String sha256documentation =
                 "e87aa3bc0789083c0b05e040bdc309de0e79fc2eb12b8c04e853b1e8a4eac4f4";
         return Utils.testEndpoint(host.toString() + "/openapi.json", result, sha256documentation);
-    }
-
-    @Test
-    public boolean headerServer() throws JsonMappingException, JsonProcessingException {
-        final List<String> servers = netlasWrapper.getServers();
-        final List<String> types = netlasWrapper.getContentType();
-        final String baseType = "text/html; charset=utf-8";
-        final String base = "Werkzeug";
-        boolean result = false;
-        for (final String server : servers) {
-            if (server.contains(base)) {
-                result = true;
-            }
-        }
-        return result && types.contains(baseType);
     }
 }
