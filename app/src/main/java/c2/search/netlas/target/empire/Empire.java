@@ -51,19 +51,11 @@ public class Empire {
     }
 
     @Test
-    public Response checkJarm() throws JsonMappingException, JsonProcessingException {
-        final List<String> jarmv5 =
+    public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
+        final List<String> jarm =
                 List.of("0ad0ad0000ad0ad00042d42d0000007320ccd9701dbccd7024a4f866f0cfd9");
-
         final String responseJarm = netlasWrapper.getJarm();
-
-        String minVersion = null;
-        boolean detect = false;
-        if (checkJarm(responseJarm, jarmv5)) {
-            minVersion = "5.x.x";
-            detect = true;
-        }
-        return Response.newBuilder().setSuccess(detect).setVersion(new Version("", minVersion)).build();
+        return checkJarm(responseJarm, jarm);
     }
 
     @Test
