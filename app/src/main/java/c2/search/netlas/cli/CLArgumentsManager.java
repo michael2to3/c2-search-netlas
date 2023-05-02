@@ -1,7 +1,7 @@
 package c2.search.netlas.cli;
 
 import c2.search.netlas.c2detect.C2Detect;
-import c2.search.netlas.execute.config.ConfigManager;
+import c2.search.netlas.config.ConfigManager;
 import c2.search.netlas.scheme.Host;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;

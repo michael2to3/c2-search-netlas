@@ -10,6 +10,7 @@ import c2.search.netlas.target.NetlasWrapper;
 import c2.search.netlas.target.bruteratel.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
