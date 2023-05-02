@@ -8,7 +8,6 @@ import c2.search.netlas.target.bruteratel.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import netlas.java.scheme.host.Host;
-import org.checkerframework.checker.lock.qual.LockPossiblyHeld;
 
 import java.util.List;
 
