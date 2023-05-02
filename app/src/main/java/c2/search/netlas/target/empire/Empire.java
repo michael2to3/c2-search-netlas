@@ -85,9 +85,9 @@ public class Empire {
 
     @Test(extern = true)
     public boolean badNotFound() throws IOException, NoSuchAlgorithmException {
-        final int success = 200;
+        final int result = 404;
         final String sha256notfound =
                 "48c3843f57eceab2613c42ed65bff6d8701b3cfe12534220702cf2a895e45a79";
-        return Utils.testEndpoint(host.toString(), success, sha256notfound);
+        return Utils.testEndpoint(host.toString(), result, sha256notfound);
     }
 }
