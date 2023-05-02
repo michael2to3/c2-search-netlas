@@ -9,7 +9,6 @@ import c2.search.netlas.scheme.Host;
 import c2.search.netlas.target.NetlasWrapper;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
