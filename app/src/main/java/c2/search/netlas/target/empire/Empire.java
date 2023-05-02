@@ -22,9 +22,6 @@ import org.slf4j.LoggerFactory;
 
 @Detect(name = "Empire")
 public class Empire {
-    //    private static final Logger LOGGER = LoggerFactory.getLogger(Empire.class);
-//    private static final int SOCKET_TIMEOUT_MS = 1000;
-//    private static final String SHELL_ID = "shell";
     private static final int STATUS_SUCCESFULL = 200;
     @Wire
     private Host host;
