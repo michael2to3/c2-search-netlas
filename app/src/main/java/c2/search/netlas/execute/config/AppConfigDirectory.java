@@ -1,4 +1,4 @@
-package c2.search.netlas.config;
+package c2.search.netlas.execute.config;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

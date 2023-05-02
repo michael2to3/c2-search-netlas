@@ -1,4 +1,4 @@
-package c2.search.netlas.config;
+package c2.search.netlas.execute.config;
 
 import java.io.IOException;
 import java.io.InputStream;

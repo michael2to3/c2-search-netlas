@@ -1,4 +1,4 @@
-package c2.search.netlas.config;
+package c2.search.netlas.execute.config;
 
 public interface ConfigManager {
   public abstract String get(String key);
