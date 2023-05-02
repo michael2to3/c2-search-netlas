@@ -1,4 +1,4 @@
-package c2.search.netlas.target.metasploit.havoc;
+package c2.search.netlas.target.havoc;
 
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
