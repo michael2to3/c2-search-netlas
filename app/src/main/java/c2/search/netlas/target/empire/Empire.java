@@ -25,7 +25,7 @@ public class Empire {
     }
 
     @Test
-    public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
+    public boolean checkTeamserverBodyResponse() throws JsonMappingException, JsonProcessingException {
         final String body = "404 page not found";
         final String rbody = netlasWrapper.getBody();
         final int statusCode = 404;
@@ -36,7 +36,12 @@ public class Empire {
 
         return rbody.contains(body) && rstatusCode == statusCode && !hasServerHeader;
     }
-
+    @Test
+    public boolean checkListenerBodyResponse() throws JsonMappingException, JsonProcessingException {
+        final String sha256 = "e2b93e26a115d641baaca4f652db4bc64d5cac5c7479a6d4d1d08673fb410305";
+        final String body = netlasWrapper.getBodyAsSha256();
+        return sha256.equals(body);
+    }
     private boolean checkJarm(final String body, final List<String> jarms) {
         boolean isJarm = false;
         for (final String jarm : jarms) {
