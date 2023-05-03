@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.Arrays;
 import java.util.List;
 
-final public class Utils {
+public final class Utils {
     private Utils() {}
     public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
         boolean result = true;
