@@ -8,7 +8,6 @@ import c2.search.netlas.target.bruteratel.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import netlas.java.scheme.host.Host;
-
 import java.util.List;
 
 @Detect (name = "Posh")
@@ -17,9 +16,7 @@ public class Posh {
     private Host host;
     @Wire
     private NetlasWrapper netlasWrapper;
-
-    public Posh() {};
-    public void setHost(final Host host) { this.host = host; }
+    public Posh() {}
 
     @Test
     public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
@@ -64,6 +61,7 @@ public class Posh {
         return result && types.equals(baseType);
     }
 
+    @Test
     public boolean checkBodyResp() throws JsonMappingException, JsonProcessingException {
         final String bodyResponse = "404";
         final int statusCode = 404;
