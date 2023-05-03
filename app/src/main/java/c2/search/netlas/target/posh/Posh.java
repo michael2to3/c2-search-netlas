@@ -3,11 +3,11 @@ package c2.search.netlas.target.posh;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
+import netlas.java.scheme.host.Host;
 import c2.search.netlas.target.NetlasWrapper;
 import c2.search.netlas.target.bruteratel.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import netlas.java.scheme.host.Host;
 import java.util.List;
 
 @Detect (name = "Posh")
