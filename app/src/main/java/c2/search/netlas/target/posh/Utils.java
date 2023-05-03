@@ -3,11 +3,10 @@ package c2.search.netlas.target.posh;
 import c2.search.netlas.target.NetlasWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
 import java.util.Arrays;
 import java.util.List;
 
-public class Utils {
+final public class Utils {
     private Utils() {}
     public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
         boolean result = true;
