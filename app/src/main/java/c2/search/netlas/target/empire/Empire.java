@@ -74,7 +74,15 @@ public class Empire {
 
         return defaultHeadersNum > defaultHeaders.size() & STATUS_SUCCESFULL == status;
     }
-
+    @Test
+    public boolean checkListenerContent() throws JsonMappingException, JsonProcessingException {
+        final int contentLen = 836;
+        final String contentType = "text/html; charset-utf-8";
+        final boolean isEmptyServer = netlasWrapper.getServers().isEmpty();
+        final boolean isDefaultLen = netlasWrapper.getContentLength().contains(contentLen);
+        final boolean isDefaultType = netlasWrapper.getContentType().contains(contentType);
+        return isEmptyServer && isDefaultLen && isDefaultType;
+    }
     @Test(extern = true)
     public boolean checkDocumentationPage() throws IOException, NoSuchAlgorithmException {
         final int result = 200;
