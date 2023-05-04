@@ -5,7 +5,6 @@ import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
 import c2.search.netlas.target.NetlasWrapper;
-import c2.search.netlas.target.bruteratel.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
