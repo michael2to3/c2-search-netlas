@@ -18,10 +18,6 @@ public class Merlin {
 
     public Merlin() {}
 
-    public void setHost(final Host host) {
-        this.host = host;
-    }
-
     @Test
     public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
         final String jarm = "3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e";
