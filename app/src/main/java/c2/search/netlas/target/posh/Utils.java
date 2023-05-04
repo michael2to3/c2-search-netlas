@@ -7,39 +7,41 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Utils {
-    private Utils() {}
-    public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
-        boolean result = true;
-        for (int i = 0; i < lhs.size(); ++i) {
-            if (!lhs.get(i).contains(rhs[i])) {
-                result = false;
-                break;
-            }
-        }
-        return result;
+  private Utils() {}
+
+  public static boolean compareList(final List<List<String>> lhs, final String[] rhs) {
+    boolean result = true;
+    for (int i = 0; i < lhs.size(); ++i) {
+      if (!lhs.get(i).contains(rhs[i])) {
+        result = false;
+        break;
+      }
     }
-    public static boolean verifyCertFields(
-            final NetlasWrapper netlasWrapper, final String[] subjectFields, final String[] issuerFields)
-            throws JsonMappingException, JsonProcessingException {
-        final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
-        final List<String> subState = netlasWrapper.getCertSubjectProvince();
-        final List<String> subCity = netlasWrapper.getCertSubjectLocality();
-        final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
-        final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-        final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
+    return result;
+  }
 
-        final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
-        final List<String> issState = netlasWrapper.getCertIssuerProvince();
-        final List<String> issCity = netlasWrapper.getCertIssuerLocality();
-        final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
-        final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
-        final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
+  public static boolean verifyCertFields(
+      final NetlasWrapper netlasWrapper, final String[] subjectFields, final String[] issuerFields)
+      throws JsonMappingException, JsonProcessingException {
+    final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
+    final List<String> subState = netlasWrapper.getCertSubjectProvince();
+    final List<String> subCity = netlasWrapper.getCertSubjectLocality();
+    final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
+    final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
+    final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
 
-        final List<List<String>> subject =
-                Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-        final List<List<String>> issuer =
-                Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
+    final List<String> issCountry = netlasWrapper.getCertIssuerCountry();
+    final List<String> issState = netlasWrapper.getCertIssuerProvince();
+    final List<String> issCity = netlasWrapper.getCertIssuerLocality();
+    final List<String> issOrg = netlasWrapper.getCertIssuerOrganization();
+    final List<String> issOrgUnit = netlasWrapper.getCertIssuerOrganizationUnit();
+    final List<String> issCommonName = netlasWrapper.getCertIssuerCommonName();
 
-        return compareList(subject, subjectFields) && compareList(issuer, issuerFields);
-    }
+    final List<List<String>> subject =
+        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
+    final List<List<String>> issuer =
+        Arrays.asList(issCountry, issState, issCity, issOrg, issOrgUnit, issCommonName);
+
+    return compareList(subject, subjectFields) && compareList(issuer, issuerFields);
+  }
 }
