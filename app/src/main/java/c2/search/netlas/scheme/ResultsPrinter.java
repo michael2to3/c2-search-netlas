@@ -1,20 +1,36 @@
 package c2.search.netlas.scheme;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultsPrinter {
+  private final Logger LOGGER = LoggerFactory.getLogger(ResultsPrinter.class);
   private final Results results;
 
   public ResultsPrinter(final Results results) {
     this.results = results;
   }
 
-  public void print(final PrintStream stream, final boolean verbose) {
+  public void print(final PrintStream stream, final boolean verbose, final boolean json) {
     if (verbose) {
       printVerbose(stream);
+    } else if (json) {
+      printJson(stream);
     } else {
       printShort(stream);
+    }
+  }
+
+  private void printJson(final PrintStream stream) {
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(stream, results);
+    } catch (IOException e) {
+      LOGGER.error("Failed to write JSON", e);
     }
   }
 
