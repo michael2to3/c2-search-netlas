@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResultsPrinter {
-  private final Logger LOGGER = LoggerFactory.getLogger(ResultsPrinter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResultsPrinter.class);
   private final Results results;
 
   public ResultsPrinter(final Results results) {
@@ -26,7 +26,7 @@ public class ResultsPrinter {
   }
 
   private void printJson(final PrintStream stream) {
-    ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = new ObjectMapper();
     try {
       mapper.writeValue(stream, results);
     } catch (IOException e) {
