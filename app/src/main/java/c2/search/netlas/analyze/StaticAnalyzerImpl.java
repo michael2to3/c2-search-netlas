@@ -33,8 +33,8 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private c2.search.netlas.scheme.Response passCert(final StaticData data) {
-    final List<Certificate> targetCertificates = data.getCertificate();
-    if (data.getCertificate() == null || targetCertificates == null) {
+    final List<Certificate> target = data.getCertificate();
+    if (data.getCertificate() == null || target == null) {
       return c2.search.netlas.scheme.Response.newBuilder()
           .setSuccess(false)
           .setDescription("Certificate is null")
@@ -43,7 +43,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
 
     final Certificate baseCertificates = response.getCertificate();
     final var comp = new CertificateComparator();
-    for (final Certificate targetCertificate : targetCertificates) {
+    for (final Certificate targetCertificate : target) {
       if (comp.compare(targetCertificate, baseCertificates) == 0) {
         return c2.search.netlas.scheme.Response.newBuilder()
             .setSuccess(true)

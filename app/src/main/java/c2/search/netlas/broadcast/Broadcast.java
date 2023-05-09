@@ -11,7 +11,7 @@ public class Broadcast {
   private final String range;
   private final List<StaticData> data;
 
-  public Broadcast(Netlas netlas, String range, List<StaticData> data)
+  public Broadcast(final Netlas netlas, final String range, final List<StaticData> data)
       throws IpRangeFormatException {
     this.netlas = netlas;
     this.range = new NormalizeRangeHost(range).normalize();
@@ -19,7 +19,7 @@ public class Broadcast {
   }
 
   public Response execute() throws NetlasRequestException {
-    String query = GenerateQuery.generate(range, data);
+    final String query = GenerateQuery.generate(range, data);
     return netlas.response(query, 0, null, null, false);
   }
 }

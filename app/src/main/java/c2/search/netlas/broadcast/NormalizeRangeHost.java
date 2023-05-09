@@ -14,7 +14,7 @@ public class NormalizeRangeHost {
   }
 
   public String normalize() throws IpRangeFormatException {
-    String normalizedRange = null;
+    String normalizedRange;
     final Matcher matcher = getIpRangeMatcher();
     final Matcher subnetMatcher = getSubnetMatcher();
 
@@ -23,7 +23,7 @@ public class NormalizeRangeHost {
     } else if (subnetMatcher.find()) {
       normalizedRange = processSubnet(subnetMatcher);
     } else {
-      throw new IpRangeFormatException("Invalid IP range format");
+      throw new IpRangeFormatException("Invalid IP range format: " + range);
     }
 
     return normalizedRange;
@@ -36,7 +36,7 @@ public class NormalizeRangeHost {
     if (isValidIPAddress(startIP) && isValidIPAddress(endIP)) {
       return formatIpRange(startIP, endIP);
     } else {
-      throw new IpRangeFormatException("Invalid IP range format");
+      throw new IpRangeFormatException("Invalid IP address format in range: " + range);
     }
   }
 
@@ -47,20 +47,19 @@ public class NormalizeRangeHost {
     if (isValidIPAddress(ipAddress) && isValidSubnetMask(subnetMask)) {
       return "\"" + ipAddress + "/" + subnetMask + "\"";
     } else {
-      throw new IpRangeFormatException("Invalid IP range format");
+      throw new IpRangeFormatException(
+          "Invalid IP address format or subnet mask in range: " + range);
     }
   }
 
   private Matcher getIpRangeMatcher() {
-    final Pattern pattern =
-        Pattern.compile(
-            "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
+    final Pattern pattern = Pattern.compile(
+        "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
     return pattern.matcher(range);
   }
 
   private Matcher getSubnetMatcher() {
-    final Pattern subnetPattern =
-        Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
+    final Pattern subnetPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
     return subnetPattern.matcher(range);
   }
 
@@ -70,16 +69,16 @@ public class NormalizeRangeHost {
       final InetAddress startAddress = InetAddress.getByName(startIP);
       final InetAddress endAddress = InetAddress.getByName(endIP);
 
-      final ByteBuffer startAddressBuffer = ByteBuffer.wrap(startAddress.getAddress());
-      final ByteBuffer endAddressBuffer = ByteBuffer.wrap(endAddress.getAddress());
+      final ByteBuffer startBuffer = ByteBuffer.wrap(startAddress.getAddress());
+      final ByteBuffer endBuffer = ByteBuffer.wrap(endAddress.getAddress());
 
-      if (startAddressBuffer.compareTo(endAddressBuffer) <= 0) {
+      if (startBuffer.compareTo(endBuffer) <= 0) {
         return "[" + startIP + " TO " + endIP + "]";
       } else {
-        throw new IpRangeFormatException("Invalid IP range");
+        throw new IpRangeFormatException("Invalid IP range format: " + range);
       }
     } catch (UnknownHostException e) {
-      throw new IpRangeFormatException("Invalid IP range format");
+      throw new IpRangeFormatException("Invalid IP range format: " + range);
     }
   }
 
