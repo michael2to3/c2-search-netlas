@@ -9,15 +9,15 @@ public class CustomListComparator<T, U> implements Comparator<List<T>> {
   private final BiPredicate<T, U> customComparator;
   private final List<U> target;
 
-  public CustomListComparator(BiPredicate<T, U> customComparator, List<U> target) {
+  public CustomListComparator(final BiPredicate<T, U> customComparator, final List<U> target) {
     this.customComparator = customComparator;
     this.target = target;
   }
 
   @Override
-  public int compare(List<T> base, List<T> otherBase) {
-    for (T baseElement : base) {
-      for (U targetElement : target) {
+  public int compare(final List<T> base, final List<T> otherBase) {
+    for (final T baseElement : base) {
+      for (final U targetElement : target) {
         if (customComparator.test(baseElement, targetElement)) {
           return 0;
         }

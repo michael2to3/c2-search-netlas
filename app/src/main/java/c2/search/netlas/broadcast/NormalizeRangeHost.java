@@ -35,8 +35,12 @@ public class NormalizeRangeHost {
 
     if (isValidIPAddress(startIP) && isValidIPAddress(endIP)) {
       return formatIpRange(startIP, endIP);
+    } else if (!isValidIPAddress(startIP) && !isValidIPAddress(endIP)) {
+      throw new IpRangeFormatException("Invalid IP address format in start and end IPs: " + range);
+    } else if (!isValidIPAddress(startIP)) {
+      throw new IpRangeFormatException("Invalid IP address format in start IP: " + range);
     } else {
-      throw new IpRangeFormatException("Invalid IP address format in range: " + range);
+      throw new IpRangeFormatException("Invalid IP address format in end IP: " + range);
     }
   }
 
@@ -46,9 +50,10 @@ public class NormalizeRangeHost {
 
     if (isValidIPAddress(ipAddress) && isValidSubnetMask(subnetMask)) {
       return "\"" + ipAddress + "/" + subnetMask + "\"";
+    } else if (!isValidIPAddress(ipAddress)) {
+      throw new IpRangeFormatException("Invalid IP address format in subnet IP: " + range);
     } else {
-      throw new IpRangeFormatException(
-          "Invalid IP address format or subnet mask in range: " + range);
+      throw new IpRangeFormatException("Invalid subnet mask format in subnet IP: " + range);
     }
   }
 
@@ -75,10 +80,12 @@ public class NormalizeRangeHost {
       if (startBuffer.compareTo(endBuffer) <= 0) {
         return "[" + startIP + " TO " + endIP + "]";
       } else {
-        throw new IpRangeFormatException("Invalid IP range format: " + range);
+        throw new IpRangeFormatException(
+            "Invalid IP range format: start IP must be less than or equal to end IP: " + range);
       }
     } catch (UnknownHostException e) {
-      throw new IpRangeFormatException("Invalid IP range format: " + range);
+      throw new IpRangeFormatException(
+          "Invalid IP range format: invalid start or end IP address: " + range);
     }
   }
 

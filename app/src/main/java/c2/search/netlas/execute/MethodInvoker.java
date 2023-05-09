@@ -48,7 +48,9 @@ public final class MethodInvoker {
   }
 
   public static void handleInvocationError(final Exception exception) {
-    LOGGER.error("Error invoking test methods - {}", exception.getMessage(), exception);
+    if (LOGGER.isErrorEnabled()) {
+      LOGGER.error("Error invoking test methods - {}", exception.getMessage(), exception);
+    }
   }
 
   private static String getDescriptionOfTestMethod(final Method method) {

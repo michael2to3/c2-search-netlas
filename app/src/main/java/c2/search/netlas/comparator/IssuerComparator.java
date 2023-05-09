@@ -7,14 +7,16 @@ import java.util.function.Supplier;
 import netlas.java.scheme.Issuer;
 
 public class IssuerComparator implements Comparator<Issuer> {
+  public IssuerComparator() {}
+
   @Override
-  public int compare(Issuer base, Issuer target) {
+  public int compare(final Issuer base, final Issuer target) {
     if (base == null || target == null) {
       return 0;
     }
-    ListComparator comp = new ListComparator();
+    final ListComparator comp = new ListComparator();
 
-    List<Supplier<Integer>> comparisons =
+    final List<Supplier<Integer>> comparisons =
         Arrays.asList(
             () -> comp.compare(base.getCountry(), target.getCountry()),
             () -> comp.compare(base.getOrganization(), target.getOrganization()),

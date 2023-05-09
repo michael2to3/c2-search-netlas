@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ListComparator implements Comparator<List<String>> {
+  public ListComparator() {}
 
   @Override
   public int compare(List<String> base, List<String> target) {

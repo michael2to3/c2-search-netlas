@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import netlas.java.scheme.Subject;
 
 public class SubjectComparator implements Comparator<Subject> {
+  public SubjectComparator() {}
 
   @Override
   public int compare(Subject base, Subject target) {

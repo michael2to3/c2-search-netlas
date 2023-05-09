@@ -24,13 +24,13 @@ public class DetectSubmit implements Submit {
   private final ClassScanner classScanner;
   private final Factory factory;
 
-  public DetectSubmit(ClassScanner classScanner, Factory factory) {
+  public DetectSubmit(final ClassScanner classScanner, final Factory factory) {
     this.classScanner = classScanner;
     this.factory = factory;
   }
 
   @Override
-  public List<Future<Results>> submitTests(ExecutorService executor) {
+  public List<Future<Results>> submitTests(final ExecutorService executor) {
     return classScanner.getClassesWithAnnotation(Detect.class).stream()
         .map(clazz -> executor.submit(() -> runTestsForClass(clazz)))
         .collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class DetectSubmit implements Submit {
         if (response != null) {
           responses.add(response);
         }
-      } catch (TimeoutException e) {
+      } catch (final TimeoutException e) {
         LOGGER.info("Timed out after {} seconds", TIMEOUT_SINGLE, e);
       } catch (InterruptedException | ExecutionException e) {
         MethodInvoker.handleInvocationError(e);

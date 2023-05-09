@@ -8,13 +8,13 @@ import netlas.java.scheme.Headers;
 public class HeadersComparator implements Comparator<Headers> {
 
   @Override
-  public int compare(Headers base, Headers target) {
-    Map<String, List<String>> baseHeaders = base.getHeaders();
-    Map<String, List<String>> targetHeaders = target.getHeaders();
+  public int compare(final Headers base, final Headers target) {
+    final Map<String, List<String>> baseHeaders = base.getHeaders();
+    final Map<String, List<String>> targetHeaders = target.getHeaders();
 
-    for (Map.Entry<String, List<String>> entry : targetHeaders.entrySet()) {
-      String key = entry.getKey();
-      List<String> targetValues = entry.getValue();
+    for (final Map.Entry<String, List<String>> entry : targetHeaders.entrySet()) {
+      final String key = entry.getKey();
+      final List<String> targetValues = entry.getValue();
 
       if (!baseHeaders.containsKey(key)) {
         if (targetValues == null || targetValues.isEmpty()) {
@@ -23,7 +23,7 @@ public class HeadersComparator implements Comparator<Headers> {
         return -1;
       }
 
-      List<String> baseValues = baseHeaders.get(key);
+      final List<String> baseValues = baseHeaders.get(key);
       if (baseValues == null || baseValues.isEmpty()) {
         if (targetValues == null || targetValues.isEmpty()) {
           continue;
@@ -32,7 +32,7 @@ public class HeadersComparator implements Comparator<Headers> {
       }
 
       boolean hasCommonElement = false;
-      for (String targetValue : targetValues) {
+      for (final String targetValue : targetValues) {
         if (baseValues.contains(targetValue)) {
           hasCommonElement = true;
           break;
