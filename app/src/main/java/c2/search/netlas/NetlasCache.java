@@ -7,11 +7,11 @@ import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
 
 final public class NetlasCache {
-  private static NetlasCache instance = null;
+  private static NetlasCache instance;
   private final Netlas netlas;
   private final Map<String, Object> cache;
 
-  private NetlasCache(String apiKey) {
+  private NetlasCache(final String apiKey) {
     this.netlas = Netlas.newBuilder().setApiKey(apiKey).build();
     this.cache = new HashMap<>();
   }
@@ -20,7 +20,7 @@ final public class NetlasCache {
     return instance;
   }
 
-  public static NetlasCache getInstance(String apiKey) {
+  public static NetlasCache getInstance(final String apiKey) {
     if (instance == null) {
       instance = new NetlasCache(apiKey);
     }
@@ -32,9 +32,9 @@ final public class NetlasCache {
   }
 
   public Response response(
-      String query, int page, String indices, String fields, boolean excludeFields)
+      final String query, final int page, final String indices, final String fields, final boolean excludeFields)
       throws NetlasRequestException {
-    String cacheKey = buildCacheKey("response", query, page, indices, fields, excludeFields);
+    final String cacheKey = buildCacheKey("response", query, page, indices, fields, excludeFields);
     var response = (Response) cache.get(cacheKey);
     if (response == null) {
       response = fetchResponse(query, page, indices, fields, excludeFields);
@@ -44,13 +44,13 @@ final public class NetlasCache {
   }
 
   private Response fetchResponse(
-      String query, int page, String indices, String fields, boolean excludeFields)
+      final String query, final int page, final String indices, final String fields, final boolean excludeFields)
       throws NetlasRequestException {
     return netlas.response(query, page, indices, fields, excludeFields);
   }
 
   private String buildCacheKey(
-      String method, String query, int page, String indices, String fields, boolean excludeFields) {
+      final String method, final String query, final int page, final String indices, final String fields, final boolean excludeFields) {
     return method + "|" + query + "|" + page + "|" + indices + "|" + fields + "|" + excludeFields;
   }
 }
