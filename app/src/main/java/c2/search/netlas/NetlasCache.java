@@ -6,7 +6,7 @@ import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
 
-final public class NetlasCache {
+public final class NetlasCache {
   private static NetlasCache instance;
   private final Netlas netlas;
   private final Map<String, Object> cache;
@@ -32,7 +32,11 @@ final public class NetlasCache {
   }
 
   public Response response(
-      final String query, final int page, final String indices, final String fields, final boolean excludeFields)
+      final String query,
+      final int page,
+      final String indices,
+      final String fields,
+      final boolean excludeFields)
       throws NetlasRequestException {
     final String cacheKey = buildCacheKey("response", query, page, indices, fields, excludeFields);
     var response = (Response) cache.get(cacheKey);
@@ -44,13 +48,22 @@ final public class NetlasCache {
   }
 
   private Response fetchResponse(
-      final String query, final int page, final String indices, final String fields, final boolean excludeFields)
+      final String query,
+      final int page,
+      final String indices,
+      final String fields,
+      final boolean excludeFields)
       throws NetlasRequestException {
     return netlas.response(query, page, indices, fields, excludeFields);
   }
 
   private String buildCacheKey(
-      final String method, final String query, final int page, final String indices, final String fields, final boolean excludeFields) {
+      final String method,
+      final String query,
+      final int page,
+      final String indices,
+      final String fields,
+      final boolean excludeFields) {
     return method + "|" + query + "|" + page + "|" + indices + "|" + fields + "|" + excludeFields;
   }
 }
