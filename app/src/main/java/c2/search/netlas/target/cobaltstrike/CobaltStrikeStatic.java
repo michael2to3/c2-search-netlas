@@ -23,10 +23,8 @@ public class CobaltStrikeStatic implements StaticData {
       final String organization,
       final String unit,
       final String commonName) {
-    Certificate cert = new Certificate();
-    Subject subject = new Subject();
-    Issuer issuer = new Issuer();
 
+    Subject subject = new Subject();
     subject.setCountry(List.of(country));
     subject.setProvince(List.of(province));
     subject.setLocality(List.of(locality));
@@ -34,12 +32,14 @@ public class CobaltStrikeStatic implements StaticData {
     subject.setOrganizationalUnit(List.of(unit));
     subject.setCommonName(List.of(commonName));
 
+    Issuer issuer = new Issuer();
     issuer.setCountry(List.of(country));
     issuer.setLocality(List.of(locality));
     issuer.setOrganization(List.of(organization));
     issuer.setOrganizationalUnit(List.of(unit));
     issuer.setCommonName(List.of(commonName));
 
+    Certificate cert = new Certificate();
     cert.setIssuer(issuer);
     cert.setSubject(subject);
 

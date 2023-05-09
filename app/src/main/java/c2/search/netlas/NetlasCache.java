@@ -6,7 +6,7 @@ import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
 
-public class NetlasCache {
+final public class NetlasCache {
   private static NetlasCache instance = null;
   private final Netlas netlas;
   private final Map<String, Object> cache;

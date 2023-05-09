@@ -5,13 +5,13 @@ import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
 
 public interface StaticData {
-  public List<String> getJarm();
+  public abstract List<String> getJarm();
 
-  public List<Certificate> getCertificate();
+  public abstract List<Certificate> getCertificate();
 
-  public List<Integer> getPort();
+  public abstract List<Integer> getPort();
 
-  public List<Headers> getHeader();
+  public abstract List<Headers> getHeader();
 
-  public List<String> getBodyAsSha256();
+  public abstract List<String> getBodyAsSha256();
 }
