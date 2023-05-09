@@ -8,6 +8,7 @@ import netlas.java.scheme.Headers;
 
 @Static(name = "Havoc")
 public class HavocStatic implements StaticData {
+  public HavocStatic() {}
 
   @Override
   public List<String> getJarm() {
@@ -16,12 +17,12 @@ public class HavocStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override

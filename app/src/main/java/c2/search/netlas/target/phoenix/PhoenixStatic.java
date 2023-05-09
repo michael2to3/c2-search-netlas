@@ -2,8 +2,6 @@ package c2.search.netlas.target.phoenix;
 
 import c2.search.netlas.analyze.StaticData;
 import c2.search.netlas.annotation.Static;
-import c2.search.netlas.annotation.Wire;
-import c2.search.netlas.scheme.Host;
 import java.util.Arrays;
 import java.util.List;
 import netlas.java.scheme.Certificate;
@@ -13,8 +11,6 @@ import netlas.java.scheme.Subject;
 
 @Static(name = "Phoenix")
 public class PhoenixStatic implements StaticData {
-  @Wire private Host host;
-
   public PhoenixStatic() {}
 
   @Override
@@ -38,7 +34,7 @@ public class PhoenixStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override

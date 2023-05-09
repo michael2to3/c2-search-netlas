@@ -9,6 +9,7 @@ import netlas.java.scheme.Headers;
 
 @Static(name = "Metasploit")
 public class MetasploitStatic implements StaticData {
+  public MetasploitStatic() {}
 
   @Override
   public List<String> getJarm() {

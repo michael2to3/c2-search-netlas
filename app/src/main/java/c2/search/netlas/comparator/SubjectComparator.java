@@ -10,10 +10,10 @@ public class SubjectComparator implements Comparator<Subject> {
   public SubjectComparator() {}
 
   @Override
-  public int compare(Subject base, Subject target) {
-    ListComparator comp = new ListComparator();
+  public int compare(final Subject base, final Subject target) {
+    final ListComparator comp = new ListComparator();
 
-    List<Supplier<Integer>> comparisons =
+    final List<Supplier<Integer>> comparisons =
         Arrays.asList(
             () -> comp.compare(base.getCountry(), target.getCountry()),
             () -> comp.compare(base.getOrganization(), target.getOrganization()),

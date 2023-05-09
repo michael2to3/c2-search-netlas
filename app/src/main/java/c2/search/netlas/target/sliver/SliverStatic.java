@@ -10,6 +10,8 @@ import netlas.java.scheme.Subject;
 
 @Static(name = "Sliver")
 public class SliverStatic implements StaticData {
+  public SliverStatic() {}
+
   @Override
   public List<String> getJarm() {
     final String jarm = "3fd21c00000000021c43d21c21c43d3795b2a696610c3ae44909dcdcb797f2";
@@ -24,7 +26,7 @@ public class SliverStatic implements StaticData {
     final var organization = List.of("College");
     final var organizationUnit = List.of("distant lettuce, incorporated");
     final var commonName = List.of("localhost");
-    Subject subject = new Subject();
+    final Subject subject = new Subject();
     subject.setCountry(country);
     subject.setProvince(province);
     subject.setLocality(locality);
@@ -36,11 +38,11 @@ public class SliverStatic implements StaticData {
 
     final Issuer issuer = new Issuer();
     issuer.setCommonName(List.of("operators"));
-    subject = new Subject();
-    subject.setCommonName(List.of("multiplayer"));
+    final Subject osubject = new Subject();
+    osubject.setCommonName(List.of("multiplayer"));
     final Certificate listener = new Certificate();
     listener.setIssuer(issuer);
-    listener.setSubject(subject);
+    listener.setSubject(osubject);
 
     return List.of(teamserver, listener);
   }

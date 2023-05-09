@@ -9,12 +9,12 @@ public class ListComparator implements Comparator<List<String>> {
   public ListComparator() {}
 
   @Override
-  public int compare(List<String> base, List<String> target) {
+  public int compare(final List<String> base, final List<String> target) {
     if (base == null || target == null) {
       return -1;
     }
-    Set<String> baseSet = new HashSet<>(base);
-    for (String element : target) {
+    final Set<String> baseSet = new HashSet<>(base);
+    for (final String element : target) {
       if (baseSet.contains(element)) {
         return 0;
       }

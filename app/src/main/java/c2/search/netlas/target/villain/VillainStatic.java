@@ -43,7 +43,7 @@ public class VillainStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override
@@ -55,6 +55,6 @@ public class VillainStatic implements StaticData {
 
   @Override
   public List<String> getBodyAsSha256() {
-    return null;
+    return List.of();
   }
 }

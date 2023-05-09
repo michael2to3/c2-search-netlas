@@ -6,5 +6,5 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public interface Submit {
-  List<Future<Results>> submitTests(ExecutorService executor);
+  public abstract List<Future<Results>> submitTests(ExecutorService executor);
 }

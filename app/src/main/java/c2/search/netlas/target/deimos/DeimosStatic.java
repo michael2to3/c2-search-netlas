@@ -10,6 +10,7 @@ import netlas.java.scheme.Subject;
 
 @Static(name = "Deimos")
 public class DeimosStatic implements StaticData {
+  public DeimosStatic() {}
 
   @Override
   public List<String> getJarm() {
@@ -33,12 +34,12 @@ public class DeimosStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Headers> getHeader() {
-    return null;
+    return List.of();
   }
 
   @Override

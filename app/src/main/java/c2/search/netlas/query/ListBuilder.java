@@ -16,11 +16,11 @@ public class ListBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    final String query = generate(value, list).toString();
     if (list == null) {
       return "";
     }
     final int min = 1;
+    final String query = generate(value, list).toString();
     if (list.size() > min) {
       return String.format("(%s)", query);
     }

@@ -7,7 +7,6 @@ public class BodyAsSha256Builder implements QueryBuilder {
   private String separator;
 
   public BodyAsSha256Builder(final List<String> body) {
-    super();
     this.body = body;
     this.separator = " OR ";
   }

@@ -26,7 +26,7 @@ public class CobaltStrikeStatic implements StaticData {
       final String unit,
       final String commonName) {
 
-    Subject subject = new Subject();
+    final Subject subject = new Subject();
     subject.setCountry(List.of(country));
     subject.setProvince(List.of(province));
     subject.setLocality(List.of(locality));
@@ -34,14 +34,14 @@ public class CobaltStrikeStatic implements StaticData {
     subject.setOrganizationalUnit(List.of(unit));
     subject.setCommonName(List.of(commonName));
 
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setCountry(List.of(country));
     issuer.setLocality(List.of(locality));
     issuer.setOrganization(List.of(organization));
     issuer.setOrganizationalUnit(List.of(unit));
     issuer.setCommonName(List.of(commonName));
 
-    Certificate cert = new Certificate();
+    final Certificate cert = new Certificate();
     cert.setIssuer(issuer);
     cert.setSubject(subject);
 
@@ -50,7 +50,7 @@ public class CobaltStrikeStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    Certificate teamserver =
+    final Certificate teamserver =
         generateCert(
             "US",
             "Washington",
@@ -58,18 +58,19 @@ public class CobaltStrikeStatic implements StaticData {
             "Microsoft Corporation",
             "Microsoft Corporation",
             "Outlook.live.com");
-    Certificate listener = generateCert("", "", "", "", "", "");
+    final Certificate listener = generateCert("", "", "", "", "", "");
     return List.of(teamserver, listener);
   }
 
   @Override
   public List<Integer> getPort() {
-    return List.of(41337);
+    final int defaultPort = 41337;
+    return List.of(defaultPort);
   }
 
   @Override
   public List<Headers> getHeader() {
-    Headers headers = new Headers();
+    final Headers headers = new Headers();
     headers.setHeader("server", new ArrayList<>());
     headers.setHeader("content-length", List.of("0"));
     headers.setHeader("content-type", List.of("text/plain"));
@@ -78,6 +79,6 @@ public class CobaltStrikeStatic implements StaticData {
 
   @Override
   public List<String> getBodyAsSha256() {
-    return null;
+    return List.of();
   }
 }

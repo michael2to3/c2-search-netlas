@@ -10,6 +10,8 @@ import netlas.java.scheme.Subject;
 
 @Static(name = "Posh")
 public class PoshStatic implements StaticData {
+  public PoshStatic() {}
+
   @Override
   public List<String> getJarm() {
     final String jarm = "2ad2ad0002ad2ad22c42d42d000000faabb8fd156aa8b4d8a37853e1063261";
@@ -24,14 +26,14 @@ public class PoshStatic implements StaticData {
     final var organization = List.of("Pajfds");
     final var organizationUnit = List.of("Jethpro");
     final var commonName = List.of("P18055077");
-    Subject subject = new Subject();
+    final Subject subject = new Subject();
     subject.setCountry(country);
     subject.setProvince(province);
     subject.setLocality(locality);
     subject.setOrganization(organization);
     subject.setOrganizationalUnit(organizationUnit);
     subject.setCommonName(commonName);
-    Issuer issue = new Issuer();
+    final Issuer issue = new Issuer();
     issue.setCountry(country);
     issue.setProvince(province);
     issue.setLocality(locality);
@@ -39,7 +41,7 @@ public class PoshStatic implements StaticData {
     issue.setOrganizationalUnit(organizationUnit);
     issue.setCommonName(commonName);
 
-    Certificate cert = new Certificate();
+    final Certificate cert = new Certificate();
     cert.setSubject(subject);
     cert.setIssuer(issue);
 
@@ -48,12 +50,12 @@ public class PoshStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Headers> getHeader() {
-    Headers header = new Headers();
+    final Headers header = new Headers();
     header.setHeader("Content-Type", List.of("text/html"));
     header.setHeader("Server", List.of("Apache"));
     return List.of(header);

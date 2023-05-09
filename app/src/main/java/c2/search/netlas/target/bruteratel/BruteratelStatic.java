@@ -10,6 +10,9 @@ import netlas.java.scheme.Subject;
 
 @Static(name = "Bruteratel")
 public class BruteratelStatic implements StaticData {
+
+  public BruteratelStatic() {}
+
   @Override
   public List<String> getJarm() {
     return List.of("3fd21b20d00000021c43d21b21b43de0a012c76cf078b8d06f4620c2286f5e");
