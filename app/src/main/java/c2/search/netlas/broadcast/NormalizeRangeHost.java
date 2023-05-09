@@ -79,15 +79,15 @@ public class NormalizeRangeHost {
       final ByteBuffer startBuffer = ByteBuffer.wrap(startAddress.getAddress());
       final ByteBuffer endBuffer = ByteBuffer.wrap(endAddress.getAddress());
 
-      if (startBuffer.compareTo(endBuffer) <= 0) {
-        return "[" + startIP + " TO " + endIP + "]";
-      } else {
+      if (startBuffer.compareTo(endBuffer) > 0) {
         throw new IpRangeFormatException(
             "Invalid IP range format: start IP must be less than or equal to end IP: " + range);
       }
+
+      return "[" + startIP + " TO " + endIP + "]";
     } catch (UnknownHostException e) {
       throw new IpRangeFormatException(
-          "Invalid IP range format: invalid start or end IP address: " + range);
+          "Invalid IP range format: invalid start or end IP address: " + range, e);
     }
   }
 
