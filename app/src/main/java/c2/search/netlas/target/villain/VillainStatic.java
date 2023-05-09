@@ -22,18 +22,18 @@ public class VillainStatic implements StaticData {
   public List<Certificate> getCertificate() {
     // * subject: C=AU; ST=Some-State; O=Internet Widgits Pty Ltd
     // * issuer: C=AU; ST=Some-State; O=Internet Widgits Pty Ltd
-    Certificate certificate = new Certificate();
-    Subject subject = new Subject();
-    var country = Arrays.asList("AU");
-    var state = Arrays.asList("Some-State");
-    var organization = Arrays.asList("Internet Widgits Pty Ltd");
+    final Subject subject = new Subject();
+    final var country = Arrays.asList("AU");
+    final var state = Arrays.asList("Some-State");
+    final var organization = Arrays.asList("Internet Widgits Pty Ltd");
     subject.setCountry(country);
     subject.setLocality(state);
     subject.setOrganization(organization);
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setCountry(country);
     issuer.setLocality(state);
     issuer.setOrganization(organization);
+    final Certificate certificate = new Certificate();
     certificate.setIssuer(issuer);
     certificate.setSubject(subject);
     return Arrays.asList(certificate);
@@ -46,7 +46,7 @@ public class VillainStatic implements StaticData {
 
   @Override
   public List<Headers> getHeader() {
-    Headers headers = new Headers();
+    final Headers headers = new Headers();
     headers.setHeader("server", List.of("BaseHTTP"));
     return Arrays.asList(headers);
   }

@@ -25,7 +25,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
           .setDescription("Jarm is null")
           .build();
     }
-    boolean pass = data.getJarm().contains(baseJarms);
+    final boolean pass = data.getJarm().contains(baseJarms);
     return c2.search.netlas.scheme.Response.newBuilder()
         .setSuccess(pass)
         .setDescription("Jarm matched")
@@ -33,7 +33,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private c2.search.netlas.scheme.Response passCert(final StaticData data) {
-    List<Certificate> targetCertificates = data.getCertificate();
+    final List<Certificate> targetCertificates = data.getCertificate();
     if (data.getCertificate() == null || targetCertificates == null) {
       return c2.search.netlas.scheme.Response.newBuilder()
           .setSuccess(false)
@@ -41,9 +41,9 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
           .build();
     }
 
-    Certificate baseCertificates = response.getCertificate();
-    var comp = new CertificateComparator();
-    for (Certificate targetCertificate : targetCertificates) {
+    final Certificate baseCertificates = response.getCertificate();
+    final var comp = new CertificateComparator();
+    for (final Certificate targetCertificate : targetCertificates) {
       if (comp.compare(targetCertificate, baseCertificates) == 0) {
         return c2.search.netlas.scheme.Response.newBuilder()
             .setSuccess(true)
@@ -58,7 +58,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private c2.search.netlas.scheme.Response passPort(final StaticData data) {
-    List<Integer> targetPorts = data.getPort();
+    final List<Integer> targetPorts = data.getPort();
     if (data.getPort() == null || targetPorts == null) {
       return c2.search.netlas.scheme.Response.newBuilder()
           .setSuccess(false)
@@ -66,8 +66,8 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
           .build();
     }
 
-    Integer basePorts = response.getPort();
-    boolean pass = targetPorts.contains(basePorts);
+    final Integer basePorts = response.getPort();
+    final boolean pass = targetPorts.contains(basePorts);
     return c2.search.netlas.scheme.Response.newBuilder()
         .setSuccess(pass)
         .setDescription("Port matched")
@@ -75,7 +75,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private c2.search.netlas.scheme.Response passHeader(final StaticData data) {
-    List<Headers> targetHeaders = data.getHeader();
+    final List<Headers> targetHeaders = data.getHeader();
     if (data.getHeader() == null || targetHeaders == null) {
       return c2.search.netlas.scheme.Response.newBuilder()
           .setSuccess(false)
@@ -83,9 +83,9 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
           .build();
     }
 
-    Headers baseHeaders = response.getHttp().getHeaders();
-    var comp = new HeadersComparator();
-    for (Headers targetHeader : targetHeaders) {
+    final Headers baseHeaders = response.getHttp().getHeaders();
+    final var comp = new HeadersComparator();
+    for (final Headers targetHeader : targetHeaders) {
       if (comp.compare(targetHeader, baseHeaders) == 0) {
         return c2.search.netlas.scheme.Response.newBuilder()
             .setSuccess(true)
@@ -100,8 +100,8 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
   }
 
   private c2.search.netlas.scheme.Response passBody(final StaticData data) {
-    List<String> targetBody = data.getBodyAsSha256();
-    String baseBody = response.getHttp().getBodySha256();
+    final List<String> targetBody = data.getBodyAsSha256();
+    final String baseBody = response.getHttp().getBodySha256();
     if (baseBody == null || targetBody == null) {
       return c2.search.netlas.scheme.Response.newBuilder()
           .setSuccess(false)
@@ -109,7 +109,7 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
           .build();
     }
 
-    boolean pass = targetBody.contains(baseBody);
+    final boolean pass = targetBody.contains(baseBody);
     return c2.search.netlas.scheme.Response.newBuilder()
         .setSuccess(pass)
         .setDescription("Body matched")
@@ -118,15 +118,15 @@ public class StaticAnalyzerImpl implements StaticAnalyzer {
 
   @Override
   public Results analyze(final StaticData data) {
-    Results results = new Results();
-    List<c2.search.netlas.scheme.Response> responses =
+    final Results results = new Results();
+    final List<c2.search.netlas.scheme.Response> responses =
         List.of(passJarm(data), passCert(data), passPort(data), passHeader(data), passBody(data));
     results.setResponses(Map.of(getNameOfClass(data.getClass()), responses));
     return results;
   }
 
   private String getNameOfClass(final Class<?> clazz) {
-    Static annotation = clazz.getAnnotation(Static.class);
+    final Static annotation = clazz.getAnnotation(Static.class);
     String name = annotation.name();
     if (name == null || name.isEmpty()) {
       name = clazz.getSimpleName();

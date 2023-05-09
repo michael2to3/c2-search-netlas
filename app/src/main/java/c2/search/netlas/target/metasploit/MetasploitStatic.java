@@ -21,7 +21,7 @@ public class MetasploitStatic implements StaticData {
             "07c03c12c21c21c07c07c03c07c21c23aeefb38b723c523befb314af6e95ac",
             "07d19d12d21d21d00007d19d07d21d0ae59125bcd90b8876b50928af8f6cd4");
 
-    List<String> total = new ArrayList<>();
+    final List<String> total = new ArrayList<>();
     total.addAll(jarmv5);
     total.addAll(jarmv6);
 
@@ -40,14 +40,14 @@ public class MetasploitStatic implements StaticData {
 
   @Override
   public List<Headers> getHeader() {
-    Headers headers = new Headers();
+    final Headers headers = new Headers();
     headers.setHeader("server", List.of("apache"));
     return List.of(headers);
   }
 
   @Override
   public List<String> getBodyAsSha256() {
-    var body = "534c3073bb1d373b2c76f9c85cc7373658a7dbbe7cc7eccdf5af751ed91951df";
+    final var body = "534c3073bb1d373b2c76f9c85cc7373658a7dbbe7cc7eccdf5af751ed91951df";
     return List.of(body);
   }
 }

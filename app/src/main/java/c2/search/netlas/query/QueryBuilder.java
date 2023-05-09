@@ -1,9 +1,9 @@
 package c2.search.netlas.query;
 
 public interface QueryBuilder {
-  public String build();
+  public abstract String build();
 
-  public void setSeparator(final String separator);
+  public abstract void setSeparator(final String separator);
 
-  public String getSeparator();
+  public abstract String getSeparator();
 }

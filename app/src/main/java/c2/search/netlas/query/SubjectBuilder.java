@@ -19,7 +19,7 @@ public class SubjectBuilder implements QueryBuilder {
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 
@@ -29,11 +29,11 @@ public class SubjectBuilder implements QueryBuilder {
   }
 
   private StringJoiner generate(final Subject subject) {
-    StringJoiner joiner = new StringJoiner(getSeparator());
+    final StringJoiner joiner = new StringJoiner(getSeparator());
     if (subject == null) {
       return joiner;
     }
-    List<QueryBuilder> builder =
+    final List<QueryBuilder> builder =
         List.of(
             new ListBuilder("certificate.subject.country", subject.getCountry()),
             new ListBuilder("certificate.subject.locality", subject.getLocality()),
@@ -43,9 +43,9 @@ public class SubjectBuilder implements QueryBuilder {
             new ListBuilder("certificate.subject.common_name", subject.getCommonName()),
             new ListBuilder("certificate.subject.province", subject.getProvince()));
 
-    for (QueryBuilder builderItem : builder) {
+    for (final QueryBuilder builderItem : builder) {
       builderItem.setSeparator(" OR ");
-      String query = builderItem.build();
+      final String query = builderItem.build();
       if (query != null && !query.isEmpty()) {
         joiner.add(query);
       }
