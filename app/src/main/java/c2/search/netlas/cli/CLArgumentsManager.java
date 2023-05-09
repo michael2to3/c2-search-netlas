@@ -45,6 +45,10 @@ public class CLArgumentsManager {
     return cmd.hasOption("h");
   }
 
+  public boolean isJson() {
+    return cmd.hasOption("j");
+  }
+
   public boolean isVerbose() {
     return cmd.hasOption("v");
   }

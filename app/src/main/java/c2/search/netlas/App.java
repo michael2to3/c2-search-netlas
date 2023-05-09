@@ -102,7 +102,7 @@ public final class App {
     final Results results = c2Detect.run();
 
     final ResultsPrinter printer = new ResultsPrinter(results);
-    printer.print(outputHandler, clArgManager.isVerbose());
+    printer.print(outputHandler, clArgManager.isVerbose(), clArgManager.isJson());
   }
 
   private static Options getOptions() {
@@ -128,13 +128,15 @@ public final class App {
             .argName("TARGET_PORT")
             .desc("Set the target port for the application")
             .build();
+    final Option jsonOption =
+        Option.builder("j").longOpt("json").hasArg(false).desc("Print in JSON format").build();
     final Option printVerbosOption =
         Option.builder("v").longOpt("verbose").hasArg(false).desc("Print verbose output").build();
     final Option helpOption =
         Option.builder("h").longOpt("help").desc("Print this help message").build();
 
     final List<Option> list =
-        List.of(setOption, targetOption, portOption, printVerbosOption, helpOption);
+        List.of(setOption, targetOption, portOption, jsonOption, printVerbosOption, helpOption);
     for (final Option option : list) {
       options.addOption(option);
     }

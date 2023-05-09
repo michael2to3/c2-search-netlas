@@ -1,9 +1,10 @@
 package c2.search.netlas;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,8 @@ class AppTest {
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
+  private final String API = System.getenv("API_KEY");
+  private final boolean HAS_API = API != null && !API.isEmpty();
 
   @BeforeEach
   public void setUpStreams() {
@@ -49,6 +52,7 @@ class AppTest {
 
   @Test
   void testInvokeWithoutExplicitApiKey() {
+    assumeTrue(HAS_API, "API_KEY is not set");
     App.main(new String[] {"-s", System.getenv("API_KEY")});
     var args = new String[] {"-t", "google.com", "-p", "443"};
     App.main(args);
@@ -57,6 +61,7 @@ class AppTest {
 
   @Test
   void testVerboseOption() throws ParseException {
+    assumeTrue(HAS_API, "API_KEY is not set");
     CLArgumentsManager clArgumentsManager = mock(CLArgumentsManager.class);
     when(clArgumentsManager.isChangeApiKey()).thenReturn(true);
     when(clArgumentsManager.getApiKey()).thenReturn(System.getenv("API_KEY"));
@@ -78,6 +83,7 @@ class AppTest {
 
   @Test
   void testShortOutput() throws ParseException {
+    assumeTrue(HAS_API, "API_KEY is not set");
     CLArgumentsManager clArgumentsManager = mock(CLArgumentsManager.class);
     when(clArgumentsManager.isChangeApiKey()).thenReturn(true);
     when(clArgumentsManager.getApiKey()).thenReturn(System.getenv("API_KEY"));
