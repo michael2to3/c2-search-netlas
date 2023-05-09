@@ -5,7 +5,7 @@ import java.util.StringJoiner;
 
 public class ListBuilder implements QueryBuilder {
   private final String value;
-  private List<String> list;
+  private final List<String> list;
   private String separator;
 
   public ListBuilder(final String value, final List<String> list) {
@@ -16,18 +16,19 @@ public class ListBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    String query = generate(value, list).toString();
+    final String query = generate(value, list).toString();
     if (list == null) {
       return "";
     }
-    if (list.size() > 1) {
+    final int min = 1;
+    if (list.size() > min) {
       return String.format("(%s)", query);
     }
     return query;
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 
@@ -37,11 +38,11 @@ public class ListBuilder implements QueryBuilder {
   }
 
   private StringJoiner generate(final String value, final List<String> list) {
-    StringJoiner joiner = new StringJoiner(getSeparator());
+    final StringJoiner joiner = new StringJoiner(getSeparator());
     if (list == null || list.isEmpty()) {
       return joiner;
     }
-    for (String c : list) {
+    for (final String c : list) {
       if (c == null) {
         joiner.add(String.format("%s:*", value));
       } else {

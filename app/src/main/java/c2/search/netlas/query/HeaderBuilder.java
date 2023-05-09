@@ -16,13 +16,13 @@ public class HeaderBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    StringJoiner joiner = new StringJoiner(separator);
-    for (Map.Entry<String, List<String>> entry : body.getHeaders().entrySet()) {
+    final StringJoiner joiner = new StringJoiner(separator);
+    for (final Map.Entry<String, List<String>> entry : body.getHeaders().entrySet()) {
 
       String query = String.format("http.headers.%s:*", entry.getKey());
       if (entry.getValue() != null) {
-        String key = String.format("http.headers.%s", entry.getKey());
-        QueryBuilder valueBuilder = new ListBuilder(key, entry.getValue());
+        final String key = String.format("http.headers.%s", entry.getKey());
+        final QueryBuilder valueBuilder = new ListBuilder(key, entry.getValue());
         valueBuilder.setSeparator(" OR ");
         query = valueBuilder.build();
       }
@@ -36,7 +36,7 @@ public class HeaderBuilder implements QueryBuilder {
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 

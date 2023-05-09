@@ -14,7 +14,7 @@ public class CertificateBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    String query = generate(certificate).toString();
+    final String query = generate(certificate).toString();
     if (query.isEmpty()) {
       return "";
     }
@@ -22,16 +22,16 @@ public class CertificateBuilder implements QueryBuilder {
   }
 
   private StringJoiner generate(final Certificate certificate) {
-    StringJoiner joiner = new StringJoiner(getSeparator());
+    final StringJoiner joiner = new StringJoiner(getSeparator());
     if (certificate == null) {
       return joiner;
     }
-    QueryBuilder subject = new SubjectBuilder(certificate.getSubject());
-    QueryBuilder issuer = new IssuerBuilder(certificate.getIssuer());
+    final QueryBuilder subject = new SubjectBuilder(certificate.getSubject());
+    final QueryBuilder issuer = new IssuerBuilder(certificate.getIssuer());
     subject.setSeparator(separator);
     issuer.setSeparator(separator);
-    String subjectQuery = subject.build();
-    String issuerQuery = issuer.build();
+    final String subjectQuery = subject.build();
+    final String issuerQuery = issuer.build();
     if (subjectQuery != null && !subjectQuery.isEmpty()) {
       joiner.add(subject.build());
     }
@@ -42,7 +42,7 @@ public class CertificateBuilder implements QueryBuilder {
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 

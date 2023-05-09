@@ -14,13 +14,13 @@ public class BodyAsSha256Builder implements QueryBuilder {
 
   @Override
   public String build() {
-    QueryBuilder builder = new ListBuilder("http.body_sha256", body);
+    final QueryBuilder builder = new ListBuilder("http.body_sha256", body);
     builder.setSeparator(separator);
     return builder.build();
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 

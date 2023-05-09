@@ -1,6 +1,6 @@
 package c2.search.netlas.execute;
 
-import c2.search.netlas.*;
+import c2.search.netlas.NetlasCache;
 import c2.search.netlas.analyze.StaticAnalyzer;
 import c2.search.netlas.analyze.StaticAnalyzerImpl;
 import c2.search.netlas.analyze.StaticData;
@@ -21,12 +21,12 @@ public class StaticSubmit implements Submit {
   private static final Logger LOGGER = LoggerFactory.getLogger(StaticSubmit.class);
   private final ClassScanner classScanner;
 
-  public StaticSubmit(ClassScanner classScanner) {
+  public StaticSubmit(final ClassScanner classScanner) {
     this.classScanner = classScanner;
   }
 
   @Override
-  public List<Future<Results>> submitTests(ExecutorService executor) {
+  public List<Future<Results>> submitTests(final ExecutorService executor) {
     return classScanner.getClassesWithAnnotation(Static.class).stream()
         .map(clazz -> executor.submit(() -> runTestsForClass(clazz)))
         .collect(Collectors.toList());
@@ -34,7 +34,7 @@ public class StaticSubmit implements Submit {
 
   private Results runTestsForClass(final Class<?> clazz) {
     final StaticData instance = createInstance(clazz);
-    StaticAnalyzer analyzer = new StaticAnalyzerImpl(getData());
+    final StaticAnalyzer analyzer = new StaticAnalyzerImpl(getData());
     return analyzer.analyze(instance);
   }
 
@@ -52,13 +52,13 @@ public class StaticSubmit implements Submit {
 
   private Data getData() {
     try {
-      var items = NetlasCache.getInstance().response("", 0, null, null, false).getItems();
+      final var items = NetlasCache.getInstance().response("", 0, null, null, false).getItems();
       if (items.isEmpty()) {
         LOGGER.warn("No static data found");
         return null;
       }
       return items.get(0).getData();
-    } catch (NetlasRequestException e) {
+    } catch (final NetlasRequestException e) {
       MethodInvoker.handleInvocationError(e);
       return null;
     }

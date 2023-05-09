@@ -13,13 +13,13 @@ public class JarmBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    QueryBuilder builder = new ListBuilder("jarm", body);
+    final QueryBuilder builder = new ListBuilder("jarm", body);
     builder.setSeparator(separator);
     return builder.build();
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 
