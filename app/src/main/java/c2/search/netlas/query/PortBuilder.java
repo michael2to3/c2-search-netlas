@@ -13,13 +13,13 @@ public class PortBuilder implements QueryBuilder {
 
   @Override
   public String build() {
-    QueryBuilder builder = new ListBuilder("port", body.stream().map(Object::toString).toList());
+    final QueryBuilder builder = new ListBuilder("port", body.stream().map(Object::toString).toList());
     builder.setSeparator(separator);
     return builder.build();
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 

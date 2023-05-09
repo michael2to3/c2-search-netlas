@@ -15,6 +15,8 @@ import netlas.java.scheme.Subject;
 public class PhoenixStatic implements StaticData {
   @Wire private Host host;
 
+  public PhoenixStatic() {}
+
   @Override
   public List<String> getJarm() {
     final String jarm = "2ad2ad0002ad2ad22c42d42d000000faabb8fd156aa8b4d8a37853e1063261";
@@ -23,12 +25,12 @@ public class PhoenixStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    Certificate certificate = new Certificate();
-    Subject subject = new Subject();
-    List<String> country = Arrays.asList("US");
+    final Certificate certificate = new Certificate();
+    final Subject subject = new Subject();
+    final List<String> country = Arrays.asList("US");
     subject.setCountry(country);
     certificate.setSubject(subject);
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setCountry(country);
     certificate.setIssuer(issuer);
     return Arrays.asList(certificate);
@@ -41,7 +43,7 @@ public class PhoenixStatic implements StaticData {
 
   @Override
   public List<Headers> getHeader() {
-    Headers headers = new Headers();
+    final Headers headers = new Headers();
     headers.setHeader("content-type", List.of("text/html; charset=utf-8"));
     headers.setHeader("server", List.of("Werkzeug"));
     return Arrays.asList(headers);

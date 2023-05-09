@@ -20,7 +20,7 @@ public class StaticBuilder implements QueryBuilder {
   }
 
   @Override
-  public void setSeparator(String separator) {
+  public void setSeparator(final String separator) {
     this.separator = separator;
   }
 
@@ -30,7 +30,7 @@ public class StaticBuilder implements QueryBuilder {
   }
 
   private StringJoiner generate(final StaticData data) {
-    StringJoiner joiner = new StringJoiner(separator);
+    final StringJoiner joiner = new StringJoiner(separator);
     if (data == null) {
       return joiner;
     }
@@ -44,11 +44,11 @@ public class StaticBuilder implements QueryBuilder {
     builder = new BodyAsSha256Builder(data.getBodyAsSha256());
     joiner.add(builder.build());
 
-    for (Certificate certificate : data.getCertificate()) {
+    for (final Certificate certificate : data.getCertificate()) {
       builder = new CertificateBuilder(certificate);
       joiner.add(builder.build());
     }
-    for (Headers header : data.getHeader()) {
+    for (final Headers header : data.getHeader()) {
       builder = new HeaderBuilder(header);
       joiner.add(builder.build());
     }

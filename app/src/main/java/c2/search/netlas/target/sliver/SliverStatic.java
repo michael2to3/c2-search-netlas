@@ -18,12 +18,12 @@ public class SliverStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    var country = List.of("CA");
-    var province = List.of("Newfoundland and Labrador");
-    var locality = List.of("Mount Pearl");
-    var organization = List.of("College");
-    var organizationUnit = List.of("distant lettuce, incorporated");
-    var commonName = List.of("localhost");
+    final var country = List.of("CA");
+    final var province = List.of("Newfoundland and Labrador");
+    final var locality = List.of("Mount Pearl");
+    final var organization = List.of("College");
+    final var organizationUnit = List.of("distant lettuce, incorporated");
+    final var commonName = List.of("localhost");
     Subject subject = new Subject();
     subject.setCountry(country);
     subject.setProvince(province);
@@ -31,14 +31,14 @@ public class SliverStatic implements StaticData {
     subject.setOrganization(organization);
     subject.setOrganizationalUnit(organizationUnit);
     subject.setCommonName(commonName);
-    Certificate teamserver = new Certificate();
+    final Certificate teamserver = new Certificate();
     teamserver.setSubject(subject);
 
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setCommonName(List.of("operators"));
     subject = new Subject();
     subject.setCommonName(List.of("multiplayer"));
-    Certificate listener = new Certificate();
+    final Certificate listener = new Certificate();
     listener.setIssuer(issuer);
     listener.setSubject(subject);
 
@@ -47,16 +47,16 @@ public class SliverStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Headers> getHeader() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<String> getBodyAsSha256() {
-    return null;
+    return List.of();
   }
 }

@@ -26,7 +26,7 @@ public class HavocStatic implements StaticData {
 
   @Override
   public List<Headers> getHeader() {
-    Headers headers = new Headers();
+    final Headers headers = new Headers();
     headers.setHeader("x-ishavocframework", null);
     return List.of(headers);
   }

@@ -17,14 +17,14 @@ public class BruteratelStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    Certificate certificate = new Certificate();
-    Subject subject = new Subject();
+    final Certificate certificate = new Certificate();
+    final Subject subject = new Subject();
     subject.setCountry(List.of("US"));
     subject.setLocality(List.of("California"));
     subject.setOrganization(List.of("Microsoft"));
     subject.setOrganizationalUnit(List.of("Security"));
     subject.setCommonName(List.of("localhost"));
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setCountry(List.of("US"));
     issuer.setLocality(List.of("California"));
     issuer.setOrganization(List.of("Microsoft"));
@@ -39,16 +39,16 @@ public class BruteratelStatic implements StaticData {
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Headers> getHeader() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<String> getBodyAsSha256() {
-    return null;
+    return List.of();
   }
 }

@@ -20,12 +20,12 @@ public class DeimosStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    List<String> org = List.of("Acme Co");
-    Certificate certificate = new Certificate();
-    Subject subject = new Subject();
+    final List<String> org = List.of("Acme Co");
+    final Certificate certificate = new Certificate();
+    final Subject subject = new Subject();
     subject.setOrganization(org);
     certificate.setSubject(subject);
-    Issuer issuer = new Issuer();
+    final Issuer issuer = new Issuer();
     issuer.setOrganization(org);
     certificate.setIssuer(issuer);
     return List.of(certificate);

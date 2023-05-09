@@ -12,6 +12,8 @@ import netlas.java.scheme.Subject;
 @Static(name = "Villain")
 public class VillainStatic implements StaticData {
 
+  public VillainStatic() {}
+
   @Override
   public List<String> getJarm() {
     final String jarm = "2ad2ad0002ad2ad22c42d42d000000faabb8fd156aa8b4d8a37853e1063261";

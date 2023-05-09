@@ -30,12 +30,12 @@ public class MetasploitStatic implements StaticData {
 
   @Override
   public List<Certificate> getCertificate() {
-    return null;
+    return List.of();
   }
 
   @Override
   public List<Integer> getPort() {
-    return null;
+    return List.of();
   }
 
   @Override

@@ -23,7 +23,7 @@ public class Results {
   }
 
   public void addResponse(final String name, final List<Response> newResponses) {
-    List<Response> existingResponses = this.responses.get(name);
+    final List<Response> existingResponses = this.responses.get(name);
     if (existingResponses == null) {
       this.responses.put(name, newResponses);
     } else {
