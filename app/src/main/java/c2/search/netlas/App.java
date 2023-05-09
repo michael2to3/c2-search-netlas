@@ -96,7 +96,7 @@ public final class App {
       final CLArgumentsManager clArgManager, final PrintStream outputHandler) {
     final String apikey = clArgManager.getApiKey();
     final Host host = clArgManager.getTarget();
-    NetlasCache.getInstance(apikey);
+    NetlasCache.changeApiKey(apikey);
     final C2Detect c2Detect = new C2DetectImpl(host);
 
     final Results results = c2Detect.run();

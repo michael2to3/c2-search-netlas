@@ -1,30 +1,30 @@
 package c2.search.netlas;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
 
 public final class NetlasCache {
-  private static NetlasCache instance;
+  private static volatile NetlasCache instance;
   private final Netlas netlas;
-  private final Map<String, Object> cache;
+  private final ConcurrentHashMap<String, Object> cache;
 
   private NetlasCache(final String apiKey) {
     this.netlas = Netlas.newBuilder().setApiKey(apiKey).build();
-    this.cache = new HashMap<>();
+    this.cache = new ConcurrentHashMap<>();
   }
 
   public static NetlasCache getInstance() {
     return instance;
   }
 
-  public static NetlasCache getInstance(final String apiKey) {
-    if (instance == null) {
-      instance = new NetlasCache(apiKey);
+  public static void changeApiKey(final String apiKey) {
+    synchronized (NetlasCache.class) {
+      if (instance == null) {
+        instance = new NetlasCache(apiKey);
+      }
     }
-    return instance;
   }
 
   public static Netlas getNetlas() {
@@ -41,8 +41,13 @@ public final class NetlasCache {
     final String cacheKey = buildCacheKey("response", query, page, indices, fields, excludeFields);
     var response = (Response) cache.get(cacheKey);
     if (response == null) {
-      response = fetchResponse(query, page, indices, fields, excludeFields);
-      cache.put(cacheKey, response);
+      synchronized (cache) {
+        response = (Response) cache.get(cacheKey);
+        if (response == null) {
+          response = fetchResponse(query, page, indices, fields, excludeFields);
+          cache.put(cacheKey, response);
+        }
+      }
     }
     return response;
   }
