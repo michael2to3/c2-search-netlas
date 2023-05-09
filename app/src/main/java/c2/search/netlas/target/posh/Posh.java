@@ -6,9 +6,7 @@ import c2.search.netlas.scheme.Host;
 
 @Detect(name = "Posh")
 public class Posh {
-  @Wire
-  private Host host;
+  @Wire private Host host;
 
-  public Posh() {
-  }
+  public Posh() {}
 }
