@@ -58,13 +58,15 @@ public class NormalizeRangeHost {
   }
 
   private Matcher getIpRangeMatcher() {
-    final Pattern pattern = Pattern.compile(
-        "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
+    final Pattern pattern =
+        Pattern.compile(
+            "(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*[-TO,]\\s*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})");
     return pattern.matcher(range);
   }
 
   private Matcher getSubnetMatcher() {
-    final Pattern subnetPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
+    final Pattern subnetPattern =
+        Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})");
     return subnetPattern.matcher(range);
   }
 
