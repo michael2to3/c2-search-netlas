@@ -48,11 +48,11 @@ public class NormalizeRangeHost {
 
   private String processSubnet(final Matcher subnetMatcher) throws IpRangeFormatException {
     final String ipAddress = subnetMatcher.group(1);
-    final String subnetMask = subnetMatcher.group(2);
-
     if (!isValidIPAddress(ipAddress)) {
       throw new IpRangeFormatException("Invalid IP address format in subnet IP: " + range);
     }
+
+    final String subnetMask = subnetMatcher.group(2);
     if (!isValidSubnetMask(subnetMask)) {
       throw new IpRangeFormatException("Invalid subnet mask format in subnet IP: " + range);
     }
