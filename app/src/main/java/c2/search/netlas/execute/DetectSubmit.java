@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class DetectSubmit implements Submit {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
-  private static final int TIMEOUT_SINGLE = 120;
+  private static final int TIMEOUT_SINGLE = 20;
   private final ClassScanner classScanner;
   private final Factory factory;
 

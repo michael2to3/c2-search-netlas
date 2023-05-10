@@ -17,7 +17,7 @@ public class C2DetectImpl implements C2Detect {
   @Override
   public Results run() {
     final FieldValues fieldValues = createFieldValues();
-    final Execute executor = new Execute(fieldValues);
+    final Execute executor = new Execute(fieldValues, this.targetHost);
     return executor.run();
   }
 

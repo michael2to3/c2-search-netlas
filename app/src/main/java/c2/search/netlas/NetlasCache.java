@@ -1,33 +1,34 @@
 package c2.search.netlas;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import netlas.java.Netlas;
 import netlas.java.exception.NetlasRequestException;
 import netlas.java.scheme.Response;
 
 public final class NetlasCache {
-  private static NetlasCache instance;
   private final Netlas netlas;
   private final Map<String, Object> cache;
 
   private NetlasCache(final String apiKey) {
     this.netlas = Netlas.newBuilder().setApiKey(apiKey).build();
-    this.cache = new HashMap<>();
+    this.cache = new ConcurrentHashMap<>();
   }
 
   public static NetlasCache getInstance() {
-    return instance;
+    return Holder.INSTANCE;
   }
 
   public static void changeApiKey(final String apiKey) {
-    if (instance == null) {
-      instance = new NetlasCache(apiKey);
+    synchronized (Holder.class) {
+      if (Holder.INSTANCE == null) {
+        Holder.INSTANCE = new NetlasCache(apiKey);
+      }
     }
   }
 
   public static Netlas getNetlas() {
-    return instance.netlas;
+    return getInstance().netlas;
   }
 
   public Response response(
@@ -40,8 +41,13 @@ public final class NetlasCache {
     final String cacheKey = buildCacheKey("response", query, page, indices, fields, excludeFields);
     var response = (Response) cache.get(cacheKey);
     if (response == null) {
-      response = fetchResponse(query, page, indices, fields, excludeFields);
-      cache.put(cacheKey, response);
+      synchronized (cache) {
+        response = (Response) cache.get(cacheKey);
+        if (response == null) {
+          response = fetchResponse(query, page, indices, fields, excludeFields);
+          cache.put(cacheKey, response);
+        }
+      }
     }
     return response;
   }
@@ -64,5 +70,16 @@ public final class NetlasCache {
       final String fields,
       final boolean excludeFields) {
     return method + "|" + query + "|" + page + "|" + indices + "|" + fields + "|" + excludeFields;
+  }
+
+  private static class Holder {
+    private static NetlasCache INSTANCE;
+
+    static {
+      String apiKey = System.getenv("API_KEY");
+      if (apiKey != null && !apiKey.isEmpty()) {
+        INSTANCE = new NetlasCache(apiKey);
+      }
+    }
   }
 }

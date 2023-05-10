@@ -2,6 +2,7 @@ package c2.search.netlas.execute;
 
 import c2.search.netlas.classscanner.ClassScanner;
 import c2.search.netlas.scheme.Results;
+import c2.search.netlas.scheme.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -15,21 +16,23 @@ import org.slf4j.LoggerFactory;
 
 public class Execute {
   private static final Logger LOGGER = LoggerFactory.getLogger(Execute.class);
-  private static final int TIMEOUT_COMPLEX = 120;
+  private static final int TIMEOUT_COMPLEX = 300;
   private static final String TARGET_CLASS_NAME = "c2.search.netlas.target";
   private final ClassScanner classScanner;
   private final Factory factory;
+  private final Host host;
 
-  public Execute(final FieldValues fields) {
+  public Execute(final FieldValues fields, final Host host) {
     this.classScanner = new ClassScanner(TARGET_CLASS_NAME);
     this.factory = new Factory(fields);
+    this.host = host;
   }
 
   public Results run() {
     final ExecutorService executor = createExecutorService();
     final List<Future<Results>> futures = new ArrayList<>();
     final Submit detect = new DetectSubmit(classScanner, factory);
-    final Submit staticSubmit = new StaticSubmit(classScanner);
+    final Submit staticSubmit = new StaticSubmit(classScanner, host);
     futures.addAll(detect.submitTests(executor));
     futures.addAll(staticSubmit.submitTests(executor));
     final Results results = collectResults(futures);
