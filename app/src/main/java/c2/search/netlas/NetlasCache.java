@@ -16,13 +16,13 @@ public final class NetlasCache {
   }
 
   public static NetlasCache getInstance() {
-    return Holder.INSTANCE;
+    return Holder.instance;
   }
 
   public static void changeApiKey(final String apiKey) {
     synchronized (Holder.class) {
-      if (Holder.INSTANCE == null) {
-        Holder.INSTANCE = new NetlasCache(apiKey);
+      if (Holder.instance == null) {
+        Holder.instance = new NetlasCache(apiKey);
       }
     }
   }
@@ -73,12 +73,12 @@ public final class NetlasCache {
   }
 
   private static class Holder {
-    private static NetlasCache INSTANCE;
+    private static NetlasCache instance;
 
     static {
-      String apiKey = System.getenv("API_KEY");
+      final String apiKey = System.getenv("API_KEY");
       if (apiKey != null && !apiKey.isEmpty()) {
-        INSTANCE = new NetlasCache(apiKey);
+        instance = new NetlasCache(apiKey);
       }
     }
   }

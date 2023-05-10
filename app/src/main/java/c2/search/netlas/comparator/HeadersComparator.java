@@ -6,15 +6,16 @@ import java.util.Map;
 import netlas.java.scheme.Headers;
 
 public class HeadersComparator implements Comparator<Headers> {
+  public HeadersComparator() {}
 
   @Override
-  public int compare(Headers base, Headers target) {
-    Map<String, List<String>> baseHeaders = base.getHeaders();
-    Map<String, List<String>> targetHeaders = target.getHeaders();
+  public int compare(final Headers base, final Headers target) {
+    final Map<String, List<String>> baseHeaders = base.getHeaders();
+    final Map<String, List<String>> targetHeaders = target.getHeaders();
 
-    for (Map.Entry<String, List<String>> entry : targetHeaders.entrySet()) {
-      String key = entry.getKey();
-      List<String> targetValues = entry.getValue();
+    for (final Map.Entry<String, List<String>> entry : targetHeaders.entrySet()) {
+      final String key = entry.getKey();
+      final List<String> targetValues = entry.getValue();
 
       if (isNullOrEmpty(baseHeaders.get(key))) {
         if (isNullOrEmpty(targetValues)) {
@@ -23,7 +24,7 @@ public class HeadersComparator implements Comparator<Headers> {
         return -1;
       }
 
-      List<String> baseValues = baseHeaders.get(key);
+      final List<String> baseValues = baseHeaders.get(key);
       if (isNullOrEmpty(baseValues)) {
         if (isNullOrEmpty(targetValues)) {
           continue;
@@ -39,7 +40,7 @@ public class HeadersComparator implements Comparator<Headers> {
     return 0;
   }
 
-  private boolean isNullOrEmpty(List<String> list) {
+  private boolean isNullOrEmpty(final List<String> list) {
     return list == null || list.isEmpty();
   }
 }

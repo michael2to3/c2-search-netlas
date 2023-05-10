@@ -33,28 +33,31 @@ public class NormalizeRangeHost {
     final String startIP = matcher.group(1);
     final String endIP = matcher.group(2);
 
-    if (isValidIPAddress(startIP) && isValidIPAddress(endIP)) {
-      return formatIpRange(startIP, endIP);
-    } else if (!isValidIPAddress(startIP) && !isValidIPAddress(endIP)) {
+    if (!isValidIPAddress(startIP) && !isValidIPAddress(endIP)) {
       throw new IpRangeFormatException("Invalid IP address format in start and end IPs: " + range);
-    } else if (!isValidIPAddress(startIP)) {
+    }
+    if (!isValidIPAddress(startIP)) {
       throw new IpRangeFormatException("Invalid IP address format in start IP: " + range);
-    } else {
+    }
+    if (!isValidIPAddress(endIP)) {
       throw new IpRangeFormatException("Invalid IP address format in end IP: " + range);
     }
+
+    return formatIpRange(startIP, endIP);
   }
 
   private String processSubnet(final Matcher subnetMatcher) throws IpRangeFormatException {
     final String ipAddress = subnetMatcher.group(1);
     final String subnetMask = subnetMatcher.group(2);
 
-    if (isValidIPAddress(ipAddress) && isValidSubnetMask(subnetMask)) {
-      return "\"" + ipAddress + "/" + subnetMask + "\"";
-    } else if (!isValidIPAddress(ipAddress)) {
+    if (!isValidIPAddress(ipAddress)) {
       throw new IpRangeFormatException("Invalid IP address format in subnet IP: " + range);
-    } else {
+    }
+    if (!isValidSubnetMask(subnetMask)) {
       throw new IpRangeFormatException("Invalid subnet mask format in subnet IP: " + range);
     }
+
+    return "\"" + ipAddress + "/" + subnetMask + "\"";
   }
 
   private Matcher getIpRangeMatcher() {

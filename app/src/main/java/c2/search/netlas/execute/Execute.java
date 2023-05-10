@@ -1,7 +1,7 @@
 package c2.search.netlas.execute;
 
 import c2.search.netlas.classscanner.ClassScanner;
-import c2.search.netlas.scheme.*;
+import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Results;
 import java.util.ArrayList;
 import java.util.List;
