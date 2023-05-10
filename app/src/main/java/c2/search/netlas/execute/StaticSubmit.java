@@ -57,7 +57,6 @@ public class StaticSubmit implements Submit {
     try {
       final String query = String.format("host:%s AND port:%s", host.getTarget(), host.getPort());
       final var items = NetlasCache.getInstance().response(query, 0, null, null, false).getItems();
-      System.out.println(items);
       if (items.isEmpty()) {
         LOGGER.warn("No static data found");
         return null;
