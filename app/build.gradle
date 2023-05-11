@@ -23,7 +23,7 @@ dependencies {
     implementation 'io.github.classgraph:classgraph:4.8.157'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
-    implementation 'com.github.michael2to3:netlas-java:0.0.401b7'
+    implementation 'com.github.michael2to3:netlas-java:0.0.410'
 }
 shadowJar {
     mergeServiceFiles()

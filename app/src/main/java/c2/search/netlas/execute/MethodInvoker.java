@@ -48,8 +48,8 @@ public final class MethodInvoker {
   }
 
   public static void handleInvocationError(final Exception exception) {
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info("Error invoking test methods - {}", exception.getMessage());
+    if (LOGGER.isErrorEnabled()) {
+      LOGGER.error("Error invoking test methods - {}", exception.getMessage(), exception);
     }
   }
 

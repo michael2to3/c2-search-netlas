@@ -4,46 +4,17 @@ import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.annotation.Wire;
 import c2.search.netlas.scheme.Host;
-import c2.search.netlas.target.NetlasWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
 
 @Detect(name = "Phoenix")
 public class Phoenix {
   @Wire private Host host;
-  @Wire private NetlasWrapper netlasWrapper;
 
   public Phoenix() {}
 
-  @Test
-  public boolean checkJarm() throws JsonMappingException, JsonProcessingException {
-    final String jarm = "2ad2ad0002ad2ad22c42d42d000000faabb8fd156aa8b4d8a37853e1063261";
-    return jarm.equals(netlasWrapper.getJarm());
-  }
-
-  @Test
-  public boolean checkFieldCert() throws JsonMappingException, JsonProcessingException {
-    final String subIssCountry = "US";
-    final List<String> rsubCountry = netlasWrapper.getCertSubjectCountry();
-    final List<String> rissCountry = netlasWrapper.getCertIssuerCountry();
-    return rsubCountry.contains(subIssCountry) && rissCountry.contains(subIssCountry);
-  }
-
-  @Test
-  public boolean checkDefaultBodyResponse() throws JsonMappingException, JsonProcessingException {
-    final List<String> body =
-        Arrays.asList(
-            "bdd3acd38b235f3e79f97834c1bada34fe87489f5cc3c530dab5bc47404e0a87",
-            "e9639e3c4681ce85f852fbac48e2eeee5ba51296dbfec57c200d59b76237ab80");
-    return body.contains(netlasWrapper.getBodyAsSha256());
-  }
-
-  @Test
+  @Test(extern = true)
   public boolean checkListenerResponse()
       throws KeyManagementException, NoSuchAlgorithmException, IOException {
     final String[] paths = {"/download/history.csv", "/download/users.csv", "/static/dump.sql"};
@@ -56,20 +27,5 @@ public class Phoenix {
       }
     }
     return result;
-  }
-
-  @Test
-  public boolean headerServer() throws JsonMappingException, JsonProcessingException {
-    final List<String> servers = netlasWrapper.getServers();
-    final List<String> types = netlasWrapper.getContentType();
-    final String baseType = "text/html; charset=utf-8";
-    final String base = "Werkzeug";
-    boolean result = false;
-    for (final String server : servers) {
-      if (server.contains(base)) {
-        result = true;
-      }
-    }
-    return result && types.contains(baseType);
   }
 }

@@ -8,6 +8,7 @@ import c2.search.netlas.annotation.BeforeAll;
 import c2.search.netlas.annotation.Detect;
 import c2.search.netlas.annotation.Test;
 import c2.search.netlas.classscanner.ClassScanner;
+import c2.search.netlas.scheme.Host;
 import c2.search.netlas.scheme.Response;
 import c2.search.netlas.scheme.Results;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ExecuteTest {
   public void setup() {
     classScanner = mock(ClassScanner.class);
     FieldValues fields = mock(FieldValues.class);
-    checker = new Execute(fields);
+    checker = new Execute(fields, Host.newBuilder().setTarget("localhost").build());
   }
 
   @Test

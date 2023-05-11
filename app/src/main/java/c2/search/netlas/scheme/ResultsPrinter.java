@@ -1,26 +1,59 @@
 package c2.search.netlas.scheme;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultsPrinter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResultsPrinter.class);
   private final Results results;
 
   public ResultsPrinter(final Results results) {
     this.results = results;
   }
 
-  public void print(final PrintStream stream, final boolean verbose) {
-    if (verbose) {
+  public void print(final PrintStream stream, final boolean verbose, final boolean json) {
+    if (isEmptyResults()) {
+      stream.println("Detection results are empty");
+    } else if (verbose) {
       printVerbose(stream);
+    } else if (json) {
+      printJson(stream);
     } else {
       printShort(stream);
+    }
+  }
+
+  private boolean isEmptyResults() {
+    if (results.getResponses().isEmpty()) {
+      return true;
+    }
+    for (final String tool : results.getResponses().keySet()) {
+      if (!results.getResponses().get(tool).isEmpty()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void printJson(final PrintStream stream) {
+    final ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(stream, results);
+    } catch (IOException e) {
+      LOGGER.error("Failed to write JSON", e);
     }
   }
 
   private void printVerbose(final PrintStream stream) {
     for (final String tool : results.getResponses().keySet()) {
       final List<Response> toolResponses = results.getResponses().get(tool);
+      if (getSuccessCount(toolResponses) == 0) {
+        continue;
+      }
       final Response resp = toolResponses.get(0);
 
       if (resp.getVersion().isEmpty()) {
