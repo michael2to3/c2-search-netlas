@@ -6,7 +6,7 @@ import c2.search.netlas.scheme.Host;
 
 @Detect(name = "Merlin")
 public class Merlin {
-    @Wire private Host host;
+  @Wire private Host host;
 
-    public Merlin() {}
+  public Merlin() {}
 }
