@@ -78,11 +78,11 @@ This will display a list of C2 servers found in the given IP address or domain.
 | DeimosC2                | :white_check_mark: |
 | PhoenixC2               | :white_check_mark: |
 | Empire                  | :x:                |
-| Merlin                  | :x:                |
+| Merlin                  | :white_check_mark: |
 | Covenant                | :x:                |
 | Villain                 | :white_check_mark: |
 | Shad0w                  | :x:                |
-| PoshC2                  | :x:                |
+| PoshC2                  | :white_check_mark: |
 
 Legend:
 
