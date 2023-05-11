@@ -24,7 +24,9 @@ public class MerlinStatic implements StaticData {
         return List.of(cert);
     }
     @Override
-    public List<Integer> getPort() { return List.of(); }
+    public List<Integer> getPort() {
+        return List.of();
+    }
     @Override
     public List<Headers> getHeader() {
         final Headers header = new Headers();
@@ -33,5 +35,7 @@ public class MerlinStatic implements StaticData {
         return List.of(header);
     }
     @Override
-    public List<String> getBodyAsSha256() { return List.of(); }
+    public List<String> getBodyAsSha256() {
+        return List.of();
+    }
 }
