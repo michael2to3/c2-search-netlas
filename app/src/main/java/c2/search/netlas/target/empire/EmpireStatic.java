@@ -1,9 +1,9 @@
 package c2.search.netlas.target.empire;
 
+import java.util.List;
 import c2.search.netlas.analyze.StaticData;
 import netlas.java.scheme.Certificate;
 import netlas.java.scheme.Headers;
-import java.util.List;
 
 public class EmpireStatic implements StaticData {
     public EmpireStatic() {
