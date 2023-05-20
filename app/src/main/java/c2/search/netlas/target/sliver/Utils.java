@@ -1,13 +1,9 @@
 package c2.search.netlas.target.sliver;
 
-import c2.search.netlas.target.NetlasWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,23 +12,6 @@ final class Utils {
   private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
   private Utils() {}
-
-  public static boolean verifyCertFieldsSubject(
-      final NetlasWrapper netlasWrapper, final String[] subjectFields)
-      throws JsonMappingException, JsonProcessingException {
-    final List<String> subCountry = netlasWrapper.getCertSubjectCountry();
-    final List<String> subState = netlasWrapper.getCertSubjectProvince();
-    final List<String> subCity = netlasWrapper.getCertSubjectLocality();
-    final List<String> subOrg = netlasWrapper.getCertSubjectOrganization();
-    final List<String> subOrgUnit = netlasWrapper.getCertSubjectOrganizationUnit();
-    final List<String> subCommonName = netlasWrapper.getCertSubjectCommonName();
-
-    final List<List<String>> subject =
-        Arrays.asList(subCountry, subState, subCity, subOrg, subOrgUnit, subCommonName);
-
-    final List<String> list = Arrays.asList(subjectFields);
-    return compareList(subject, list);
-  }
 
   public static boolean compareList(final List<List<String>> lhs, final List<String> rhs) {
     boolean result = true;

@@ -16,13 +16,27 @@ public class ResultsPrinter {
   }
 
   public void print(final PrintStream stream, final boolean verbose, final boolean json) {
-    if (verbose) {
+    if (isEmptyResults()) {
+      stream.println("Detection results are empty");
+    } else if (verbose) {
       printVerbose(stream);
     } else if (json) {
       printJson(stream);
     } else {
       printShort(stream);
     }
+  }
+
+  private boolean isEmptyResults() {
+    if (results.getResponses().isEmpty()) {
+      return true;
+    }
+    for (final String tool : results.getResponses().keySet()) {
+      if (!results.getResponses().get(tool).isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private void printJson(final PrintStream stream) {
@@ -37,6 +51,9 @@ public class ResultsPrinter {
   private void printVerbose(final PrintStream stream) {
     for (final String tool : results.getResponses().keySet()) {
       final List<Response> toolResponses = results.getResponses().get(tool);
+      if (getSuccessCount(toolResponses) == 0) {
+        continue;
+      }
       final Response resp = toolResponses.get(0);
 
       if (resp.getVersion().isEmpty()) {

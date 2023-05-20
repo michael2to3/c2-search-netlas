@@ -12,7 +12,7 @@ public class FieldValues {
 
   public FieldValues() {}
 
-  public void setField(final Class<?> clazz, final Object value) {
+  public void set(final Class<?> clazz, final Object value) {
     FIELDS.put(clazz, value);
   }
 
