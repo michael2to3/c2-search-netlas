@@ -37,7 +37,6 @@ public class EmpireStatic implements StaticData {
     public List<String> getBodyAsSha256() {
         return List.of(
                 "e2b93e26a115d641baaca4f652db4bc64d5cac5c7479a6d4d1d08673fb410305",
-                "48c3843f57eceab2613c42ed65bff6d8701b3cfe12534220702cf2a895e45a79",
                 "e87aa3bc0789083c0b05e040bdc309de0e79fc2eb12b8c04e853b1e8a4eac4f4");
     }
 }
